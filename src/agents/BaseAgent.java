@@ -41,26 +41,24 @@ public class BaseAgent extends Agent {
 	}
 	
 	
-	/*protected void takeDown()
+	protected void takeDown()
 	{
-		if (subDF == null)
+		if (this.getDefaultDF() == null)
 		{
 			try {
 				DFService.deregister(this);
 			} catch (FIPAException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
 		else
 		{
 			try {
-				DFService.deregister(this, this.subDF);
+				DFService.deregister(this, this.getDefaultDF());
 			} catch (FIPAException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
-	}*/
+	}
 
 }

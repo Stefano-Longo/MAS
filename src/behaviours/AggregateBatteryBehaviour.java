@@ -4,11 +4,14 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 import agents.BaseAgent;
+import basicData.AggregatorFlexibilityData;
+import basicData.BatteryInfo;
 import basicData.FlexibilityData;
 import jade.core.behaviours.OneShotBehaviour;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.UnreadableException;
 import database.DbAggregatorBattery;
+import database.DbBatteryInfo;
 
 public class AggregateBatteryBehaviour extends OneShotBehaviour {
 
@@ -33,11 +36,14 @@ public class AggregateBatteryBehaviour extends OneShotBehaviour {
 		try 
 		{
 			@SuppressWarnings("unchecked")
-			ArrayList<FlexibilityData> msgData = (ArrayList<FlexibilityData>)msg.getContentObject();
+			ArrayList<AggregatorFlexibilityData> msgData = (ArrayList<AggregatorFlexibilityData>)msg.getContentObject();
+			BatteryInfo batteryInfo = new DbBatteryInfo().getBatteryByIdAgent(msg.getSender().getName());
 			
 			// Insert the message in the database
 			for (int i=0; i < msgData.size(); i++){
-				new DbAggregatorBattery().addFlexibilityBatteryMessage(this.myAgent.getName(), msgData.get(i));
+				msgData.get(i).setIdAgent(this.myAgent.getName());
+				msgData.get(i).setIdentificator(batteryInfo.getIdBattery());
+				new DbAggregatorBattery().addFlexibilityBatteryMessage(msgData.get(i));
 			}
 			int messagesReceived = new DbAggregatorBattery().countMessagesReceived(this.myAgent.getName());
 			int batteryAgents = new BaseAgent().getAgentsbyServiceType(this.myAgent, "BatteryAgent").length;
@@ -55,9 +61,9 @@ public class AggregateBatteryBehaviour extends OneShotBehaviour {
 				
 				ACLMessage output = new ACLMessage(ACLMessage.INFORM);			
 				output.setContentObject(result);
-				output.setConversationId("proposal");
+				output.setConversationId("proposalBattery");
 				output.addReceiver(new BaseAgent().getAgentsbyServiceType(this.myAgent, "ControlAgent")[0].getName());
-				
+				System.out.println(new BaseAgent().getAgentsbyServiceType(this.myAgent, "ControlAgent")[0].getName());
 			}
 		} 
 		catch (UnreadableException | IOException e) 

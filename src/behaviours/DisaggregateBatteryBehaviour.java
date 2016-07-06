@@ -1,8 +1,10 @@
 package behaviours;
 
+import java.io.IOException;
 import java.util.ArrayList;
 
 import agents.BaseAgent;
+import basicData.AggregatorFlexibilityData;
 import basicData.FlexibilityData;
 import basicData.ResultData;
 import database.DbAggregatorBattery;
@@ -40,14 +42,32 @@ public class DisaggregateBatteryBehaviour extends OneShotBehaviour {
 		 * Linear Programming -> Operative Research
 		 */
 		
-		ArrayList<FlexibilityData> list = new DbAggregatorBattery().getBatteryChoice(this.myAgent.getName());
-		DFAgentDescription[] ca = new BaseAgent().getAgentsbyServiceType(myAgent, "BatteryAgent");
+		ArrayList<AggregatorFlexibilityData> list = new DbAggregatorBattery().getBatteriesChoice(this.myAgent.getName());
+		DFAgentDescription[] batteryAgents = new BaseAgent().getAgentsbyServiceType(myAgent, "BatteryAgent");
 		
-		if(list.size() == ca.length)
-			System.out.println("TUTTO OK");
-		else //quella che ho in meno o in più la ignoro. Però segnalo il dato mancante o eccedente, come?
+		if(list.size() != batteryAgents.length)
 			System.out.println("Il numero di batteryAgent registrati è inferiore al numero di dati nel db");
+		else{ //quella che ho in meno o in più la ignoro. Però segnalo il dato mancante o eccedente, come?
+			System.out.println("TUTTO OK");
 	
+			try {
+			//per ora invio come scelta quella fatta da loro
+				//ATTENZIONE far matchare l'id battery con quello a cui invio!!
+				for(int i=0; i<list.size(); i++)
+				{
+					//prende la batteria giusta, quella che ha il servizio BatteryAgent-1
+					DFAgentDescription[] battery = new BaseAgent().getAgentsbyServiceType(myAgent,
+							"BatteryAgent"+list.get(i).getIdentificator());
+					
+					ACLMessage message = new ACLMessage(ACLMessage.INFORM);
+					message.setContentObject(list.get(i));
+					message.addReceiver(battery[0].getName());
+					this.myAgent.send(message);
+				}
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
 		
 	}
 

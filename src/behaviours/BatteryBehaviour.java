@@ -28,7 +28,6 @@ public class BatteryBehaviour  extends OneShotBehaviour {
 		try {
 			msgData = (ResultData)msg.getContentObject();
 		} catch (UnreadableException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
@@ -55,6 +54,7 @@ public class BatteryBehaviour  extends OneShotBehaviour {
 		/*msgData.getPower()
 		msgData.getCost()
 		*/
+		System.out.println("ENTRATOOOOOO");
 		System.out.println(batteryData.getDatetime().getTime());
 		batteryData.getDatetime().add(Calendar.SECOND, timeSlot);
 		System.out.println(batteryData.getDatetime().getTime());
@@ -64,13 +64,18 @@ public class BatteryBehaviour  extends OneShotBehaviour {
 		double outputPowerMax = getMaxOutput(batteryData.getSoc(), batteryInfo.getSocMin(), 
 				batteryInfo.getCapacity(), batteryInfo.getBatteryOutputMax());
 		
-		
-		//calculate next socObjective
 		double newSoc = calculateSoc(batteryData.getSoc(), batteryData.getCapacity(), msgData.getPowerRequested());
-		/*BatteryData newBatteryData = new BatteryData(batteryInfo.getIdBattery(), batteryData.getDatetime(), 
-				socObjective, newSoc, costKwh, inputPowerMax, outputPowerMax, msgData.getPowerRequested());
-		new DbBatteryData().addBatteryData(newBatteryData);*/
-
+		double newSocObjective = batteryData.getSocObjective();
+		//TO-DO per ora newSocObjective sempre uguale. Poi vediamo se è meglio che si aggiorni per ogni ora
+		
+		//BatteryInput -> powerRequested negative value
+		//BatteryOutput -> powerRequested positive value
+		double newCostKwh = calculateNewCostKwh(batteryData.getSoc(), batteryData.getCapacity(), batteryData.getCostKwh());
+		
+		BatteryData newBatteryData = new BatteryData(batteryInfo.getIdBattery(), batteryData.getDatetime(), 
+				newSocObjective, newSoc, newCostKwh, inputPowerMax, outputPowerMax, msgData.getPowerRequested());
+		new DbBatteryData().addBatteryData(newBatteryData);
+		
 	}
 	
 	private double getMaxInput(double soc, double socMax, double capacity, double maxInputBattery)
@@ -105,5 +110,18 @@ public class BatteryBehaviour  extends OneShotBehaviour {
 		 double newSoc = soc + (int)((powerRequested / (3600 / timeSlot))*100 / capacity);
 
 		return newSoc;
+	}
+	
+	private double calculateNewCostKwh(double soc, double capacity, double oldCostKwh)
+	{
+		if(msgData.getPowerRequested() > 0) // output energy -> the cost does not change
+		{
+			return oldCostKwh;
+		}
+		double newKwh = msgData.getPowerRequested()/(3600/timeSlot);
+		double oldKwh = soc*capacity;
+		double newCostKwh = (oldCostKwh*(oldKwh) + msgData.getCost()*(newKwh))/(oldKwh+newKwh);
+		
+		return newCostKwh;
 	}
 }

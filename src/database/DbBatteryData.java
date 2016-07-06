@@ -38,7 +38,6 @@ public class DbBatteryData extends DbConnection	{
 				+ " FROM BatteryDataHistory"
 				+ " WHERE RTRIM(IdBattery) = "+idBattery
 				+ " ORDER BY DateTime DESC";
-		System.out.println(query);
 		try {
 			ResultSet rs = stmt.executeQuery(query);
 			while(rs.next())

@@ -1,6 +1,8 @@
 package agents;
 
+import basicData.BatteryInfo;
 import behaviours.ReceiveMessages;
+import database.DbBatteryInfo;
 import jade.core.Agent;
 import jade.core.behaviours.Behaviour;
 import jade.core.behaviours.OneShotBehaviour;
@@ -17,6 +19,9 @@ public class BatteryAgent extends BaseAgent {
 		 */
 		
 		registerDfAgent(this.getHap(), "BatteryAgent");
+		BatteryInfo batteryInfo = new DbBatteryInfo().getBatteryByIdAgent(this.getName());
+		registerDfAgent(this.getHap(), "BatteryAgent-"+batteryInfo.getIdBattery());
+		//serve per il disaggregatorBattery
 		this.addBehaviour(new ReceiveMessages(this));
 		
 	}

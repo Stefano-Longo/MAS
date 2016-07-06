@@ -3,28 +3,19 @@ package basicData;
 import java.io.Serializable;
 import java.util.Calendar;
 
+@SuppressWarnings("serial")
 public class FlexibilityData implements Serializable {
 		
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
-	private int idBattery;
 	private Calendar analysisDatetime;
 	private Calendar datetime;
 	private double lowerLimit;
 	private double upperLimit;
-	private double costKwh; //media pesata
+	private double costKwh; 
 	private double desideredChoice; // positive or negative value which represent the choice the single agent
-	private double maxGain;
- 
-	private String idBatteryAgent;
-	
 
 	/**
-	 * Message that agents send to aggregator agents
 	 * 
-	 * @param idBattery
+	 * @param idSenderAgent
 	 * @param analysisDatetime
 	 * @param datetime
 	 * @param lowerLimit
@@ -33,27 +24,21 @@ public class FlexibilityData implements Serializable {
 	 * @param desideredChoice
 	 * @param maxGain
 	 */
-	public FlexibilityData(int idBattery, Calendar analysisDatetime, Calendar datetime, double lowerLimit, double upperLimit, double costKwh, double desideredChoice, double maxGain) {
-		this.idBattery = idBattery;
+	public FlexibilityData(Calendar analysisDatetime, Calendar datetime, double lowerLimit, double upperLimit, double costKwh, double desideredChoice) {
 		this.analysisDatetime = analysisDatetime;
 		this.datetime = datetime;
 		this.lowerLimit = lowerLimit;
 		this.upperLimit = upperLimit;
 		this.costKwh = costKwh;
 		this.desideredChoice = desideredChoice;
-		this.maxGain = maxGain;
 	}
-	
+
 	public Calendar getAnalysisDatetime() {
 		return analysisDatetime;
 	}
 
 	public void setAnalysisDatetime(Calendar analysisDatetime) {
 		this.analysisDatetime = analysisDatetime;
-	}
-
-	public void setIdBattery(int idBattery) {
-		this.idBattery = idBattery;
 	}
 
 	public FlexibilityData() {}
@@ -72,22 +57,6 @@ public class FlexibilityData implements Serializable {
 
 	public void setDatetime(Calendar datetime) {
 		this.datetime = datetime;
-	}
-
-	public double getMaxGain() {
-		return maxGain;
-	}
-
-	public void setMaxGain(double maxGain) {
-		this.maxGain = maxGain;
-	}
-
-	public int getIdBattery() {
-		return idBattery;
-	}
-
-	public void setId(int idBattery) {
-		this.idBattery = idBattery;
 	}
 
 	public double getLowerLimit() {
@@ -112,18 +81,6 @@ public class FlexibilityData implements Serializable {
 
 	public void setDesideredChoice(double desideredChoice) {
 		this.desideredChoice = desideredChoice;
-	}
-
-	public static long getSerialversionuid() {
-		return serialVersionUID;
-	}
-	
-	public String getIdBatteryAgent() {
-		return idBatteryAgent;
-	}
-
-	public void setIdBatteryAgent(String idBatteryAgent) {
-		this.idBatteryAgent = idBatteryAgent;
 	}
 	
 }

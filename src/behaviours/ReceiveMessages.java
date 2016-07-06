@@ -30,16 +30,24 @@ public class ReceiveMessages extends TickerBehaviour {
 				this.myAgent.addBehaviour(new GiveOutput());
 			
 			}
-			else if(this.myAgent instanceof ControlAgent && msg.getConversationId().equals("input"))
+			else if(this.myAgent instanceof ControlAgent)
 			{
-				this.myAgent.addBehaviour(new SendPricesToTypeAgents(msg, this.myAgent.getHap(),"Aggregator"));
-			
+				if(msg.getConversationId().equals("input"))
+				{
+					this.myAgent.addBehaviour(new SendPricesToTypeAgents(msg, this.myAgent.getHap(),"Aggregator"));
+				}
+				else if(msg.getConversationId().contains("proposal"))
+				{
+					this.myAgent.addBehaviour(new ControlBehaviour(msg));
+				}
 			}
-			else if(this.myAgent instanceof BatteryAgent && msg.getConversationId().equals("input"))
+			else if(this.myAgent instanceof BatteryAgent)
 			{
-				this.myAgent.addBehaviour(new BetteryFlexibilityBehaviour(msg));
+				if(msg.getConversationId().equals("input"))
+				{
+					this.myAgent.addBehaviour(new BatteryFlexibilityBehaviour(msg));
+				}
 			}
-			
 			else if(this.myAgent instanceof DerAggregatorAgent)
 			{
 				if(msg.getConversationId().equals("input"))
