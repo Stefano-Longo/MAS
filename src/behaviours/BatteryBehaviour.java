@@ -4,7 +4,7 @@ import java.util.Calendar;
 
 import basicData.BatteryData;
 import basicData.BatteryInfo;
-import basicData.ResultData;
+import basicData.ResultPowerPrice;
 import database.DbBatteryData;
 import database.DbBatteryInfo;
 import jade.core.behaviours.OneShotBehaviour;
@@ -20,13 +20,13 @@ public class BatteryBehaviour  extends OneShotBehaviour {
 	private static final long serialVersionUID = 1L;
 
 	ACLMessage msg;
-	ResultData msgData;
+	ResultPowerPrice msgData;
 	private int timeSlot = new GeneralData().timeSlot;
 	
 	public BatteryBehaviour(ACLMessage msg) {
 		this.msg = msg;
 		try {
-			msgData = (ResultData)msg.getContentObject();
+			msgData = (ResultPowerPrice)msg.getContentObject();
 		} catch (UnreadableException e) {
 			e.printStackTrace();
 		}
@@ -34,9 +34,6 @@ public class BatteryBehaviour  extends OneShotBehaviour {
 	
 	@Override
 	public void action() {
-		
-		BatteryInfo batteryInfo = new DbBatteryInfo().getBatteryByIdAgent(this.myAgent.getName());
-		BatteryData batteryData = new DbBatteryData().getLastBatteryData(batteryInfo.getIdBattery());
 		
 		/**
 		 * Create BatteryData which has:
@@ -48,13 +45,9 @@ public class BatteryBehaviour  extends OneShotBehaviour {
 		 *  - OutputPowerMax: I should have it also
 		 */
 		
+		BatteryInfo batteryInfo = new DbBatteryInfo().getBatteryByIdAgent(this.myAgent.getName());
+		BatteryData batteryData = new DbBatteryData().getLastBatteryData(batteryInfo.getIdBattery());
 		
-		//the row in db is created before, now it is only updated with the new values
-		
-		/*msgData.getPower()
-		msgData.getCost()
-		*/
-		System.out.println("ENTRATOOOOOO");
 		System.out.println(batteryData.getDatetime().getTime());
 		batteryData.getDatetime().add(Calendar.SECOND, timeSlot);
 		System.out.println(batteryData.getDatetime().getTime());
@@ -66,6 +59,7 @@ public class BatteryBehaviour  extends OneShotBehaviour {
 		
 		double newSoc = calculateSoc(batteryData.getSoc(), batteryData.getCapacity(), msgData.getPowerRequested());
 		double newSocObjective = batteryData.getSocObjective();
+		
 		//TO-DO per ora newSocObjective sempre uguale. Poi vediamo se è meglio che si aggiorni per ogni ora
 		
 		//BatteryInput -> powerRequested negative value
@@ -74,7 +68,7 @@ public class BatteryBehaviour  extends OneShotBehaviour {
 		
 		BatteryData newBatteryData = new BatteryData(batteryInfo.getIdBattery(), batteryData.getDatetime(), 
 				newSocObjective, newSoc, newCostKwh, inputPowerMax, outputPowerMax, msgData.getPowerRequested());
-		new DbBatteryData().addBatteryData(newBatteryData);
+		new DbBatteryData().addBatteryData(newBatteryData); //salvo nello storico
 		
 	}
 	
@@ -107,7 +101,7 @@ public class BatteryBehaviour  extends OneShotBehaviour {
 	{
 		//BatteryInput -> powerRequested negative value
 		//BatteryOutput -> powerRequested positive value
-		 double newSoc = soc + (int)((powerRequested / (3600 / timeSlot))*100 / capacity);
+		 double newSoc = soc - (int)((powerRequested / (3600 / timeSlot))*100 / capacity);
 
 		return newSoc;
 	}
@@ -118,9 +112,13 @@ public class BatteryBehaviour  extends OneShotBehaviour {
 		{
 			return oldCostKwh;
 		}
+		BatteryInfo bInfo = new DbBatteryInfo().getBatteryByIdAgent(this.myAgent.getName());
+		double cycleCost = (bInfo.getCapitalCost() + bInfo.getMaintenanceCost())/bInfo.getCyclesNumber();
+		double costNewKwh = (cycleCost/(2*bInfo.getCapacity()))+((1-bInfo.getRoundTripEfficiency())*msgData.getCostKwh());
+		//TO-DO control Agent sends the price expressed in costKwh!!
 		double newKwh = msgData.getPowerRequested()/(3600/timeSlot);
 		double oldKwh = soc*capacity;
-		double newCostKwh = (oldCostKwh*(oldKwh) + msgData.getCost()*(newKwh))/(oldKwh+newKwh);
+		double newCostKwh = (oldCostKwh*(oldKwh) + costNewKwh*(newKwh))/(oldKwh+newKwh);
 		
 		return newCostKwh;
 	}

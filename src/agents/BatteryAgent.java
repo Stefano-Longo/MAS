@@ -18,9 +18,9 @@ public class BatteryAgent extends BaseAgent {
 		 * Takes in input the ids (number) of the platforms for which it is created
 		 */
 		
-		registerDfAgent(this.getHap(), "BatteryAgent");
 		BatteryInfo batteryInfo = new DbBatteryInfo().getBatteryByIdAgent(this.getName());
-		registerDfAgent(this.getHap(), "BatteryAgent-"+batteryInfo.getIdBattery());
+		registerDfAgent(this.getHap(), "BatteryAgent", "BatteryAgent-"+batteryInfo.getIdBattery());
+		//registerDfAgent(this.getHap(), "BatteryAgent-"+batteryInfo.getIdBattery());
 		//serve per il disaggregatorBattery
 		this.addBehaviour(new ReceiveMessages(this));
 		

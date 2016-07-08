@@ -7,6 +7,7 @@ import agents.BaseAgent;
 import basicData.AggregatorFlexibilityData;
 import basicData.BatteryInfo;
 import basicData.FlexibilityData;
+import basicData.ResultPowerPrice;
 import jade.core.behaviours.OneShotBehaviour;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.UnreadableException;
@@ -26,9 +27,15 @@ public class AggregateBatteryBehaviour extends OneShotBehaviour {
 	private static final long serialVersionUID = 1L;
 	
 	ACLMessage msg;
+	ResultPowerPrice msgData;
 	public AggregateBatteryBehaviour(ACLMessage msg) 
 	{
 		this.msg = msg;
+		try {
+			msgData = (ResultPowerPrice)msg.getContentObject();
+		} catch (UnreadableException e) {
+			e.printStackTrace();
+		}
 	}
 
 	public void action() 
@@ -36,14 +43,15 @@ public class AggregateBatteryBehaviour extends OneShotBehaviour {
 		try 
 		{
 			@SuppressWarnings("unchecked")
-			ArrayList<AggregatorFlexibilityData> msgData = (ArrayList<AggregatorFlexibilityData>)msg.getContentObject();
+			// BatteryAgents send an object of FlexibilityData
+			ArrayList<FlexibilityData> msgData = (ArrayList<FlexibilityData>)msg.getContentObject();
 			BatteryInfo batteryInfo = new DbBatteryInfo().getBatteryByIdAgent(msg.getSender().getName());
 			
 			// Insert the message in the database
 			for (int i=0; i < msgData.size(); i++){
-				msgData.get(i).setIdAgent(this.myAgent.getName());
-				msgData.get(i).setIdentificator(batteryInfo.getIdBattery());
-				new DbAggregatorBattery().addFlexibilityBatteryMessage(msgData.get(i));
+				AggregatorFlexibilityData data = new AggregatorFlexibilityData(this.myAgent.getName(), 
+						batteryInfo.getIdBattery(), msgData.get(i));
+				new DbAggregatorBattery().addFlexibilityBatteryMessage(data);
 			}
 			int messagesReceived = new DbAggregatorBattery().countMessagesReceived(this.myAgent.getName());
 			int batteryAgents = new BaseAgent().getAgentsbyServiceType(this.myAgent, "BatteryAgent").length;
@@ -59,11 +67,11 @@ public class AggregateBatteryBehaviour extends OneShotBehaviour {
 				ArrayList<FlexibilityData> result = new DbAggregatorBattery().
 						aggregateMessageReceived(this.myAgent.getName(), msgData.get(0).getAnalysisDatetime());
 				
+				
 				ACLMessage output = new ACLMessage(ACLMessage.INFORM);			
 				output.setContentObject(result);
 				output.setConversationId("proposalBattery");
 				output.addReceiver(new BaseAgent().getAgentsbyServiceType(this.myAgent, "ControlAgent")[0].getName());
-				System.out.println(new BaseAgent().getAgentsbyServiceType(this.myAgent, "ControlAgent")[0].getName());
 			}
 		} 
 		catch (UnreadableException | IOException e) 

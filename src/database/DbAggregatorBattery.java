@@ -46,23 +46,23 @@ public class DbAggregatorBattery extends DbConnection {
 	{
 		ArrayList<FlexibilityData> list = new ArrayList<FlexibilityData>();
 		DateFormat format = new SimpleDateFormat("dd/MM/yyyy HH:mm");
-		String query = "SELECT AnalysisDatetime, Datetime, SUM(LowerLimit) as LowerLimit, SUM(UpperLimit) as UpperLimit,"
+		String query = "SELECT AnalysisDateTime, Datetime, SUM(LowerLimit) as LowerLimit, SUM(UpperLimit) as UpperLimit,"
 				+ " AVG(CostKwh) as CostKwh, SUM(DesideredChoice) as DesideredChoice"
 				+ " FROM BatteryAggregatorData"
 				+ " WHERE IdAggregatorAgent = '"+idAggregatorAgent+"'"
-				+ " AND AnalysisDateTime == '"+format.format(dateTime.getTime())+"'"
+				+ " AND AnalysisDateTime = '"+format.format(dateTime.getTime())+"'"
 				+ " GROUP BY DateTime";
 		System.out.println(query);
 		try {
 			ResultSet rs = stmt.executeQuery(query);
 			while(rs.next())
-			{
+			{	
 				Calendar cal1 = Calendar.getInstance();
 				cal1.setTime(rs.getDate("AnalysisDateTime"));
 				
 				Calendar cal2 = Calendar.getInstance();
 				cal2.setTime(rs.getDate("DateTime"));
-
+//TO-DO!!!
 				FlexibilityData data = new FlexibilityData(cal1, cal2, rs.getDouble("LowerLimit"), 
 						rs.getDouble("UpperLimit"), rs.getDouble("CostKwh"), 
 						rs.getDouble("DesideredChoice"));
@@ -84,7 +84,7 @@ public class DbAggregatorBattery extends DbConnection {
 	{
 		String query = "SELECT COUNT(*) as Count"
     			+ " FROM BatteryAggregatorData"
-    			+ " WHERE IdAgent = '"+idAgent+"'"
+    			+ " WHERE IdAggregatorAgent = '"+idAgent+"'"
     			+ " AND AnalysisDateTime in (SELECT Max(AnalysisDateTime)" 
 											+"FROM BatteryAggregatorData)";
 		try{
@@ -111,7 +111,8 @@ public class DbAggregatorBattery extends DbConnection {
 				+ " FROM BatteryAggregatorData A JOIN Battery B ON A.IdBattery = B.IdBattery"
 				+ " WHERE IdAggregatorAgent='"+idAggregatorAgent+"'"
 				+ " AND AnalysisDateTime in (SELECT MAX(AnalysisDateTime)"
-											+" FROM BatteryAggregatorData";
+											+" FROM BatteryAggregatorData"
+				+ " ORDER BY CostKwh";
 		ResultSet rs;
 		try {
 			rs = stmt.executeQuery(query);
@@ -135,4 +136,5 @@ public class DbAggregatorBattery extends DbConnection {
 		
 		return list;
 	}
+	
 }

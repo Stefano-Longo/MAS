@@ -15,9 +15,14 @@ public class BatteryInfo {
 	private double batteryOutputMax;
 	private double socMin;
 	private double socMax;
+	private double capitalCost;
+	private double maintenanceCost;
+	private double cyclesNumber;
+	private double roundTripEfficiency;
 	
 	public BatteryInfo(int idBattery, String idAgent, String idPlatform, double capacity, String type,
-			double batteryInputMax, double batteryOutputMax, double socMin, double socMax) {
+			double batteryInputMax, double batteryOutputMax, double socMin, double socMax,
+			double capitalCost, double maintenaceCost, double cyclesNumber, double roundTripEfficiency) {
 		super();
 		this.idBattery = idBattery;
 		this.idAgent = idAgent;
@@ -28,6 +33,10 @@ public class BatteryInfo {
 		this.batteryOutputMax = batteryOutputMax;
 		this.socMin = socMin;
 		this.socMax = socMax;
+		this.capitalCost = capitalCost;
+		this.maintenanceCost = maintenaceCost;
+		this.cyclesNumber = cyclesNumber;
+		this.roundTripEfficiency = roundTripEfficiency;
 	}
 
 	public BatteryInfo() { }
@@ -103,8 +112,37 @@ public class BatteryInfo {
 	public void setSocMax(double socMax) {
 		this.socMax = socMax;
 	}
-	
-	
-	
+
+	public double getCapitalCost() {
+		return capitalCost;
+	}
+
+	public void setCapitalCost(double capitalCost) {
+		this.capitalCost = capitalCost;
+	}
+
+	public double getMaintenanceCost() {
+		return maintenanceCost;
+	}
+
+	public void setMaintenanceCost(double maintenanceCost) {
+		this.maintenanceCost = maintenanceCost;
+	}
+
+	public double getCyclesNumber() {
+		return cyclesNumber;
+	}
+
+	public void setCyclesNumber(double cyclesNumber) {
+		this.cyclesNumber = cyclesNumber;
+	}
+
+	public double getRoundTripEfficiency() {
+		return roundTripEfficiency;
+	}
+
+	public void setRoundTripEfficiency(double roundTripEfficiency) {
+		this.roundTripEfficiency = roundTripEfficiency;
+	}
 	
 }

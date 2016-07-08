@@ -9,12 +9,19 @@ import jade.domain.FIPAAgentManagement.ServiceDescription;
 public class BaseAgent extends Agent {
 	
 	
-	protected void registerDfAgent(String platform, String type)
+	protected void registerDfAgent(String platform, String type, String idType)
 	{
 		DFAgentDescription ad = new DFAgentDescription();
 		ServiceDescription sd = new ServiceDescription();
 		sd.setName("Platform-"+platform);
 		sd.setType(type);
+		if(!idType.equals(null))
+		{
+			ServiceDescription sd1 = new ServiceDescription();
+			sd1.setName("Platform-"+idType);
+			sd1.setType(idType);
+			ad.addServices(sd1);
+		}
 		ad.addServices(sd);
 		
 		try{

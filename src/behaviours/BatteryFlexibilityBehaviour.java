@@ -6,6 +6,8 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.concurrent.ThreadLocalRandom;
 
+import javax.swing.plaf.basic.BasicInternalFrameTitlePane.MaximizeAction;
+
 import basicData.BatteryData;
 import basicData.BatteryInfo;
 import basicData.FlexibilityData;
@@ -53,6 +55,8 @@ public class BatteryFlexibilityBehaviour extends OneShotBehaviour {
 		BatteryInfo batteryInfo = new DbBatteryInfo().getBatteryByIdAgent(this.myAgent.getName());
 		BatteryData batteryData = new DbBatteryData().getLastBatteryData(batteryInfo.getIdBattery());
 		
+		double newSocObjective = batteryData.getSocObjective(); //always 60% for now
+		
 		double maxInput = getMaxInput(batteryData.getSoc(), batteryInfo.getSocMax(), batteryInfo.getCapacity(), 
 				batteryInfo.getBatteryInputMax());
 		double maxOutput = getMaxOutput(batteryData.getSoc(), batteryInfo.getSocMin(), batteryInfo.getCapacity(), 
@@ -62,7 +66,13 @@ public class BatteryFlexibilityBehaviour extends OneShotBehaviour {
 		 * define what the battery wants to do and the flexibility and the gain it has doing that
 		 * use getSocObjective, or anyway another function
 		 */
-		int desideredChoice = (int)ThreadLocalRandom.current().nextDouble(-maxInput, maxOutput+1);
+		double socObjectiveDesideredChoice = calculateSocObjectiveDesideredChoice(batteryData.getSoc(), 
+				batteryInfo.getSocMax(), batteryInfo.getCapacity(), batteryInfo.getBatteryInputMax(), 
+				batteryInfo.getBatteryOutputMax(), newSocObjective);
+		double historyDesideredChoice = calculateHistoryDesideredChoice();
+		double priceDesideredChoice = calculatePriceDesideredChoice();
+		double desideredChoice = (socObjectiveDesideredChoice + historyDesideredChoice + priceDesideredChoice)/3;
+		//int desideredRandomChoice = (int)ThreadLocalRandom.current().nextDouble(-maxInput, maxOutput+1);
 		
 		
 		/**
@@ -112,18 +122,45 @@ public class BatteryFlexibilityBehaviour extends OneShotBehaviour {
 		
 	}
 	
-	private ArrayList<FlexibilityData> estimateNextHours (Calendar now){ // TO-DO magari chiedi a Francesco
+	private ArrayList<FlexibilityData> estimateNextHours (Calendar now){ // TO-DO magari chiedi a Francesco, prendi quelle di ieri
 		//select from db all data where 
 		ArrayList<FlexibilityData> list = new ArrayList<FlexibilityData>();
 		return list;
 	}
 	
+	private double calculateSocObjectiveDesideredChoice (double soc, double socMax, double capacity,
+			double maxInputBattery, double maxOutputBattery, double nextSocObjective)
+	{
+		if(soc < nextSocObjective)
+		{
+			return getMaxInput(soc, socMax, capacity, maxInputBattery);
+		}
+		else
+		{
+			return getMaxOutput(soc, socMax, capacity, maxOutputBattery);
+		}
+	}
+	
+	private double calculateHistoryDesideredChoice ()
+	{
+		/**
+		 * Accede al db, prende i dati vecchi e vede se di solito nelle ore successive il CA chiede o dà kw
+		 */
 		
-	private double getMaxInput(double soc, double socMax, double capacity, double maxInputBattery)
+	}
+		
+	private double calculatePriceDesideredChoice ()
+	{
+		msgData.get(0).getEnergyPrice();
+		msgData.get(0).getFlexibilityPrice();
+		
+	}
+	
+ 	private double getMaxInput(double soc, double socMax, double capacity, double maxInputBattery)
 	{
         if (soc >= socMax)
             return 0;
-        double maxBatteryInputPercentage = (socMax - soc) * capacity * (60/timeSlot) / 100;
+        double maxBatteryInputPercentage = (socMax - soc) * capacity * (3600/timeSlot) / 100;
         if (maxBatteryInputPercentage > maxInputBattery)
         {
         	return maxInputBattery;
@@ -135,7 +172,7 @@ public class BatteryFlexibilityBehaviour extends OneShotBehaviour {
 	{
         if (soc <= socMin)
             return 0;
-        double maxBatteryOutputPercentage = (soc - socMin) * capacity * (60 / timeSlot) / 100;
+        double maxBatteryOutputPercentage = (soc - socMin) * capacity * (3600/timeSlot) / 100;
 
         if (maxBatteryOutputPercentage > maxOutputBattery)
         {

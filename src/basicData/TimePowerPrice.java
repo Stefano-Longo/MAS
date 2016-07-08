@@ -2,9 +2,9 @@ package basicData;
 
 import java.io.Serializable;
 import java.util.Calendar;
-import java.util.Date;
 
 
+@SuppressWarnings("serial")
 public class TimePowerPrice implements Serializable {
 	
 	/**

@@ -15,7 +15,7 @@ public class ControlAgent extends BaseAgent {
 		 * 
 		 * arriva un messaggio 
 		 */
-		registerDfAgent(this.getHap(), "ControlAgent");
+		registerDfAgent(this.getHap(), "ControlAgent", "");
 		this.addBehaviour(new ReceiveMessages(this));
 		
 	}

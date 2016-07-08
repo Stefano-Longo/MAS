@@ -16,6 +16,14 @@ public class AggregatorFlexibilityData extends FlexibilityData {
 		this.identificator = identificator;
 	}
 
+	public AggregatorFlexibilityData(String idAggregatorAgent, int identificator, FlexibilityData data)
+	{
+		super(data.getAnalysisDatetime(), data.getDatetime(), data.getLowerLimit(), data.getUpperLimit(),
+				data.getCostKwh(), data.getDesideredChoice());
+		this.idAgent = idAggregatorAgent;
+		this.identificator = identificator;
+	}
+	
 	public String getIdAgent() {
 		return idAgent;
 	}

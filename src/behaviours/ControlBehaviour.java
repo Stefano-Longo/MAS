@@ -58,9 +58,9 @@ public class ControlBehaviour extends OneShotBehaviour {
 			 */
 			
 			//FARE LA FUNZIONE GETLASTDATA -> poi vai sui der, lascia perdere qui
-			ArrayList<ControlFlexibilityData> BatteryData = new DbControlArrivalData().getLastData(this.myAgent.getName(), "battery");
-			ArrayList<ControlFlexibilityData> DerData = new DbControlArrivalData().getLastData(this.myAgent.getName(), "der");
-			ArrayList<ControlFlexibilityData> LoadData = new DbControlArrivalData().getLastData(this.myAgent.getName(), "load");
+			ArrayList<ControlFlexibilityData> BatteryData = new DbControlArrivalData().getControlArrivalDatabyType(this.myAgent.getName(), "battery");
+			ArrayList<ControlFlexibilityData> DerData = new DbControlArrivalData().getControlArrivalDatabyType(this.myAgent.getName(), "der");
+			ArrayList<ControlFlexibilityData> LoadData = new DbControlArrivalData().getControlArrivalDatabyType(this.myAgent.getName(), "load");
 
 		}
 	}
