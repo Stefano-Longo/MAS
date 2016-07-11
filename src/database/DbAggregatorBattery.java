@@ -42,7 +42,7 @@ public class DbAggregatorBattery extends DbConnection {
 	 * @param dateTime
 	 * @return
 	 */
-	public ArrayList<FlexibilityData> aggregateMessageReceived (String idAggregatorAgent, Calendar dateTime)
+	public ArrayList<FlexibilityData> aggregateMessageReceived (String idAggregatorAgent)
 	{
 		ArrayList<FlexibilityData> list = new ArrayList<FlexibilityData>();
 		DateFormat format = new SimpleDateFormat("dd/MM/yyyy HH:mm");
@@ -50,7 +50,8 @@ public class DbAggregatorBattery extends DbConnection {
 				+ " AVG(CostKwh) as CostKwh, SUM(DesideredChoice) as DesideredChoice"
 				+ " FROM BatteryAggregatorData"
 				+ " WHERE IdAggregatorAgent = '"+idAggregatorAgent+"'"
-				+ " AND AnalysisDateTime = '"+format.format(dateTime.getTime())+"'"
+				+ " AND AnalysisDateTime in (SELECT Max(AnalysisDateTime)" 
+											+"FROM BatteryAggregatorData)"
 				+ " GROUP BY DateTime";
 		System.out.println(query);
 		try {
@@ -107,12 +108,55 @@ public class DbAggregatorBattery extends DbConnection {
 	public ArrayList<AggregatorFlexibilityData> getBatteriesChoice(String idAggregatorAgent)
 	{
 		ArrayList<AggregatorFlexibilityData> list = new ArrayList<AggregatorFlexibilityData>();
-		String query = "SELECT IdAggregatorAgent, IdBattery, LowerLimit, UpperLimit, CostKwh, DesideredChoice"
+		String query = "SELECT IdAggregatorAgent, IdBattery, LowerLimit, UpperLimit, CostKwh,"
+				+ " DesideredChoice, DesideredChoice-LowerLimit as Diff"
 				+ " FROM BatteryAggregatorData A JOIN Battery B ON A.IdBattery = B.IdBattery"
 				+ " WHERE IdAggregatorAgent='"+idAggregatorAgent+"'"
 				+ " AND AnalysisDateTime in (SELECT MAX(AnalysisDateTime)"
 											+" FROM BatteryAggregatorData"
-				+ " ORDER BY CostKwh";
+				+ " ORDER BY Diff";
+		ResultSet rs;
+		try {
+			rs = stmt.executeQuery(query);
+			while(rs.next())
+			{
+				Calendar cal1 = Calendar.getInstance();
+				cal1.setTime(rs.getDate("AnalysisDateTime"));
+				
+				Calendar cal2 = Calendar.getInstance();
+				cal2.setTime(rs.getDate("DateTime"));
+				
+				AggregatorFlexibilityData data = new AggregatorFlexibilityData(
+						rs.getString("IdAggregatorAgent"),rs.getInt("IdBattery"),cal1, cal2,
+						rs.getDouble("LowerLimit"), rs.getDouble("UpperLimit"), 
+						rs.getDouble("CostKwh"), rs.getDouble("DesideredChoice"));
+				list.add(data);
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		
+		return list;
+	}
+	
+	public ArrayList<AggregatorFlexibilityData> getBatteriesChoiceByValue(String idAggregatorAgent, String choice)
+	{
+		ArrayList<AggregatorFlexibilityData> list = new ArrayList<AggregatorFlexibilityData>();
+		String query = "SELECT IdAggregatorAgent, IdBattery, LowerLimit, UpperLimit, CostKwh,"
+				+ " DesideredChoice, DesideredChoice-LowerLimit as Diff"
+				+ " FROM BatteryAggregatorData A JOIN Battery B ON A.IdBattery = B.IdBattery";
+		if(choice.equals("positive"))
+		{
+			query += " WHERE DesideredChoice > 0";
+		}
+		else if(choice.equals("negative"))
+		{
+			query += " WHERE DesideredChoice < 0";
+		}
+		query += " WHERE IdAggregatorAgent='"+idAggregatorAgent+"'"
+				+ " AND AnalysisDateTime in (SELECT MAX(AnalysisDateTime)"
+											+" FROM BatteryAggregatorData"
+				+ " ORDER BY Diff";
 		ResultSet rs;
 		try {
 			rs = stmt.executeQuery(query);

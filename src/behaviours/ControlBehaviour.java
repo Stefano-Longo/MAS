@@ -62,6 +62,7 @@ public class ControlBehaviour extends OneShotBehaviour {
 			ArrayList<ControlFlexibilityData> DerData = new DbControlArrivalData().getControlArrivalDatabyType(this.myAgent.getName(), "der");
 			ArrayList<ControlFlexibilityData> LoadData = new DbControlArrivalData().getControlArrivalDatabyType(this.myAgent.getName(), "load");
 
+			
 		}
 	}
 	

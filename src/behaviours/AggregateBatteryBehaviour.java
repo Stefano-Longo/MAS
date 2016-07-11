@@ -65,12 +65,13 @@ public class AggregateBatteryBehaviour extends OneShotBehaviour {
 				 */
 				
 				ArrayList<FlexibilityData> result = new DbAggregatorBattery().
-						aggregateMessageReceived(this.myAgent.getName(), msgData.get(0).getAnalysisDatetime());
+						aggregateMessageReceived(this.myAgent.getName());
 				
 				
 				ACLMessage output = new ACLMessage(ACLMessage.INFORM);			
 				output.setContentObject(result);
 				output.setConversationId("proposalBattery");
+				
 				output.addReceiver(new BaseAgent().getAgentsbyServiceType(this.myAgent, "ControlAgent")[0].getName());
 			}
 		} 

@@ -69,17 +69,14 @@ public class BatteryFlexibilityBehaviour extends OneShotBehaviour {
 		double socObjectiveDesideredChoice = calculateSocObjectiveDesideredChoice(batteryData.getSoc(), 
 				batteryInfo.getSocMax(), batteryInfo.getCapacity(), batteryInfo.getBatteryInputMax(), 
 				batteryInfo.getBatteryOutputMax(), newSocObjective);
-		double historyDesideredChoice = calculateHistoryDesideredChoice();
-		double priceDesideredChoice = calculatePriceDesideredChoice();
-		double desideredChoice = (socObjectiveDesideredChoice + historyDesideredChoice + priceDesideredChoice)/3;
-		//int desideredRandomChoice = (int)ThreadLocalRandom.current().nextDouble(-maxInput, maxOutput+1);
+		double desideredChoice = socObjectiveDesideredChoice;
 		
 		
 		/**
 		 * PRIORITIES!! Think about it!
 		 * 
 		 * How to calculate desideredChoice :
-		 *  - Reaching the SocObjective (33% of final value)
+		 *  - Reaching the SocObjective (33% of final value) ONLY THIS
 		 *  - Be ready for the next requests -> if the requests for the next periods usually (the majority)
 		 *  	are of request of power from batteries, then I need to charge now (33% of final value)
 		 *  - Depending on the prices of electricity and the price of flexibility. If it's much more convenient
@@ -114,12 +111,7 @@ public class BatteryFlexibilityBehaviour extends OneShotBehaviour {
 			e.printStackTrace();
 		}
 		this.myAgent.send(response);
-    	/**
-		 * Aggiungere le previsioni per le prossime ore
-		 */
-    	
 
-		
 	}
 	
 	private ArrayList<FlexibilityData> estimateNextHours (Calendar now){ // TO-DO magari chiedi a Francesco, prendi quelle di ieri
@@ -139,21 +131,6 @@ public class BatteryFlexibilityBehaviour extends OneShotBehaviour {
 		{
 			return getMaxOutput(soc, socMax, capacity, maxOutputBattery);
 		}
-	}
-	
-	private double calculateHistoryDesideredChoice ()
-	{
-		/**
-		 * Accede al db, prende i dati vecchi e vede se di solito nelle ore successive il CA chiede o dà kw
-		 */
-		
-	}
-		
-	private double calculatePriceDesideredChoice ()
-	{
-		msgData.get(0).getEnergyPrice();
-		msgData.get(0).getFlexibilityPrice();
-		
 	}
 	
  	private double getMaxInput(double soc, double socMax, double capacity, double maxInputBattery)

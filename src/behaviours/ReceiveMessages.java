@@ -21,14 +21,16 @@ public class ReceiveMessages extends TickerBehaviour {
 		if (msg!=null){
 			System.out.println("entrato? ConvID: "+msg.getConversationId()+"  "+this.myAgent.getName());
 
-			if(this.myAgent instanceof GridAgent && msg.getConversationId().equals("input"))
+			if(this.myAgent instanceof GridAgent)
 			{
-				this.myAgent.addBehaviour(new CalculatePrices(msg));
-			}
-			else if(this.myAgent instanceof GridAgent && msg.getConversationId().equals("output"))
-			{
-				this.myAgent.addBehaviour(new GiveOutput());
-			
+				if(msg.getConversationId().equals("input"))
+				{
+					this.myAgent.addBehaviour(new CalculatePrices(msg));
+				}
+				else if(msg.getConversationId().equals("result"))
+				{//TO-DO sicuro?
+					this.myAgent.addBehaviour(new GiveOutput());
+				}
 			}
 			else if(this.myAgent instanceof ControlAgent)
 			{
@@ -46,6 +48,10 @@ public class ReceiveMessages extends TickerBehaviour {
 				if(msg.getConversationId().equals("input"))
 				{
 					this.myAgent.addBehaviour(new BatteryFlexibilityBehaviour(msg));
+				}
+				else if(msg.getConversationId().equals("response"))
+				{
+					
 				}
 			}
 			else if(this.myAgent instanceof DerAggregatorAgent)

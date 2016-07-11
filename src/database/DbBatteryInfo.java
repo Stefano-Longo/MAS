@@ -4,6 +4,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import basicData.BatteryInfo;
+import jade.core.AID;
 
 public class DbBatteryInfo extends DbConnection{
 
@@ -29,6 +30,32 @@ public class DbBatteryInfo extends DbConnection{
 		String query = "SELECT *"
 				+ " FROM Battery"
 				+ " WHERE IdAgent = '"+idAgent+"'";
+		try {
+			ResultSet rs = stmt.executeQuery(query);
+			while(rs.next()){ 
+				battery.setIdBattery(rs.getInt("IdBattery"));
+				battery.setIdAgent(AID.createGUID(rs.getString("IdAgent"), rs.getString("IdPlatform")));
+				battery.setIdPlatform(rs.getString("IdPlatform"));
+				battery.setCapacity(rs.getDouble("Capacity"));
+				battery.setType(rs.getString("Type"));
+				battery.setBatteryInputMax(rs.getDouble("BatteryInputMax"));
+				battery.setBatteryOutputMax(rs.getDouble("BatteryOutputMax"));
+				battery.setSocMin(rs.getDouble("SocMin"));
+				battery.setSocMax(rs.getDouble("SocMax"));
+			}
+			return battery;
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
+	public BatteryInfo getBatteryByIdBattery (int idBattery)
+	{
+		BatteryInfo battery = new BatteryInfo();
+		String query = "SELECT *"
+				+ " FROM Battery"
+				+ " WHERE IdBattery = '"+idBattery+"'";
 		try {
 			ResultSet rs = stmt.executeQuery(query);
 			while(rs.next()){
