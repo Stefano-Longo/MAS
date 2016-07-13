@@ -2,12 +2,15 @@ package behaviours;
 
 
 import java.io.IOException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.concurrent.ThreadLocalRandom;
 
 import javax.swing.plaf.basic.BasicInternalFrameTitlePane.MaximizeAction;
 
+import agents.BaseAgent;
 import basicData.BatteryData;
 import basicData.BatteryInfo;
 import basicData.FlexibilityData;
@@ -50,8 +53,7 @@ public class BatteryFlexibilityBehaviour extends OneShotBehaviour {
 		 * learning from the past. How?
 		 * 
 		 */
-		ArrayList<FlexibilityData> list = new ArrayList<FlexibilityData>();
-
+		System.out.println(this.myAgent.getName());
 		BatteryInfo batteryInfo = new DbBatteryInfo().getBatteryByIdAgent(this.myAgent.getName());
 		BatteryData batteryData = new DbBatteryData().getLastBatteryData(batteryInfo.getIdBattery());
 		
@@ -85,39 +87,14 @@ public class BatteryFlexibilityBehaviour extends OneShotBehaviour {
 		 *  
 		 */
 		
-		FlexibilityData data = new FlexibilityData();
 		Calendar cal = Calendar.getInstance();
-		cal.setTime(batteryData.getDatetime().getTime());
-		cal.set(Calendar.SECOND, 0);
-		cal.set(Calendar.MILLISECOND, 0);
-		cal.add(Calendar.SECOND, new GeneralData().timeSlot);
+		cal.setTime(msgData.get(0).getTime().getTime());
 		
-		Calendar now = Calendar.getInstance();
-		now.set(Calendar.SECOND, 0);
-		now.set(Calendar.MILLISECOND, 0);
-		
-		data = new FlexibilityData(now, cal, -maxInput,
+		FlexibilityData result = new FlexibilityData(cal, maxInput,
     			maxOutput, batteryData.getCostKwh(), desideredChoice);
-		list.add(data);
 		
-		list.addAll(estimateNextHours(now));
-		
-		ACLMessage response = this.msg.createReply();
-		response.setPerformative(ACLMessage.INFORM);
-		response.setConversationId("proposal");
-		try {
-			response.setContentObject(list);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		this.myAgent.send(response);
-
-	}
-	
-	private ArrayList<FlexibilityData> estimateNextHours (Calendar now){ // TO-DO magari chiedi a Francesco, prendi quelle di ieri
-		//select from db all data where 
-		ArrayList<FlexibilityData> list = new ArrayList<FlexibilityData>();
-		return list;
+		new BaseAgent().sendMessageToAgentsByServiceType(this.myAgent, "BatteryAggregatorAgent",
+				"proposal", result);
 	}
 	
 	private double calculateSocObjectiveDesideredChoice (double soc, double socMax, double capacity,

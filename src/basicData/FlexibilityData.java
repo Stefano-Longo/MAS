@@ -6,7 +6,6 @@ import java.util.Calendar;
 @SuppressWarnings("serial")
 public class FlexibilityData implements Serializable {
 		
-	private Calendar analysisDatetime;
 	private Calendar datetime;
 	private double lowerLimit;
 	private double upperLimit;
@@ -24,21 +23,12 @@ public class FlexibilityData implements Serializable {
 	 * @param desideredChoice
 	 * @param maxGain
 	 */
-	public FlexibilityData(Calendar analysisDatetime, Calendar datetime, double lowerLimit, double upperLimit, double costKwh, double desideredChoice) {
-		this.analysisDatetime = analysisDatetime;
+	public FlexibilityData(Calendar datetime, double lowerLimit, double upperLimit, double costKwh, double desideredChoice) {
 		this.datetime = datetime;
 		this.lowerLimit = lowerLimit;
 		this.upperLimit = upperLimit;
 		this.costKwh = costKwh;
 		this.desideredChoice = desideredChoice;
-	}
-
-	public Calendar getAnalysisDatetime() {
-		return analysisDatetime;
-	}
-
-	public void setAnalysisDatetime(Calendar analysisDatetime) {
-		this.analysisDatetime = analysisDatetime;
 	}
 
 	public FlexibilityData() {}

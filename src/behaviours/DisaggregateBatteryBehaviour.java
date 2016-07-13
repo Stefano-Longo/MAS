@@ -52,14 +52,13 @@ public class DisaggregateBatteryBehaviour extends OneShotBehaviour {
 		 * Aggregator takes upperLimit energy from the most convenient Battery, and do the same with the 
 		 * second etc until he finishes to take all the energy that the control agent needs.
 		 * 
-		 * Aggregator takes the energy at the most convenient Batteries.
+		 * Aggregator takes the energy from the most convenient Batteries.
 		 */
 		
 		
 		DFAgentDescription[] batteryAgents = new BaseAgent().getAgentsbyServiceType(myAgent, "BatteryAgent");
-		ArrayList<FlexibilityData> aggregatedBatteriesChoice = new DbAggregatorBattery()
+		FlexibilityData aggregatedBatteriesChoice = new DbAggregatorBattery()
 				.aggregateMessageReceived(this.myAgent.getName());
-		
 		if(batteriesChoice.size() != batteryAgents.length)
 		{
 			System.out.println("Il numero di batteryAgent registrati è inferiore al numero batterie che"
@@ -93,7 +92,7 @@ public class DisaggregateBatteryBehaviour extends OneShotBehaviour {
 		double batteryPowerRequested = 0;
 		for(int i=0; i < batteriesChoice.size(); i++)
 		{
-			//TO-DO prova se funziona
+			//TO-DO prova se funziona ORDERLIST
 			batteriesChoice.sort((o1, o2) -> Double.compare(o1.getCostKwh(),o2.getCostKwh()));
 			// the first battery is the one with lower CostKwh
 			
@@ -111,14 +110,8 @@ public class DisaggregateBatteryBehaviour extends OneShotBehaviour {
 			ResultPowerPrice batteryAction = new ResultPowerPrice(batteryPowerRequested, msgData.getCostKwh());
 
 			BatteryInfo battery = new DbBatteryInfo().getBatteryByIdBattery(batteriesChoice.get(i).getIdentificator());
-			ACLMessage message = new ACLMessage(ACLMessage.INFORM);
-			try {
-				message.setContentObject(batteryAction);
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-			message.addReceiver(battery.getIdAgent());
-			this.myAgent.send(message);
+			new BaseAgent().sendMessageToAgentsByServiceType(this.myAgent, 
+					"BatteryAgent-"+battery.getIdBattery(), "response", batteryAction);
 		}
 	}
 
@@ -192,15 +185,9 @@ public class DisaggregateBatteryBehaviour extends OneShotBehaviour {
 			}
 			
 			ResultPowerPrice batteryAction = new ResultPowerPrice(batteryPowerGiven, msgData.getCostKwh());
-			BatteryInfo battery = new DbBatteryInfo().getBatteryByIdBattery(batteriesChoice.get(i).getIdentificator());
-			ACLMessage message = new ACLMessage(ACLMessage.INFORM);
-			try {
-				message.setContentObject(batteryAction);
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-			message.addReceiver(battery.getIdAgent());
-			this.myAgent.send(message);
+
+			new BaseAgent().sendMessageToAgentsByServiceType(this.myAgent, 
+					"BatteryAgent-"+batteriesChoice.get(i).getIdentificator(), "response", batteryAction);
 		}
 	}
 	
@@ -211,17 +198,10 @@ public class DisaggregateBatteryBehaviour extends OneShotBehaviour {
 	{
 		for(int i=0; i < batteriesChoice.size(); i++)
 		{
-			double batteryPowerGiven = 0;
-			ResultPowerPrice batteryAction = new ResultPowerPrice(batteryPowerGiven, msgData.getCostKwh());
-			BatteryInfo battery = new DbBatteryInfo().getBatteryByIdBattery(batteriesChoice.get(i).getIdentificator());
-			ACLMessage message = new ACLMessage(ACLMessage.INFORM);
-			try {
-				message.setContentObject(batteryAction);
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-			message.addReceiver(battery.getIdAgent());
-			this.myAgent.send(message);
+			ResultPowerPrice batteryAction = new ResultPowerPrice(0, msgData.getCostKwh());
+
+			new BaseAgent().sendMessageToAgentsByServiceType(this.myAgent, 
+					"BatteryAgent-"+batteriesChoice.get(i).getIdentificator(), "response", batteryAction);
 		}
 	}
 }

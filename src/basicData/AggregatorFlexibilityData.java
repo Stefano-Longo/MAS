@@ -3,22 +3,33 @@ package basicData;
 import java.util.Calendar;
 
 @SuppressWarnings("serial")
+
 public class AggregatorFlexibilityData extends FlexibilityData {
 	
 	private String idAgent;
 	private int identificator;
 
-	public AggregatorFlexibilityData(String idAggregatorAgent, int identificator, Calendar analysisDatetime, Calendar datetime, double lowerLimit, 
+	/**
+	 * 
+	 * @param idAggregatorAgent
+	 * @param identificator
+	 * @param datetime
+	 * @param lowerLimit
+	 * @param upperLimit
+	 * @param costKwh
+	 * @param desideredChoice
+	 */
+	public AggregatorFlexibilityData(String idAggregatorAgent, int identificator, Calendar datetime, double lowerLimit, 
 			double upperLimit, double costKwh, double desideredChoice) 
 	{
-		super(analysisDatetime, datetime, lowerLimit, upperLimit, costKwh, desideredChoice);
+		super(datetime, lowerLimit, upperLimit, costKwh, desideredChoice);
 		this.idAgent = idAggregatorAgent;
 		this.identificator = identificator;
 	}
 
 	public AggregatorFlexibilityData(String idAggregatorAgent, int identificator, FlexibilityData data)
 	{
-		super(data.getAnalysisDatetime(), data.getDatetime(), data.getLowerLimit(), data.getUpperLimit(),
+		super(data.getDatetime(), data.getLowerLimit(), data.getUpperLimit(),
 				data.getCostKwh(), data.getDesideredChoice());
 		this.idAgent = idAggregatorAgent;
 		this.identificator = identificator;
@@ -39,4 +50,5 @@ public class AggregatorFlexibilityData extends FlexibilityData {
 	public void setIdentificator(int identificator) {
 		this.identificator = identificator;
 	}
+	
 }

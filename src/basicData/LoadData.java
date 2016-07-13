@@ -2,7 +2,6 @@ package basicData;
 
 import java.io.Serializable;
 import java.util.Calendar;
-import java.util.Date;
 
 public class LoadData implements Serializable {
 	
@@ -11,18 +10,16 @@ public class LoadData implements Serializable {
 	 */
 	private static final long serialVersionUID = 1L;
 	
-	private String idAgent;
-	private String idPlatform;
+	private int idLoad;
 	private Calendar datetime = Calendar.getInstance();
 	private double criticalConsumption; // in KW
 	private double nonCriticalConsumption; 
 	private boolean sheddable = false;
 	private boolean shiftable = false;
 	
-	public LoadData(String idAgent, String idPlatform, Calendar datetime, double criticalConsumption, double nonCriticalConsumption, boolean sheddable, boolean shiftable) {
+	public LoadData(int idLoad, Calendar datetime, double criticalConsumption, double nonCriticalConsumption, boolean sheddable, boolean shiftable) {
 		super();
-		this.idAgent = idAgent;
-		this.idPlatform = idPlatform;
+		this.idLoad = idLoad;
 		this.datetime = datetime;
 		this.criticalConsumption = criticalConsumption;
 		this.nonCriticalConsumption = nonCriticalConsumption;
@@ -30,20 +27,28 @@ public class LoadData implements Serializable {
 		this.shiftable = shiftable;
 	}
 
-	public String getIdAgent() {
-		return idAgent;
+	
+	public LoadData() {
 	}
 
-	public void setIdAgent(String idAgent) {
-		this.idAgent = idAgent;
+
+	public int getIdLoad() {
+		return idLoad;
 	}
 
-	public String getIdPlatform() {
-		return idPlatform;
+
+	public void setIdLoad(int idLoad) {
+		this.idLoad = idLoad;
 	}
 
-	public void setIdPlatform(String idPlatform) {
-		this.idPlatform = idPlatform;
+
+	public Calendar getDatetime() {
+		return datetime;
+	}
+
+
+	public void setDatetime(Calendar datetime) {
+		this.datetime = datetime;
 	}
 
 	public Calendar getDateTime() {

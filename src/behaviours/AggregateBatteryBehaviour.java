@@ -14,6 +14,7 @@ import jade.lang.acl.UnreadableException;
 import database.DbAggregatorBattery;
 import database.DbBatteryInfo;
 
+@SuppressWarnings("serial")
 public class AggregateBatteryBehaviour extends OneShotBehaviour {
 
 	/**
@@ -24,15 +25,14 @@ public class AggregateBatteryBehaviour extends OneShotBehaviour {
 	 * it saves the real data for the next hour (period of time) and sends to the control agent everything 
 	 * taking this "everything" from the db
 	 */
-	private static final long serialVersionUID = 1L;
-	
+
 	ACLMessage msg;
-	ResultPowerPrice msgData;
+	FlexibilityData msgData;
 	public AggregateBatteryBehaviour(ACLMessage msg) 
 	{
 		this.msg = msg;
 		try {
-			msgData = (ResultPowerPrice)msg.getContentObject();
+			msgData = (FlexibilityData)msg.getContentObject();
 		} catch (UnreadableException e) {
 			e.printStackTrace();
 		}
@@ -40,44 +40,27 @@ public class AggregateBatteryBehaviour extends OneShotBehaviour {
 
 	public void action() 
 	{
-		try 
+		BatteryInfo batteryInfo = new DbBatteryInfo().getBatteryByIdAgent(msg.getSender().getName());
+		AggregatorFlexibilityData data = new AggregatorFlexibilityData(this.myAgent.getName(), 
+					batteryInfo.getIdBattery(), msgData);
+		new DbAggregatorBattery().addFlexibilityBatteryMessage(data);
+		
+		int messagesReceived = new DbAggregatorBattery().countMessagesReceived(this.myAgent.getName());
+		int batteryAgents = new BaseAgent().getAgentsbyServiceType(this.myAgent, "BatteryAgent").length;
+		System.out.println("messagesReceived: "+messagesReceived);
+		System.out.println("batteryAgents: "+batteryAgents);
+		if (messagesReceived == batteryAgents)
 		{
-			@SuppressWarnings("unchecked")
-			// BatteryAgents send an object of FlexibilityData
-			ArrayList<FlexibilityData> msgData = (ArrayList<FlexibilityData>)msg.getContentObject();
-			BatteryInfo batteryInfo = new DbBatteryInfo().getBatteryByIdAgent(msg.getSender().getName());
+			/**
+			 * I have all the messages that I was waiting for so now I can
+			 * send the message to ControlAgent
+			 */
 			
-			// Insert the message in the database
-			for (int i=0; i < msgData.size(); i++){
-				AggregatorFlexibilityData data = new AggregatorFlexibilityData(this.myAgent.getName(), 
-						batteryInfo.getIdBattery(), msgData.get(i));
-				new DbAggregatorBattery().addFlexibilityBatteryMessage(data);
-			}
-			int messagesReceived = new DbAggregatorBattery().countMessagesReceived(this.myAgent.getName());
-			int batteryAgents = new BaseAgent().getAgentsbyServiceType(this.myAgent, "BatteryAgent").length;
+			FlexibilityData result = new DbAggregatorBattery().
+					aggregateMessageReceived(this.myAgent.getName());
 
-			
-			if (messagesReceived == batteryAgents)
-			{
-				/**
-				 * I have all the messages that I was waiting for so now I can
-				 * send the message to ControlAgent
-				 */
-				
-				ArrayList<FlexibilityData> result = new DbAggregatorBattery().
-						aggregateMessageReceived(this.myAgent.getName());
-				
-				
-				ACLMessage output = new ACLMessage(ACLMessage.INFORM);			
-				output.setContentObject(result);
-				output.setConversationId("proposalBattery");
-				
-				output.addReceiver(new BaseAgent().getAgentsbyServiceType(this.myAgent, "ControlAgent")[0].getName());
-			}
-		} 
-		catch (UnreadableException | IOException e) 
-		{
-			e.printStackTrace();
+			new BaseAgent().sendMessageToAgentsByServiceType(this.myAgent, "ControlAgent",
+					"proposal", result);
 		}
 	}
 

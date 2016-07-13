@@ -1,18 +1,34 @@
 package basicData;
 
 import java.util.Calendar;
+import java.util.ResourceBundle.Control;
 
 @SuppressWarnings("serial")
 public class ControlFlexibilityData extends FlexibilityData {
 
 	private String idAgent;
-	private String type;
-	
-	public ControlFlexibilityData(String idAgent, String type, Calendar analysisDatetime, Calendar datetime, double lowerLimit, double upperLimit, double costKwh, double desideredChoice) {
-		super(analysisDatetime, datetime, lowerLimit, upperLimit, costKwh, desideredChoice);
+
+	/**
+	 * 
+	 * @param idAgent
+	 * @param type
+	 * @param datetime
+	 * @param lowerLimit
+	 * @param upperLimit
+	 * @param costKwh
+	 * @param desideredChoice
+	 */
+	public ControlFlexibilityData(String idAgent, Calendar datetime, double lowerLimit, double upperLimit, 
+			double costKwh, double desideredChoice) 
+	{
+		super(datetime, lowerLimit, upperLimit, costKwh, desideredChoice);
 		this.idAgent = idAgent;
-		this.type = type;
-		
+	}
+	
+	public ControlFlexibilityData(String idAgent, FlexibilityData data)
+	{
+		super(data.getDatetime(), data.getLowerLimit(), data.getUpperLimit(), data.getCostKwh(), data.getDesideredChoice());
+		this.idAgent = idAgent;
 	}
 	
 	public String getIdAgent() {
@@ -21,14 +37,6 @@ public class ControlFlexibilityData extends FlexibilityData {
 	
 	public void setIdAgent(String idAgent) {
 		this.idAgent = idAgent;
-	}
-	
-	public String getType() {
-		return type;
-	}
-	
-	public void setType(String type) {
-		this.type = type;
 	}
 	
 }

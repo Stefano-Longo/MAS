@@ -15,7 +15,7 @@ public class GridAgent extends BaseAgent {
 	
 	protected void setup(){
 		
-		registerDfAgent(this.getHap(), "GridAgent", "");
+		registerDfAgent(this.getHap(), "GridAgent");
 		this.addBehaviour(new ReceiveMessages(this));
 		
 	}

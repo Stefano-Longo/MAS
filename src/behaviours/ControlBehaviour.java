@@ -16,12 +16,12 @@ import jade.lang.acl.UnreadableException;
 public class ControlBehaviour extends OneShotBehaviour {
 
 	ACLMessage msg;
-	ArrayList<ControlFlexibilityData> msgData = new ArrayList<ControlFlexibilityData>();
+	FlexibilityData msgData;
 	@SuppressWarnings("unchecked")
 	public ControlBehaviour(ACLMessage msg) {
 		this.msg = msg;
 		try {
-			msgData = (ArrayList<ControlFlexibilityData>)msg.getContentObject();
+			msgData = (FlexibilityData)msg.getContentObject();
 		} catch (UnreadableException e) {
 			e.printStackTrace();
 		}
@@ -43,11 +43,10 @@ public class ControlBehaviour extends OneShotBehaviour {
 		// DEVO RICEVERE TUTTI E 3 I MESSAGGI, SE NON LI RICEVO ALLORA DEVO FARE QUALCOSA PER RECUPERARLI
 		// SI MA POI SI VEDE, I won't ignore :)
 		
-		for (int i=0; i < msgData.size(); i++){
-			msgData.get(i).setIdAgent(this.myAgent.getName());
-			msgData.get(i).setType(msg.getConversationId().substring(8));
-			new DbControlArrivalData().addControlArrivalData(msgData.get(i));
-		}
+		ControlFlexibilityData controlData = new ControlFlexibilityData(this.myAgent.getName(), msgData);
+		controlData.setIdAgent(this.myAgent.getName());
+		new DbControlArrivalData().addControlArrivalData(controlData);
+
 		int messagesReceived = new DbControlArrivalData().countMessagesReceived(this.myAgent.getName());
 		
 		if (messagesReceived == 3)
@@ -58,10 +57,11 @@ public class ControlBehaviour extends OneShotBehaviour {
 			 */
 			
 			//FARE LA FUNZIONE GETLASTDATA -> poi vai sui der, lascia perdere qui
-			ArrayList<ControlFlexibilityData> BatteryData = new DbControlArrivalData().getControlArrivalDatabyType(this.myAgent.getName(), "battery");
-			ArrayList<ControlFlexibilityData> DerData = new DbControlArrivalData().getControlArrivalDatabyType(this.myAgent.getName(), "der");
-			ArrayList<ControlFlexibilityData> LoadData = new DbControlArrivalData().getControlArrivalDatabyType(this.myAgent.getName(), "load");
+			ControlFlexibilityData BatteryData = new DbControlArrivalData().getControlArrivalDatabyType(this.myAgent.getName(), "battery");
+			ControlFlexibilityData DerData = new DbControlArrivalData().getControlArrivalDatabyType(this.myAgent.getName(), "der");
+			ControlFlexibilityData LoadData = new DbControlArrivalData().getControlArrivalDatabyType(this.myAgent.getName(), "load");
 
+			//TO-DO how to get the prices?
 			
 		}
 	}

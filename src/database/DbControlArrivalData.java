@@ -11,16 +11,14 @@ import basicData.ControlFlexibilityData;
 
 public class DbControlArrivalData extends DbConnection {
 
+	DateFormat format = new SimpleDateFormat("yyyy/MM/dd HH:mm");
 
 	public Boolean addControlArrivalData (ControlFlexibilityData data)
 	{
-		DateFormat format = new SimpleDateFormat("dd/MM/yyyy HH:mm");
-		String query = "INSERT INTO ControlArrivalData (IdControlAgent, Type, AnalysisDateTime,"
-				+ " DateTime, LowerLimit, UpperLimit, CostKwh, DesideredChoice)"
-				+ " VALUES ('"+data.getIdAgent()+"',"+data.getType()+",'"
-				+ format.format(data.getAnalysisDatetime().getTime())+"','"
-				+ format.format(data.getDatetime().getTime())+"',"+data.getLowerLimit()+","
-				+ data.getUpperLimit()+","+data.getCostKwh()+","+data.getDesideredChoice()+")";
+		String query = "INSERT INTO ControlArrivalData (IdControlAgent, DateTime,"
+				+ " LowerLimit, UpperLimit, CostKwh, DesideredChoice)"
+				+ " VALUES ('"+data.getIdAgent()+"'," + format.format(data.getDatetime().getTime())+"',"
+				+data.getLowerLimit()+","+ data.getUpperLimit()+","+data.getCostKwh()+","+data.getDesideredChoice()+")";
 		try {
 			return stmt.execute(query);
 		} catch (SQLException e) {
@@ -29,9 +27,8 @@ public class DbControlArrivalData extends DbConnection {
 		return null;
 	}
 	
-	public ArrayList<ControlFlexibilityData> getControlArrivalDatabyType (String idControlAgent, String type)
+	public ControlFlexibilityData getControlArrivalDatabyType (String idControlAgent, String type)
 	{
-		ArrayList<ControlFlexibilityData> list = new ArrayList<ControlFlexibilityData>();
 		String query = "SELECT *"
 				+ " FROM ControlArrivalData"
 				+ " WHERE IdControlAgent = '"+idControlAgent+"'"
@@ -43,22 +40,17 @@ public class DbControlArrivalData extends DbConnection {
 			rs = stmt.executeQuery(query);
 			while(rs.next())
 			{
-				Calendar cal1 = Calendar.getInstance();
-				cal1.setTime(rs.getDate("AnalysisDateTime"));
-				
-				Calendar cal2 = Calendar.getInstance();
-				cal2.setTime(rs.getDate("DateTime"));
-				
-				ControlFlexibilityData data = new ControlFlexibilityData(
-						rs.getString("IdControlAgent"), rs.getString("Type"), cal1, cal2,
-						rs.getDouble("LowerLimit"), rs.getDouble("UpperLimit"), 
-						rs.getDouble("CostKwh"), rs.getDouble("DesideredChoice"));
-				list.add(data);
+				Calendar cal = Calendar.getInstance();
+				cal.setTime(rs.getDate("DateTime"));
+				ControlFlexibilityData data =  new ControlFlexibilityData(
+						rs.getString("IdControlAgent"), cal, rs.getDouble("LowerLimit"), 
+						rs.getDouble("UpperLimit"), rs.getDouble("CostKwh"), rs.getDouble("DesideredChoice"));
+				return data;
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-		return list;
+		return null;
 	}
 	
 	public int countMessagesReceived (String idControlAgent)
@@ -66,7 +58,7 @@ public class DbControlArrivalData extends DbConnection {
 		String query = "SELECT COUNT(*) as Count"
     			+ " FROM ControlArrivalData"
     			+ " WHERE IdAgent = '"+idControlAgent+"'"
-    			+ " AND AnalysisDateTime in (SELECT Max(AnalysisDateTime)" 
+    			+ " AND DateTime in (SELECT Max(DateTime)" 
 											+"FROM ControlArrivalData)";
 		try{
 			ResultSet rs = stmt.executeQuery(query);
