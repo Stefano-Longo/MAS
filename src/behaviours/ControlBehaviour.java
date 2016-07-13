@@ -48,6 +48,7 @@ public class ControlBehaviour extends OneShotBehaviour {
 		new DbControlArrivalData().addControlArrivalData(controlData);
 
 		int messagesReceived = new DbControlArrivalData().countMessagesReceived(this.myAgent.getName());
+		System.out.println("messagesReceived: "+messagesReceived);
 		
 		if (messagesReceived == 3)
 		{

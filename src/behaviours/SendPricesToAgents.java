@@ -59,6 +59,10 @@ public class SendPricesToAgents extends OneShotBehaviour {
 			new BaseAgent().sendMessageToAgentsByServiceType(this.myAgent, "ControlAgent",
 					"proposal", result);
 		}
+		else
+		{
+			new BaseAgent().sendMessageToAgentsByServiceType(this.myAgent, serviceType,
+					"input", msgData);
+		}
 	}
-
 }

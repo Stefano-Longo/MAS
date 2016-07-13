@@ -8,17 +8,19 @@ import java.util.ArrayList;
 import java.util.Calendar;
 
 import basicData.ControlFlexibilityData;
+import utils.GeneralData;
 
 public class DbControlArrivalData extends DbConnection {
 
-	DateFormat format = new SimpleDateFormat("yyyy/MM/dd HH:mm");
+	DateFormat format = new GeneralData().format;
 
 	public Boolean addControlArrivalData (ControlFlexibilityData data)
 	{
 		String query = "INSERT INTO ControlArrivalData (IdControlAgent, DateTime,"
 				+ " LowerLimit, UpperLimit, CostKwh, DesideredChoice)"
-				+ " VALUES ('"+data.getIdAgent()+"'," + format.format(data.getDatetime().getTime())+"',"
+				+ " VALUES ('"+data.getIdAgent()+"','"+format.format(data.getDatetime().getTime())+"',"
 				+data.getLowerLimit()+","+ data.getUpperLimit()+","+data.getCostKwh()+","+data.getDesideredChoice()+")";
+		System.out.println(query);
 		try {
 			return stmt.execute(query);
 		} catch (SQLException e) {
@@ -34,10 +36,10 @@ public class DbControlArrivalData extends DbConnection {
 				+ " WHERE IdControlAgent = '"+idControlAgent+"'"
 				+ " AND Type = '"+type+"'"
 				+ " AND AnalysisDateTime in (SELECT MAX(AnalysisDateTime)"
-											+" FROM BatteryAggregatorData";
-		ResultSet rs;
+											+" FROM ControlArrivalData";
+		System.out.println(query);
 		try {
-			rs = stmt.executeQuery(query);
+			ResultSet rs = stmt.executeQuery(query);
 			while(rs.next())
 			{
 				Calendar cal = Calendar.getInstance();
@@ -57,7 +59,7 @@ public class DbControlArrivalData extends DbConnection {
 	{
 		String query = "SELECT COUNT(*) as Count"
     			+ " FROM ControlArrivalData"
-    			+ " WHERE IdAgent = '"+idControlAgent+"'"
+    			+ " WHERE IdControlAgent = '"+idControlAgent+"'"
     			+ " AND DateTime in (SELECT Max(DateTime)" 
 											+"FROM ControlArrivalData)";
 		try{
