@@ -10,19 +10,19 @@ import java.util.Calendar;
 import basicData.BatteryData;
 import basicData.LoadInfo;
 import basicData.LoadInfoPrice;
+import utils.GeneralData;
 
 public class DbLoadInfo extends DbConnection {
 
-	DateFormat format = new SimpleDateFormat("yyyy/MM/dd HH:mm");
+	DateFormat format = new GeneralData().format;
 
 	public ArrayList<LoadInfoPrice> getLoadInfoPricebyIdAgent (String idAgent)
 	{
 		ArrayList<LoadInfoPrice> list = new ArrayList<LoadInfoPrice>();
-		DateFormat format = new SimpleDateFormat("yyyy/MM/dd HH:mm");
 		Calendar cal = Calendar.getInstance();
 		String query = "SELECT *"
 					+ " FROM"
-						+ "(SELECT TOP 1 *"
+						+ "(SELECT TOP 1 *" //subquery prende i dati del giorno e ora subito dopo now
 						+ " FROM Load"
 						+ " WHERE RTRIM(IdAgent) = "+idAgent
 						+ " AND DateTime > '"+format.format(cal.getTime())+"'"
@@ -82,21 +82,9 @@ public class DbLoadInfo extends DbConnection {
 		return data;
 	}
 	
-	public Boolean addConsumption (LoadInfo data)
+	public Boolean updateLoadInfo()
 	{
-		DateFormat format = new SimpleDateFormat("dd/MM/yyyy HH:mm");
-		String query = "UPDATE Load"
-				+ " SET ConsumptionAdded = "+data.getConsumptionAdded()
-				+ " WHERE RTRIM(IdAgent) = "+data.getIdAgent()
-				+ " AND DateTime = '"+format.format(data.getDatetime().getTime())+"'"
-				+ " ORDER BY DateTime DESC";
-		System.out.println(query);
-		try {
-			return stmt.execute(query);
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-		return false;
+		
 	}
 	
 }

@@ -87,12 +87,14 @@ public class BatteryFlexibilityBehaviour extends OneShotBehaviour {
 		 *  
 		 */
 		
-		Calendar cal = Calendar.getInstance();
-		cal.setTime(msgData.get(0).getTime().getTime());
-		
-		FlexibilityData result = new FlexibilityData(cal, maxInput,
+		FlexibilityData result = new FlexibilityData(msgData.get(0).getTime(), maxInput,
     			maxOutput, batteryData.getCostKwh(), desideredChoice);
 		
+		BatteryData data = new BatteryData(batteryInfo.getIdBattery(), msgData.get(0).getTime(), 
+				batteryData.getSocObjective(), batteryData.getSoc(), batteryData.getCostKwh(), 
+				maxInput, maxOutput, 0, desideredChoice);
+		
+		new DbBatteryData().addBatteryData(data);
 		new BaseAgent().sendMessageToAgentsByServiceType(this.myAgent, "BatteryAggregatorAgent",
 				"proposal", result);
 	}

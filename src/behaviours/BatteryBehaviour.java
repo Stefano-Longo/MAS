@@ -46,54 +46,20 @@ public class BatteryBehaviour  extends OneShotBehaviour {
 		 */
 		
 		BatteryInfo batteryInfo = new DbBatteryInfo().getBatteryByIdAgent(this.myAgent.getName());
-		BatteryData batteryData = new DbBatteryData().getLastBatteryData(batteryInfo.getIdBattery());
+		//get the data to update
+		BatteryData lastBatteryData = new DbBatteryData().getLastBatteryData(batteryInfo.getIdBattery());
 		
-		System.out.println(batteryData.getDatetime().getTime());
-		batteryData.getDatetime().add(Calendar.SECOND, timeSlot);
-		System.out.println(batteryData.getDatetime().getTime());
-		
-		double inputPowerMax = getMaxInput(batteryData.getSoc(), batteryInfo.getSocMax(), 
-				batteryInfo.getCapacity(), batteryInfo.getBatteryInputMax());
-		double outputPowerMax = getMaxOutput(batteryData.getSoc(), batteryInfo.getSocMin(), 
-				batteryInfo.getCapacity(), batteryInfo.getBatteryOutputMax());
-		
-		double newSoc = calculateSoc(batteryData.getSoc(), batteryData.getCapacity(), msgData.getPowerRequested());
-		double newSocObjective = batteryData.getSocObjective();
+		double newSoc = calculateSoc(lastBatteryData.getSoc(), lastBatteryData.getCapacity(), msgData.getPowerRequested());
+		double newSocObjective = lastBatteryData.getSocObjective();
 		
 		//TO-DO per ora newSocObjective sempre uguale. Poi vediamo se è meglio che si aggiorni per ogni ora
 		
-		double newCostKwh = calculateNewCostKwh(batteryData.getSoc(), batteryData.getCapacity(), batteryData.getCostKwh());
+		double newCostKwh = calculateNewCostKwh(lastBatteryData.getSoc(), lastBatteryData.getCapacity(), lastBatteryData.getCostKwh());
 		
-		BatteryData newBatteryData = new BatteryData(batteryInfo.getIdBattery(), batteryData.getDatetime(), 
-				newSocObjective, newSoc, newCostKwh, inputPowerMax, outputPowerMax, msgData.getPowerRequested());
-		new DbBatteryData().addBatteryData(newBatteryData); //salvo nello storico
-		
+		BatteryData batteryData = new BatteryData(batteryInfo.getIdBattery(), lastBatteryData.getDatetime(), 
+				newSocObjective, newSoc, newCostKwh, msgData.getPowerRequested());
+		new DbBatteryData().updateBatteryData(batteryData); //salvo nello storico
 	}
-	
-	private double getMaxInput(double soc, double socMax, double capacity, double maxInputBattery)
-	{
-        if (soc >= socMax)
-            return 0;
-        double maxBatteryInputPercentage = (socMax - soc) * capacity * (60/timeSlot) / 100;
-        if (maxBatteryInputPercentage > maxInputBattery)
-        {
-        	return maxInputBattery;
-        }
-    	return maxBatteryInputPercentage;
-    }
-	
-	private double getMaxOutput(double soc, double socMin, double capacity, double maxOutputBattery)
-	{
-        if (soc <= socMin)
-            return 0;
-        double maxBatteryOutputPercentage = (soc - socMin) * capacity * (60 / timeSlot) / 100;
-
-        if (maxBatteryOutputPercentage > maxOutputBattery)
-        {
-        	return maxOutputBattery;
-        }
-    	return maxBatteryOutputPercentage;
-    }
 
 	private double calculateSoc(double soc, double capacity, double powerRequested)
 	{

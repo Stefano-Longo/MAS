@@ -3,52 +3,82 @@ package basicData;
 import java.io.Serializable;
 import java.util.Calendar;
 
+@SuppressWarnings("serial")
 public class LoadData implements Serializable {
 	
-	/**
-	 * This class will be a type of data
-	 */
-	private static final long serialVersionUID = 1L;
-	
 	private int idLoad;
-	private Calendar datetime = Calendar.getInstance();
-	private double criticalConsumption; // in KW
+	private Calendar datetime;
+	private double costKwh;
+	private double criticalConsumption; 
 	private double nonCriticalConsumption; 
-	private boolean sheddable = false;
-	private boolean shiftable = false;
-	
-	public LoadData(int idLoad, Calendar datetime, double criticalConsumption, double nonCriticalConsumption, boolean sheddable, boolean shiftable) {
-		super();
+	private double consumptionMin;
+	private double consumptionMax;
+	private double powerRequested;
+	private double desideredChoice;
+	private double consumptionShifted;
+	private Calendar toDatetime;
+
+	/**
+	 * 
+	 * @param idLoad
+	 * @param datetime
+	 * @param costKwh
+	 * @param criticalConsumption
+	 * @param nonCriticalConsumption
+	 * @param consumptionMin
+	 * @param consumptionMax
+	 * @param powerRequested
+	 * @param desideredChoice
+	 * @param consumptionShifted
+	 * @param toDatetime
+	 */
+	public LoadData(int idLoad, Calendar datetime, double costKwh, double criticalConsumption, 
+			double nonCriticalConsumption, double consumptionMin, double consumptionMax,
+			double powerRequested, double desideredChoice, double consumptionShifted, Calendar toDatetime) 
+	{
 		this.idLoad = idLoad;
 		this.datetime = datetime;
+		this.costKwh = costKwh;
 		this.criticalConsumption = criticalConsumption;
 		this.nonCriticalConsumption = nonCriticalConsumption;
-		this.sheddable = sheddable;
-		this.shiftable = shiftable;
+		this.consumptionMax = consumptionMax;
+		this.consumptionMin = consumptionMin;
+		this.powerRequested = powerRequested;
+		this.desideredChoice = desideredChoice;
+		this.consumptionShifted = consumptionShifted;
+		this.toDatetime = toDatetime;
 	}
-
 	
-	public LoadData() {
+	public LoadData(int idLoad, Calendar datetime, double powerRequested, double consumptionShifted) 
+	{
+		this.idLoad = idLoad;
+		this.datetime = datetime;
+		this.powerRequested = powerRequested;
+		this.consumptionShifted = consumptionShifted;
 	}
-
 
 	public int getIdLoad() {
 		return idLoad;
 	}
 
-
 	public void setIdLoad(int idLoad) {
 		this.idLoad = idLoad;
 	}
-
 
 	public Calendar getDatetime() {
 		return datetime;
 	}
 
-
 	public void setDatetime(Calendar datetime) {
 		this.datetime = datetime;
+	}
+
+	public double getCostKwh() {
+		return costKwh;
+	}
+
+	public void setCostKwh(double costKwh) {
+		this.costKwh = costKwh;
 	}
 
 	public Calendar getDateTime() {
@@ -75,21 +105,51 @@ public class LoadData implements Serializable {
 		this.nonCriticalConsumption = nonCriticalConsumption;
 	}
 
-	public boolean isSheddable() {
-		return sheddable;
+	public double getConsumptionMin() {
+		return consumptionMin;
 	}
 
-	public void setSheddable(boolean sheddable) {
-		this.sheddable = sheddable;
+	public void setConsumptionMin(double consumptionMin) {
+		this.consumptionMin = consumptionMin;
 	}
 
-	public boolean isShiftable() {
-		return shiftable;
+	public double getConsumptionMax() {
+		return consumptionMax;
 	}
 
-	public void setShiftable(boolean shiftable) {
-		this.shiftable = shiftable;
+	public void setConsumptionMax(double consumptionMax) {
+		this.consumptionMax = consumptionMax;
+	}
+
+	public double getPowerRequested() {
+		return powerRequested;
+	}
+
+	public void setPowerRequested(double powerRequested) {
+		this.powerRequested = powerRequested;
+	}
+
+	public double getDesideredChoice() {
+		return desideredChoice;
+	}
+
+	public void setDesideredChoice(double desideredChoice) {
+		this.desideredChoice = desideredChoice;
 	}
 	
-	
+	public double getConsumptionShifted() {
+		return consumptionShifted;
+	}
+
+	public void setConsumptionShifted(double consumptionShifted) {
+		this.consumptionShifted = consumptionShifted;
+	}
+
+	public Calendar getToDatetime() {
+		return toDatetime;
+	}
+
+	public void setToDatetime(Calendar toDatetime) {
+		this.toDatetime = toDatetime;
+	}
 }

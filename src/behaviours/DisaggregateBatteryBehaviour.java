@@ -15,13 +15,9 @@ import jade.domain.FIPAAgentManagement.DFAgentDescription;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.UnreadableException;
 
+@SuppressWarnings("serial")
 public class DisaggregateBatteryBehaviour extends OneShotBehaviour {
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
-	
 	ACLMessage msg;
 	ResultPowerPrice msgData;
 	ArrayList<AggregatorFlexibilityData> batteriesChoice = new DbAggregatorBattery()
@@ -57,28 +53,18 @@ public class DisaggregateBatteryBehaviour extends OneShotBehaviour {
 		
 		
 		DFAgentDescription[] batteryAgents = new BaseAgent().getAgentsbyServiceType(myAgent, "BatteryAgent");
-		FlexibilityData aggregatedBatteriesChoice = new DbAggregatorBattery()
-				.aggregateMessageReceived(this.myAgent.getName());
-		if(batteriesChoice.size() != batteryAgents.length)
+		
+		if(batteriesChoice.size() == batteryAgents.length)
 		{
-			System.out.println("Il numero di batteryAgent registrati è inferiore al numero batterie che"
-					+ "mi hanno già indicato quanto darmi, che faccio?");
-			//vedo quale manca su tramite batteryInfo mettendo l'idagent? boh
-			// e poi controllo se le altre mi bastano per fare quello che devo fare
-		}
-		else
-		{
-			double totalPowerRequested = msgData.getPowerRequested();
-			
-			if(totalPowerRequested > 0)
+			if(msgData.getPowerRequested() > 0)
 			{
 				takeFromMostConvenient();
 			}
-			else if(totalPowerRequested < 0)
+			else if(msgData.getPowerRequested() < 0)
 			{
 				giveWhatAsked();
 			}
-			else if(totalPowerRequested == 0)
+			else if(msgData.getPowerRequested() == 0)
 			{
 				doNothing();
 			}
@@ -90,13 +76,13 @@ public class DisaggregateBatteryBehaviour extends OneShotBehaviour {
 	{
 		double totalPowerRequested = msgData.getPowerRequested();
 		double batteryPowerRequested = 0;
+		//TO-DO prova se funziona ORDERLIST
+		batteriesChoice.sort((o1, o2) -> Double.compare(o1.getCostKwh(),o2.getCostKwh()));
+		// the first battery is the one with lower CostKwh
+
 		for(int i=0; i < batteriesChoice.size(); i++)
 		{
-			//TO-DO prova se funziona ORDERLIST
-			batteriesChoice.sort((o1, o2) -> Double.compare(o1.getCostKwh(),o2.getCostKwh()));
-			// the first battery is the one with lower CostKwh
-			
-			//ControlAgent sends this: Power, time, CostKwh
+			//ControlAgent sends this: datetime, power, CostKwh
 			if(totalPowerRequested > batteriesChoice.get(i).getUpperLimit())
 			{
 				batteryPowerRequested = batteriesChoice.get(i).getUpperLimit();
@@ -107,11 +93,10 @@ public class DisaggregateBatteryBehaviour extends OneShotBehaviour {
 				batteryPowerRequested = totalPowerRequested;
 				totalPowerRequested = 0;
 			} 
-			ResultPowerPrice batteryAction = new ResultPowerPrice(batteryPowerRequested, msgData.getCostKwh());
+			ResultPowerPrice batteryAction = new ResultPowerPrice(msgData.getDatetime(), batteryPowerRequested, msgData.getCostKwh());
 
-			BatteryInfo battery = new DbBatteryInfo().getBatteryByIdBattery(batteriesChoice.get(i).getIdentificator());
 			new BaseAgent().sendMessageToAgentsByServiceType(this.myAgent, 
-					"BatteryAgent-"+battery.getIdBattery(), "response", batteryAction);
+					"BatteryAgent-"+batteriesChoice.get(i).getIdentificator(), "response", batteryAction);
 		}
 	}
 
@@ -184,7 +169,7 @@ public class DisaggregateBatteryBehaviour extends OneShotBehaviour {
 				powerRequested -= batteryPowerGiven;
 			}
 			
-			ResultPowerPrice batteryAction = new ResultPowerPrice(batteryPowerGiven, msgData.getCostKwh());
+			ResultPowerPrice batteryAction = new ResultPowerPrice(msgData.getDatetime(), batteryPowerGiven, msgData.getCostKwh());
 
 			new BaseAgent().sendMessageToAgentsByServiceType(this.myAgent, 
 					"BatteryAgent-"+batteriesChoice.get(i).getIdentificator(), "response", batteryAction);
@@ -198,7 +183,7 @@ public class DisaggregateBatteryBehaviour extends OneShotBehaviour {
 	{
 		for(int i=0; i < batteriesChoice.size(); i++)
 		{
-			ResultPowerPrice batteryAction = new ResultPowerPrice(0, msgData.getCostKwh());
+			ResultPowerPrice batteryAction = new ResultPowerPrice(msgData.getDatetime(), 0, msgData.getCostKwh());
 
 			new BaseAgent().sendMessageToAgentsByServiceType(this.myAgent, 
 					"BatteryAgent-"+batteriesChoice.get(i).getIdentificator(), "response", batteryAction);

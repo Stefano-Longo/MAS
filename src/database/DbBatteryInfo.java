@@ -26,24 +26,19 @@ public class DbBatteryInfo extends DbConnection{
 	
 	public BatteryInfo getBatteryByIdAgent (String idAgent)
 	{
-		BatteryInfo battery = new BatteryInfo();
 		String query = "SELECT *"
 				+ " FROM Battery"
 				+ " WHERE IdAgent = '"+idAgent+"'";
 		try {
 			ResultSet rs = stmt.executeQuery(query);
 			while(rs.next()){ 
-				battery.setIdBattery(rs.getInt("IdBattery"));
-				battery.setIdAgent(AID.createGUID(rs.getString("IdAgent"), rs.getString("IdPlatform")));
-				battery.setIdPlatform(rs.getString("IdPlatform"));
-				battery.setCapacity(rs.getDouble("Capacity"));
-				battery.setType(rs.getString("Type"));
-				battery.setBatteryInputMax(rs.getDouble("BatteryInputMax"));
-				battery.setBatteryOutputMax(rs.getDouble("BatteryOutputMax"));
-				battery.setSocMin(rs.getDouble("SocMin"));
-				battery.setSocMax(rs.getDouble("SocMax"));
+				BatteryInfo batteryInfo = new BatteryInfo(rs.getInt("IdBattery"), rs.getString("IdAgent"), 
+						rs.getString("IdPlatform"), rs.getDouble("Capacity"), rs.getString("Type"), 
+						rs.getDouble("BatteryInputMax"), rs.getDouble("BatteryOutputMax"), rs.getDouble("SocMin"), 
+						rs.getDouble("SocMax"), rs.getDouble("CapitalCost"), rs.getDouble("MaintenaceCost"), 
+						rs.getDouble("CyclesNumber"), rs.getDouble("RoundTripEfficiency"));
+				return batteryInfo;
 			}
-			return battery;
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -52,24 +47,19 @@ public class DbBatteryInfo extends DbConnection{
 	
 	public BatteryInfo getBatteryByIdBattery (int idBattery)
 	{
-		BatteryInfo battery = new BatteryInfo();
 		String query = "SELECT *"
 				+ " FROM Battery"
 				+ " WHERE IdBattery = '"+idBattery+"'";
 		try {
 			ResultSet rs = stmt.executeQuery(query);
 			while(rs.next()){
-				battery.setIdBattery(rs.getInt("IdBattery"));
-				battery.setIdAgent(rs.getString("IdAgent"));
-				battery.setIdPlatform(rs.getString("IdPlatform"));
-				battery.setCapacity(rs.getDouble("Capacity"));
-				battery.setType(rs.getString("Type"));
-				battery.setBatteryInputMax(rs.getDouble("BatteryInputMax"));
-				battery.setBatteryOutputMax(rs.getDouble("BatteryOutputMax"));
-				battery.setSocMin(rs.getDouble("SocMin"));
-				battery.setSocMax(rs.getDouble("SocMax"));
+				BatteryInfo batteryInfo = new BatteryInfo(rs.getInt("IdBattery"), rs.getString("IdAgent"), 
+						rs.getString("IdPlatform"), rs.getDouble("Capacity"), rs.getString("Type"), 
+						rs.getDouble("BatteryInputMax"), rs.getDouble("BatteryOutputMax"), rs.getDouble("SocMin"), 
+						rs.getDouble("SocMax"), rs.getDouble("CapitalCost"), rs.getDouble("MaintenaceCost"), 
+						rs.getDouble("CyclesNumber"), rs.getDouble("RoundTripEfficiency"));
+				return batteryInfo;
 			}
-			return battery;
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}

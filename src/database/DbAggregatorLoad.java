@@ -4,6 +4,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 
 import basicData.AggregatorFlexibilityData;
@@ -74,5 +75,33 @@ public class DbAggregatorLoad extends DbConnection {
 			e.printStackTrace();
 		}
 		return 0;
+	}
+	
+	public ArrayList<AggregatorFlexibilityData> getLoadsChoice(String idAggregatorAgent)
+	{
+		ArrayList<AggregatorFlexibilityData> list = new ArrayList<AggregatorFlexibilityData>();
+		String query = "SELECT *"
+				+ " FROM LoadAggregatorData"
+				+ " WHERE IdAggregatorAgent='"+idAggregatorAgent+"'"
+				+ " AND DateTime in (SELECT MAX(DateTime)"
+								+" FROM LoadAggregatorData"
+				+ " ORDER BY CostKwh";
+		try {
+			ResultSet rs = stmt.executeQuery(query);
+			while(rs.next())
+			{
+				Calendar cal = Calendar.getInstance();
+				cal.setTime(rs.getDate("DateTime"));
+				
+				AggregatorFlexibilityData data = new AggregatorFlexibilityData(
+						rs.getString("IdAggregatorAgent"),rs.getInt("IdLoad"),cal,
+						rs.getDouble("LowerLimit"), rs.getDouble("UpperLimit"), 
+						rs.getDouble("CostKwh"), rs.getDouble("DesideredChoice"));
+				list.add(data);
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return list;
 	}
 }

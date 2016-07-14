@@ -12,7 +12,7 @@ public class LoadInfoPrice extends LoadInfo {
 			double nonCriticalConsumption, double consumptionAdded) {
 		super(idLoad, idAgent, platform, datetime, criticalConsumption, nonCriticalConsumption, consumptionAdded);
 	}
-
+	
 	public Calendar getToDatetime() {
 		return toDatetime;
 	}

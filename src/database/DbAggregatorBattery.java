@@ -107,14 +107,13 @@ public class DbAggregatorBattery extends DbConnection {
 	{
 		ArrayList<AggregatorFlexibilityData> list = new ArrayList<AggregatorFlexibilityData>();
 		String query = "SELECT *, DesideredChoice-LowerLimit as Diff"
-				+ " FROM BatteryAggregatorData A JOIN Battery B ON A.IdBattery = B.IdBattery"
+				+ " FROM BatteryAggregatorData"
 				+ " WHERE IdAggregatorAgent='"+idAggregatorAgent+"'"
 				+ " AND DateTime in (SELECT MAX(DateTime)"
 								+" FROM BatteryAggregatorData"
 				+ " ORDER BY Diff";
-		ResultSet rs;
 		try {
-			rs = stmt.executeQuery(query);
+			ResultSet rs = stmt.executeQuery(query);
 			while(rs.next())
 			{
 				Calendar cal = Calendar.getInstance();
