@@ -43,7 +43,7 @@ public class LoadFlexibilityBehaviour extends OneShotBehaviour {
 		}
 		loadInfoPrice.sort((o1, o2) -> Double.compare(o1.getPrice(),o2.getPrice()));
 
-		// I take always the first element because is the one which have less Price
+		// I take always the first element because is the one which has the lower Price
 		double lowerLimit = loadInfoPrice.get(0).getCriticalConsumption() + loadInfoPrice.get(0).getConsumptionAdded();
 		double upperLimit = lowerLimit + loadInfoPrice.get(0).getNonCriticalConsumption();
 		double desideredChoice;

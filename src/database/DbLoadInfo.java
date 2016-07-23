@@ -82,9 +82,19 @@ public class DbLoadInfo extends DbConnection {
 		return data;
 	}
 	
-	public Boolean updateLoadInfo()
+	public Boolean updateLoadInfo(int idLoad, Calendar toDateTime, double consumptionAdded)
 	{
-		
+		String query = "UPDATE Load"
+				+ " SET  ConsumptionAdded="+consumptionAdded
+				+ " WHERE Id = '"+idLoad+"'"
+				+ " AND DateTime = '"+format.format(toDateTime.getTime())+"'";
+		System.out.println(query);
+		try {
+			return stmt.execute(query);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return false;
 	}
 	
 }

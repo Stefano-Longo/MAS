@@ -40,6 +40,6 @@ public class LoadBehaviour extends OneShotBehaviour {
 		 * TO-DO Aggiornare load info inserendo nel campo ConsumptionAdded della tabella Load
 		 * nel DateTime = toDateTime il valore: consumptionShifted
 		 */
-		new DbLoadInfo().updateLoadInfo();
+		new DbLoadInfo().updateLoadInfo(loadInfo.getIdLoad(), loadData.getToDatetime(), consumptionShifted);
 	}
 }

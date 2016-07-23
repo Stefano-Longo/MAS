@@ -13,12 +13,8 @@ import jade.core.behaviours.OneShotBehaviour;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.UnreadableException;
 
+@SuppressWarnings("serial")
 public class AggregateLoadBehaviour extends OneShotBehaviour {
-
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
 	
 	ACLMessage msg;
 	FlexibilityData msgData;
