@@ -5,7 +5,7 @@ import java.util.Calendar;
 public class BatteryData {
 
 	private int idBattery;
-	private Calendar datetime = Calendar.getInstance();;
+	private Calendar datetime;
 	private double socObjective;
 	private double soc;
 	private double costKwh;
@@ -15,7 +15,7 @@ public class BatteryData {
 	private double desideredChoice;
 	
 	//not for upload in db
-	private Calendar analisysDatetime = Calendar.getInstance();
+	private Calendar analisysDatetime;
 	private double capacity;
 	private String type;
 

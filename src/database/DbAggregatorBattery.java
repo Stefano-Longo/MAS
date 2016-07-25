@@ -9,6 +9,7 @@ import java.util.ArrayList;
 
 import basicData.AggregatorFlexibilityData;
 import basicData.FlexibilityData;
+import utils.GeneralData;
 
 public class DbAggregatorBattery extends DbConnection {
 
@@ -18,7 +19,7 @@ public class DbAggregatorBattery extends DbConnection {
 	 * @param data
 	 * @return
 	 */
-	DateFormat format = new SimpleDateFormat("yyyy/MM/dd HH:mm");
+	DateFormat format = new GeneralData().getFormat();
 
 	public Boolean addFlexibilityBatteryMessage (AggregatorFlexibilityData data)
 	{
@@ -149,9 +150,8 @@ public class DbAggregatorBattery extends DbConnection {
 				+ " AND AnalysisDateTime in (SELECT MAX(AnalysisDateTime)"
 											+" FROM BatteryAggregatorData"
 				+ " ORDER BY Diff";
-		ResultSet rs;
 		try {
-			rs = stmt.executeQuery(query);
+			ResultSet rs = stmt.executeQuery(query);
 			while(rs.next())
 			{
 				Calendar cal = Calendar.getInstance();

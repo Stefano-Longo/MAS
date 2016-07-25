@@ -1,13 +1,9 @@
 package behaviours;
 
-import java.io.IOException;
-import java.util.ArrayList;
-
 import agents.BaseAgent;
 import basicData.AggregatorFlexibilityData;
 import basicData.BatteryInfo;
 import basicData.FlexibilityData;
-import basicData.ResultPowerPrice;
 import jade.core.behaviours.OneShotBehaviour;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.UnreadableException;
@@ -47,8 +43,6 @@ public class AggregateBatteryBehaviour extends OneShotBehaviour {
 		
 		int messagesReceived = new DbAggregatorBattery().countMessagesReceived(this.myAgent.getName());
 		int batteryAgents = new BaseAgent().getAgentsbyServiceType(this.myAgent, "BatteryAgent").length;
-		System.out.println("messagesReceived: "+messagesReceived);
-		System.out.println("batteryAgents: "+batteryAgents);
 		if (messagesReceived == batteryAgents)
 		{
 			/**

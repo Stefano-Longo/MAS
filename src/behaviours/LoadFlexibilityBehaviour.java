@@ -32,7 +32,9 @@ public class LoadFlexibilityBehaviour extends OneShotBehaviour {
 	@Override
 	public void action() 
 	{
-		ArrayList<LoadInfoPrice> loadInfoPrice = new DbLoadInfo().getLoadInfoPricebyIdAgent(this.myAgent.getName());
+		Calendar cal = Calendar.getInstance();
+		cal.setTime(msgData.get(0).getDateTime());
+		ArrayList<LoadInfoPrice> loadInfoPrice = new DbLoadInfo().getLoadInfoPricebyIdAgent(this.myAgent.getName(), cal);
 		/**
 		 * Add the price to every object of the list, then order the list on the price value ASC 
 		 */
@@ -41,8 +43,10 @@ public class LoadFlexibilityBehaviour extends OneShotBehaviour {
 			double energyPrice = getPriceByDatetime(loadInfoPrice.get(i).getToDatetime());
 			loadInfoPrice.get(i).setPrice(energyPrice);
 		}
+		System.out.println("primo: "+loadInfoPrice.size());
 		loadInfoPrice.sort((o1, o2) -> Double.compare(o1.getPrice(),o2.getPrice()));
 
+		System.out.println("secondo: "+loadInfoPrice.size());
 		// I take always the first element because is the one which has the lower Price
 		double lowerLimit = loadInfoPrice.get(0).getCriticalConsumption() + loadInfoPrice.get(0).getConsumptionAdded();
 		double upperLimit = lowerLimit + loadInfoPrice.get(0).getNonCriticalConsumption();
@@ -51,23 +55,24 @@ public class LoadFlexibilityBehaviour extends OneShotBehaviour {
 		
 		desideredChoice = costKwh < 0 ? lowerLimit : upperLimit;
 
-		FlexibilityData result = new FlexibilityData(msgData.get(0).getTime(), lowerLimit, upperLimit, costKwh, desideredChoice);
+		//FlexibilityData result = new FlexibilityData(msgData.get(0).getDateTime(), lowerLimit, upperLimit, costKwh, desideredChoice);
 		
-		LoadInfo loadInfo = new DbLoadInfo().getLoadInfoByIdAgent(this.myAgent.getName());
-		LoadData loadData = new LoadData(loadInfo.getIdLoad(), msgData.get(0).getTime(), costKwh, 
+		/*LoadInfo loadInfo = new DbLoadInfo().getLoadInfoByIdAgent(this.myAgent.getName(), msgData.get(0).getDateTime());
+		LoadData loadData = new LoadData(loadInfo.getIdLoad(), msgData.get(0).getDateTime(), costKwh, 
 				loadInfo.getCriticalConsumption(), loadInfo.getNonCriticalConsumption(),
 				lowerLimit, upperLimit, 0, desideredChoice, 0, loadInfoPrice.get(0).getToDatetime());
 		new DbLoadData().addLoadData(loadData);
 		
 		new BaseAgent().sendMessageToAgentsByServiceType(this.myAgent, "LoadAggregatorAgent",
-				"proposal", result);
+				"proposal", result);*/
 	}
+	
 	
 	private double getPriceByDatetime(Calendar datetime)
 	{
 		for(int i=0; i < msgData.size(); i++)
 		{
-			if(msgData.get(i).getTime().equals(datetime))
+			if(msgData.get(i).getDateTime().equals(datetime))
 				return msgData.get(i).getEnergyPrice();
 		}
 		return 0;

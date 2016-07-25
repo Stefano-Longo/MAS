@@ -1,8 +1,6 @@
 package agents;
 
-import basicData.BatteryInfo;
 import behaviours.ReceiveMessages;
-import database.DbBatteryInfo;
 
 @SuppressWarnings("serial")
 public class BatteryAgent extends BaseAgent {
@@ -12,8 +10,7 @@ public class BatteryAgent extends BaseAgent {
 		 * Takes in input the ids (number) of the platforms for which it is created
 		 */
 		
-		BatteryInfo batteryInfo = new DbBatteryInfo().getBatteryByIdAgent(this.getName());
-		registerDfAgent(this.getHap(), "BatteryAgent", "BatteryAgent-"+batteryInfo.getIdBattery());
+		registerDfAgent(this.getHap(), "BatteryAgent");
 
 		this.addBehaviour(new ReceiveMessages(this));
 		

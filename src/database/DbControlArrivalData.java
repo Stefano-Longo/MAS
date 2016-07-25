@@ -12,7 +12,7 @@ import utils.GeneralData;
 
 public class DbControlArrivalData extends DbConnection {
 
-	DateFormat format = new GeneralData().format;
+	DateFormat format = new GeneralData().getFormat();
 
 	public Boolean addControlArrivalData (ControlFlexibilityData data)
 	{

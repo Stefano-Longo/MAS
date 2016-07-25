@@ -54,7 +54,6 @@ public class BaseAgent extends Agent {
 	{
 		try {
 			DFAgentDescription[] agents = getAgentsbyServiceType(myAgent, serviceType);
-			System.out.println(agents.length);
 			for(int i=0; i<agents.length; i++)
 			{
 				ACLMessage message = new ACLMessage(ACLMessage.INFORM);

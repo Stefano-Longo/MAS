@@ -5,17 +5,32 @@ import java.util.Calendar;
 public class DerData {
 
 	private int idDer;
-	private Calendar datetime = Calendar.getInstance();;
+	private Calendar datetime;
 	private double costKwh; 
-	private double powerRequested;
+	private double productionMin;
+	private double productionMax;
+	private double productionRequested;
 	private double desideredChoice;
 	
-	public DerData(int idDer, Calendar datetime, double costKwh, double powerRequested, double desideredChoice) 
+	/**
+	 * 
+	 * @param idDer
+	 * @param datetime
+	 * @param costKwh
+	 * @param consumptionMin
+	 * @param consumptionMax
+	 * @param powerRequested
+	 * @param desideredChoice
+	 */
+	public DerData(int idDer, Calendar datetime, double costKwh, double productionMin, double productionMax,
+			double productionRequested, double desideredChoice) 
 	{
 		this.idDer = idDer;
 		this.datetime = datetime;
 		this.costKwh = costKwh;
-		this.powerRequested = powerRequested;
+		this.productionMin = productionMin;
+		this.productionMax = productionMax;
+		this.productionRequested = productionRequested;
 		this.desideredChoice = desideredChoice;
 	}
 
@@ -43,12 +58,28 @@ public class DerData {
 		this.costKwh = costKwh;
 	}
 
-	public double getPowerRequested() {
-		return powerRequested;
+	public double getProductionMin() {
+		return productionMin;
 	}
 
-	public void setPowerRequested(double powerRequested) {
-		this.powerRequested = powerRequested;
+	public void setProductionMin(double productionMin) {
+		this.productionMin = productionMin;
+	}
+
+	public double getProductionMax() {
+		return productionMax;
+	}
+
+	public void setProductionMax(double productionMax) {
+		this.productionMax = productionMax;
+	}
+
+	public double getProductionRequested() {
+		return productionRequested;
+	}
+
+	public void setProductionRequested(double productionRequested) {
+		this.productionRequested = productionRequested;
 	}
 
 	public double getDesideredChoice() {
@@ -58,5 +89,4 @@ public class DerData {
 	public void setDesideredChoice(double desideredChoice) {
 		this.desideredChoice = desideredChoice;
 	}
-	
 }

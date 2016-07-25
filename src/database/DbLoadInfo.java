@@ -3,31 +3,25 @@ package database;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 
-import basicData.BatteryData;
 import basicData.LoadInfo;
 import basicData.LoadInfoPrice;
 import utils.GeneralData;
 
 public class DbLoadInfo extends DbConnection {
 
-	DateFormat format = new GeneralData().format;
+	DateFormat format = new GeneralData().getFormat();
 
-	public ArrayList<LoadInfoPrice> getLoadInfoPricebyIdAgent (String idAgent)
+	public ArrayList<LoadInfoPrice> getLoadInfoPricebyIdAgent (String idAgent, Calendar datetime)
 	{
 		ArrayList<LoadInfoPrice> list = new ArrayList<LoadInfoPrice>();
-		Calendar cal = Calendar.getInstance();
-		String query = "SELECT *"
-					+ " FROM"
-						+ "(SELECT TOP 1 *" //subquery prende i dati del giorno e ora subito dopo now
-						+ " FROM Load"
-						+ " WHERE RTRIM(IdAgent) = "+idAgent
-						+ " AND DateTime > '"+format.format(cal.getTime())+"'"
-						+ " ORDER BY DateTime) as A"
-					+ " JOIN LoadManagement as B ON A.IdLoad = B.IdLoad";
+		String query = "SELECT *" //subquery prende i dati del giorno e ora subito dopo now
+					+ " FROM Load as A JOIN LoadManagement as B ON A.Id = B.IdLoadDateTime"
+					+ " WHERE RTRIM(IdAgent) = '"+idAgent+"'"
+					+ " AND DateTime = '"+format.format(datetime.getTime())+"'"
+					+ " ORDER BY DateTime";
 		System.out.println(query);
 		try {
 			ResultSet rs = stmt.executeQuery(query);
@@ -52,25 +46,45 @@ public class DbLoadInfo extends DbConnection {
 		return list;
 	}
 	
-	public LoadInfo getLoadInfoByIdAgent (String idAgent)
+	public LoadInfo getLoadInfoByIdAgent (String idAgent, Calendar datetime)
 	{
 		LoadInfo data = null;
-		Calendar cal = Calendar.getInstance();
-		String query = "SELECT TOP 1 *"
+		String query = "SELECT *"
 					+ " FROM Load"
 					+ " WHERE RTRIM(IdAgent) = "+idAgent
-					+ " AND DateTime > '"+format.format(cal.getTime())+"'"
-					+ " ORDER BY DateTime";
+					+ " AND DateTime = '"+format.format(datetime.getTime())+"'";
 		System.out.println(query);
 		try {
 			ResultSet rs = stmt.executeQuery(query);
 			while(rs.next())
 			{
-				Calendar cal1 = Calendar.getInstance();
-				cal1.setTime(rs.getDate("DateTime"));
-
 				data = new LoadInfo(rs.getInt("IdLoad"), rs.getString("IdAgent"), rs.getString("IdPlatform"),
-						cal1, rs.getDouble("CriticalConsumption"), rs.getDouble("NonCriticalConsumption"), 
+						datetime, rs.getDouble("CriticalConsumption"), rs.getDouble("NonCriticalConsumption"), 
+						rs.getDouble("ConsumptionAdded"));
+				
+				Calendar cal2 = Calendar.getInstance();
+				cal2.setTime(rs.getDate("toDateTime"));
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return data;
+	}
+	
+	public LoadInfo getLoadInfoByIdLoad (int idLoad, Calendar datetime)
+	{
+		LoadInfo data = null;
+		String query = "SELECT TOP 1 *"
+					+ " FROM Load"
+					+ " WHERE IdLoad = "+idLoad
+					+ " AND DateTime = '"+format.format(datetime.getTime())+"'";
+		System.out.println(query);
+		try {
+			ResultSet rs = stmt.executeQuery(query);
+			while(rs.next())
+			{
+				data = new LoadInfo(rs.getInt("IdLoad"), rs.getString("IdAgent"), rs.getString("IdPlatform"),
+						datetime, rs.getDouble("CriticalConsumption"), rs.getDouble("NonCriticalConsumption"), 
 						rs.getDouble("ConsumptionAdded"));
 				
 				Calendar cal2 = Calendar.getInstance();
@@ -87,7 +101,7 @@ public class DbLoadInfo extends DbConnection {
 		String query = "UPDATE Load"
 				+ " SET  ConsumptionAdded="+consumptionAdded
 				+ " WHERE Id = '"+idLoad+"'"
-				+ " AND DateTime = '"+format.format(toDateTime.getTime())+"'";
+				+ " AND ToDateTime = '"+format.format(toDateTime.getTime())+"'";
 		System.out.println(query);
 		try {
 			return stmt.execute(query);

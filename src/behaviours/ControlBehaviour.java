@@ -1,12 +1,7 @@
 package behaviours;
 
-import java.util.ArrayList;
-
-import agents.BaseAgent;
-import aggregators.*;
 import basicData.ControlFlexibilityData;
 import basicData.FlexibilityData;
-import database.DbAggregatorBattery;
 import database.DbControlArrivalData;
 import jade.core.behaviours.OneShotBehaviour;
 import jade.lang.acl.ACLMessage;
@@ -17,7 +12,6 @@ public class ControlBehaviour extends OneShotBehaviour {
 
 	ACLMessage msg;
 	FlexibilityData msgData;
-	@SuppressWarnings("unchecked")
 	public ControlBehaviour(ACLMessage msg) {
 		this.msg = msg;
 		try {
@@ -48,7 +42,6 @@ public class ControlBehaviour extends OneShotBehaviour {
 		new DbControlArrivalData().addControlArrivalData(controlData);
 
 		int messagesReceived = new DbControlArrivalData().countMessagesReceived(this.myAgent.getName());
-		System.out.println("messagesReceived: "+messagesReceived);
 		
 		if (messagesReceived == 3)
 		{

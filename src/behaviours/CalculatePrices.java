@@ -1,26 +1,16 @@
 package behaviours;
 
-import java.io.IOException;
-import java.io.Serializable;
-import java.math.RoundingMode;
 import java.text.DateFormat;
-import java.text.DecimalFormat;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Random;
 
 import agents.BaseAgent;
 import basicData.TimePowerPrice;
-import jade.core.Agent;
 import jade.core.behaviours.OneShotBehaviour;
-import jade.domain.DFService;
-import jade.domain.FIPAException;
-import jade.domain.FIPAAgentManagement.DFAgentDescription;
-import jade.domain.FIPAAgentManagement.ServiceDescription;
 import jade.lang.acl.ACLMessage;
-import jade.lang.acl.MessageTemplate;
+import utils.GeneralData;
 	
 @SuppressWarnings("serial")
 public class CalculatePrices extends OneShotBehaviour {
@@ -29,8 +19,10 @@ public class CalculatePrices extends OneShotBehaviour {
 	 * This class takes in input the prices for the next hour and calculate 
 	 * the prices for the hours after the next one estimating them
 	 */
-	private ACLMessage msg;
 	
+	private ACLMessage msg;
+	int timeSlot = new GeneralData().getTimeSlot();
+
 	public CalculatePrices(ACLMessage msg){
 		this.msg = msg;
 	}
@@ -43,35 +35,52 @@ public class CalculatePrices extends OneShotBehaviour {
 		 */
 		ArrayList<TimePowerPrice> list = new ArrayList<TimePowerPrice>();
 	    Calendar cal = Calendar.getInstance(); // creates calendar
-		DateFormat format = new SimpleDateFormat("yyyy/MM/dd HH:mm");
+		DateFormat format = new GeneralData().getFormat();
+		
+    	//08/12/1992 15:00, 150, 0.35
+    	
+		String[] msgs = msg.getContent().split(",");
 		try {
-	    	//08/12/1992 15:00, 150, 0.35
-	    	TimePowerPrice element = new TimePowerPrice();
-			String[] msgs = msg.getContent().split(",");
 			cal.setTime(format.parse(msgs[0]));
-			element.setTime(cal);
-			element.setMaxEnergy(Double.parseDouble(msgs[1]));
-			element.setEnergyPrice(Double.parseDouble(msgs[2]));
-			list.add(element);
-			
-			for(int i = cal.get(Calendar.HOUR_OF_DAY); i<24; i++){
-				cal.add(Calendar.HOUR_OF_DAY, 1);
-				Random rn = new Random();
-				/**
-				 * Here there should be the forecast!!!
-				 */
-				//the new cost can be from 50% to 150% of the last cost
-				DecimalFormat df = new DecimalFormat("#.##");
-				df.setRoundingMode(RoundingMode.CEILING);
-				double energyPrice = element.getEnergyPrice()*(rn.nextInt(10)+5)/10; 
-				TimePowerPrice e = new TimePowerPrice(cal, element.getMaxEnergy(), energyPrice);
-				list.add(e);
-			}
-
-			new BaseAgent().sendMessageToAgentsByServiceType(this.myAgent, "ControlAgent", "input", list);
-			
-	    } catch (ParseException e1) {
+		} catch (ParseException e1) {
 			e1.printStackTrace();
-	    }
+		}
+		TimePowerPrice element = new TimePowerPrice(cal.getTime(), Double.parseDouble(msgs[1].trim()),
+				Double.parseDouble(msgs[2].trim()));
+		list.add(element);
+		
+		int start = cal.get(Calendar.HOUR_OF_DAY)*3600+cal.get(Calendar.MINUTE)*60;
+		
+		for(int i = start+timeSlot; 3600*24 > i ; i+=timeSlot){
+			cal.add(Calendar.SECOND, timeSlot);
+			Random rn = new Random();
+			/**
+			 * TO-DO Here there should be the forecast!!!
+			 */
+			//the new costs can be from 20% to 250% of the last cost
+			double energyPrice = element.getEnergyPrice()*(rn.nextInt(23)+2)/10; 
+			TimePowerPrice e = new TimePowerPrice(cal.getTime(), element.getMaxEnergy(), round(energyPrice, 2));
+			list.add(e);
+		}
+
+		//print list
+		for(int i=0; i<list.size(); i++)
+		{
+			System.out.println(list.get(i).getDateTime()+" "+list.get(i).getEnergyPrice()+" "
+					+ list.get(i).getMaxEnergy());
+		}
+		//end print list
+		
+		new BaseAgent().sendMessageToAgentsByServiceType(this.myAgent, "ControlAgent", "input", list);
+			
+	}
+	
+	private static double round(double value, int places) {
+	    if (places < 0) throw new IllegalArgumentException();
+
+	    long factor = (long) Math.pow(10, places);
+	    value = value * factor;
+	    long tmp = Math.round(value);
+	    return (double) tmp / factor;
 	}
 }

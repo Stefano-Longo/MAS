@@ -17,7 +17,10 @@ public class DisaggregateDerBehaviour extends OneShotBehaviour{
 	
 	@Override
 	public void action() {
-		// TODO Auto-generated method stub
+		/**
+		 * I ask first the maximum from solar, wind and hydro. Then I ask to generator if needed
+		 */
+		
 		
 	}
 

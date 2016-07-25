@@ -89,10 +89,12 @@ public class DisaggregateLoadBehaviour extends OneShotBehaviour{
 			{
 				loadPowerRequested = loadsChoice.get(i).getLowerLimit();
 			} 
-			ResultPowerPrice loadAction = new ResultPowerPrice(msgData.getDatetime(), loadPowerRequested, msgData.getCostKwh());
+			ResultPowerPrice loadAction = new ResultPowerPrice(msgData.getDatetime(), 
+					loadPowerRequested, msgData.getCostKwh());
 
+			LoadInfo loadInfo = new DbLoadInfo().getLoadInfoByIdLoad(loadsChoice.get(i).getIdentificator(), msgData.getDatetime());
 			new BaseAgent().sendMessageToAgentsByServiceType(this.myAgent, 
-					"LoadAgent-"+loadsChoice.get(i).getIdentificator(), "response", loadAction);
+					loadInfo.getIdAgent(), "response", loadAction);
 		}
 	}
 
@@ -115,10 +117,12 @@ public class DisaggregateLoadBehaviour extends OneShotBehaviour{
 			{
 				loadPowerRequested = loadsChoice.get(i).getLowerLimit();
 			} 
-			ResultPowerPrice loadAction = new ResultPowerPrice(msgData.getDatetime(), loadPowerRequested, msgData.getCostKwh());
+			ResultPowerPrice loadAction = new ResultPowerPrice(msgData.getDatetime(), 
+					loadPowerRequested, msgData.getCostKwh());
 
+			LoadInfo loadInfo = new DbLoadInfo().getLoadInfoByIdLoad(loadsChoice.get(i).getIdentificator(), msgData.getDatetime());
 			new BaseAgent().sendMessageToAgentsByServiceType(this.myAgent, 
-					"LoadAgent-"+loadsChoice.get(i).getIdentificator(), "response", loadAction);
+					loadInfo.getIdAgent(), "response", loadAction);
 		}
 	}
 	
@@ -128,8 +132,9 @@ public class DisaggregateLoadBehaviour extends OneShotBehaviour{
 		{
 			ResultPowerPrice loadAction = new ResultPowerPrice(msgData.getDatetime(), 0, msgData.getCostKwh());
 
+			LoadInfo loadInfo = new DbLoadInfo().getLoadInfoByIdLoad(loadsChoice.get(i).getIdentificator(), msgData.getDatetime());
 			new BaseAgent().sendMessageToAgentsByServiceType(this.myAgent, 
-					"LoadAgent-"+loadsChoice.get(i).getIdentificator(), "response", loadAction);
+					loadInfo.getIdAgent(), "response", loadAction);
 		}
 	}
 	

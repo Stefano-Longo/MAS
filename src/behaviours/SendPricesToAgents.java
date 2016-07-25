@@ -52,12 +52,10 @@ public class SendPricesToAgents extends OneShotBehaviour {
 		
 		if(agents.length == 0)
 		{
-			Calendar cal = Calendar.getInstance();
-			
-			AggregatorFlexibilityData result = new AggregatorFlexibilityData(this.myAgent.getName(), 0, 
-					msgData.get(0).getTime(), 0, 0, 0, 0);
+			/*AggregatorFlexibilityData result = new AggregatorFlexibilityData(this.myAgent.getName(), 0, 
+					msgData.get(0).getDateTime(), 0, 0, 0, 0);
 			new BaseAgent().sendMessageToAgentsByServiceType(this.myAgent, "ControlAgent",
-					"proposal", result);
+					"proposal", result);*/
 		}
 		else
 		{

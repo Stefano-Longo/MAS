@@ -2,15 +2,15 @@ package behaviours;
 
 import agents.BaseAgent;
 import basicData.AggregatorFlexibilityData;
-import basicData.DerData;
+import basicData.DerInfo;
 import basicData.FlexibilityData;
-import basicData.LoadInfo;
-import database.DbAggregatorLoad;
-import database.DbLoadInfo;
+import database.DbAggregatorDer;
+import database.DbDerInfo;
 import jade.core.behaviours.OneShotBehaviour;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.UnreadableException;
 
+@SuppressWarnings("serial")
 public class AggregateDerBehaviour extends OneShotBehaviour {
 
 	ACLMessage msg;
@@ -28,13 +28,13 @@ public class AggregateDerBehaviour extends OneShotBehaviour {
 	@Override
 	public void action() 
 	{
-		DerData derData = new DbDerInfo().getDerDataByIdAgent(msg.getSender().getName());
+		DerInfo derInfo = new DbDerInfo().getDerInfoByIdAgent(msg.getSender().getName());
 		AggregatorFlexibilityData data = new AggregatorFlexibilityData(this.myAgent.getName(), 
-				derInfo.getIdLoad(), msgData);
-		new DbAggregatorLoad().addFlexibilityLoadMessage(data);
+				derInfo.getIdDer(), msgData);
+		new DbAggregatorDer().addFlexibilityDerMessage(data);
 		
-		int messagesReceived = new DbAggregatorLoad().countMessagesReceived(this.myAgent.getName());
-		int loadAgents = new BaseAgent().getAgentsbyServiceType(this.myAgent, "LoadAgent").length;
+		int messagesReceived = new DbAggregatorDer().countMessagesReceived(this.myAgent.getName());
+		int loadAgents = new BaseAgent().getAgentsbyServiceType(this.myAgent, "DerAgent").length;
 		
 		if (messagesReceived == loadAgents)
 		{
@@ -43,7 +43,7 @@ public class AggregateDerBehaviour extends OneShotBehaviour {
 			 * send the message to ControlAgent
 			 */
 			
-			FlexibilityData result = new DbAggregatorLoad().
+			FlexibilityData result = new DbAggregatorDer().
 					aggregateMessageReceived(this.myAgent.getName());
 
 			new BaseAgent().sendMessageToAgentsByServiceType(this.myAgent, "ControlAgent",

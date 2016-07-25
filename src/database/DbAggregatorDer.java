@@ -3,7 +3,6 @@ package database;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 
@@ -11,13 +10,14 @@ import basicData.AggregatorFlexibilityData;
 import basicData.FlexibilityData;
 import utils.GeneralData;
 
-public class DbAggregatorLoad extends DbConnection {
+
+public class DbAggregatorDer extends DbConnection {
 
 	DateFormat format = new GeneralData().getFormat();
 	
-	public Boolean addFlexibilityLoadMessage (AggregatorFlexibilityData data)
+	public Boolean addFlexibilityDerMessage (AggregatorFlexibilityData data)
 	{
-		String query = "INSERT INTO LoadAggregatorData (IdAggregatorAgent, IdLoad,"
+		String query = "INSERT INTO DerAggregatorData (IdAggregatorAgent, IdDer,"
 				+ " DateTime, LowerLimit, UpperLimit, CostKwh, DesideredChoice)"
 				+ " VALUES ('"+data.getIdAgent()+"',"+data.getIdentificator()+",'"
 				+ format.format(data.getDatetime().getTime())+"',"+data.getLowerLimit()+","+data.getUpperLimit()+","
@@ -35,7 +35,7 @@ public class DbAggregatorLoad extends DbConnection {
 		FlexibilityData data = null;
 		String query = "SELECT DateTime, SUM(LowerLimit) as LowerLimit, SUM(UpperLimit) as UpperLimit,"
 				+ " AVG(CostKwh) as CostKwh, SUM(DesideredChoice) as DesideredChoice"
-				+ " FROM LoadAggregatorData"
+				+ " FROM DerAggregatorData"
 				+ " WHERE IdAggregatorAgent = '"+idAggregatorAgent+"'"
 				+ " AND Datetime in (SELECT Max(Datetime)" 
 									+"FROM LoadAggregatorData)"

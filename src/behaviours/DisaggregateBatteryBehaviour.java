@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import agents.BaseAgent;
 import basicData.AggregatorFlexibilityData;
 import basicData.BatteryInfo;
-import basicData.FlexibilityData;
 import basicData.ResultPowerPrice;
 import database.DbAggregatorBattery;
 import database.DbBatteryInfo;
@@ -94,9 +93,10 @@ public class DisaggregateBatteryBehaviour extends OneShotBehaviour {
 				totalPowerRequested = 0;
 			} 
 			ResultPowerPrice batteryAction = new ResultPowerPrice(msgData.getDatetime(), batteryPowerRequested, msgData.getCostKwh());
-
+			
+			BatteryInfo batteryInfo = new DbBatteryInfo().getBatteryByIdBattery(batteriesChoice.get(i).getIdentificator());
 			new BaseAgent().sendMessageToAgentsByServiceType(this.myAgent, 
-					"BatteryAgent-"+batteriesChoice.get(i).getIdentificator(), "response", batteryAction);
+					batteryInfo.getIdAgent(), "response", batteryAction);
 		}
 	}
 
@@ -171,8 +171,9 @@ public class DisaggregateBatteryBehaviour extends OneShotBehaviour {
 			
 			ResultPowerPrice batteryAction = new ResultPowerPrice(msgData.getDatetime(), batteryPowerGiven, msgData.getCostKwh());
 
+			BatteryInfo batteryInfo = new DbBatteryInfo().getBatteryByIdBattery(batteriesChoice.get(i).getIdentificator());
 			new BaseAgent().sendMessageToAgentsByServiceType(this.myAgent, 
-					"BatteryAgent-"+batteriesChoice.get(i).getIdentificator(), "response", batteryAction);
+					batteryInfo.getIdAgent(), "response", batteryAction);
 		}
 	}
 	
@@ -185,8 +186,9 @@ public class DisaggregateBatteryBehaviour extends OneShotBehaviour {
 		{
 			ResultPowerPrice batteryAction = new ResultPowerPrice(msgData.getDatetime(), 0, msgData.getCostKwh());
 
+			BatteryInfo batteryInfo = new DbBatteryInfo().getBatteryByIdBattery(batteriesChoice.get(i).getIdentificator());
 			new BaseAgent().sendMessageToAgentsByServiceType(this.myAgent, 
-					"BatteryAgent-"+batteriesChoice.get(i).getIdentificator(), "response", batteryAction);
+					batteryInfo.getIdAgent(), "response", batteryAction);
 		}
 	}
 }

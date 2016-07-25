@@ -10,7 +10,7 @@ import utils.GeneralData;
 
 public class DbBatteryData extends DbConnection	{
 
-	DateFormat format = new GeneralData().format;
+	DateFormat format = new GeneralData().getFormat();
 
 	public Boolean addBatteryData(BatteryData battery)
 	{
@@ -51,7 +51,7 @@ public class DbBatteryData extends DbConnection	{
 		BatteryData data = null;
 		String query = "SELECT TOP 1 *"
 				+ " FROM BatteryDataHistory"
-				+ " WHERE RTRIM(IdBattery) = "+idBattery
+				+ " WHERE IdBattery = "+idBattery
 				+ " ORDER BY DateTime DESC";
 		System.out.println(query);
 		try {

@@ -1,12 +1,9 @@
 package behaviours;
 
-import java.io.IOException;
-
 import agents.BaseAgent;
 import basicData.AggregatorFlexibilityData;
 import basicData.FlexibilityData;
 import basicData.LoadInfo;
-import database.DbAggregatorBattery;
 import database.DbAggregatorLoad;
 import database.DbLoadInfo;
 import jade.core.behaviours.OneShotBehaviour;
@@ -31,7 +28,7 @@ public class AggregateLoadBehaviour extends OneShotBehaviour {
 	@Override
 	public void action() 
 	{
-		LoadInfo loadInfo = new DbLoadInfo().getLoadInfoByIdAgent(msg.getSender().getName());
+		LoadInfo loadInfo = new DbLoadInfo().getLoadInfoByIdAgent(msg.getSender().getName(), msgData.getDatetime());
 		AggregatorFlexibilityData data = new AggregatorFlexibilityData(this.myAgent.getName(), 
 				loadInfo.getIdLoad(), msgData);
 		new DbAggregatorLoad().addFlexibilityLoadMessage(data);

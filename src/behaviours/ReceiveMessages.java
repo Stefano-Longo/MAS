@@ -21,8 +21,6 @@ public class ReceiveMessages extends TickerBehaviour {
 			MessageTemplate template = MessageTemplate.MatchPerformative(ACLMessage.INFORM);
 			ACLMessage msg = this.myAgent.receive(template); 
 			if (msg!=null){
-				System.out.println("entrato? ConvID: "+msg.getConversationId()+"  "+this.myAgent.getName());
-	
 				if(this.myAgent instanceof GridAgent)
 				{
 					if(msg.getConversationId().equals("input"))

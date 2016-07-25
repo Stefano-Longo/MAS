@@ -1,14 +1,8 @@
 package behaviours;
 
 
-import java.io.IOException;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.concurrent.ThreadLocalRandom;
-
-import javax.swing.plaf.basic.BasicInternalFrameTitlePane.MaximizeAction;
 
 import agents.BaseAgent;
 import basicData.BatteryData;
@@ -25,14 +19,12 @@ import utils.GeneralData;
 @SuppressWarnings("serial")
 public class BatteryFlexibilityBehaviour extends OneShotBehaviour {
 
-	private int timeSlot = new GeneralData().timeSlot; 
-	private ACLMessage msg;
+	private int timeSlot = new GeneralData().getTimeSlot(); 
 	ArrayList<TimePowerPrice> msgData = null; 
 
 	@SuppressWarnings("unchecked")
 	public BatteryFlexibilityBehaviour(ACLMessage msg) {
 		try {
-			this.msg = msg;
 			this.msgData = (ArrayList<TimePowerPrice>)msg.getContentObject();
 		} catch (UnreadableException e) {
 			e.printStackTrace();
@@ -53,7 +45,6 @@ public class BatteryFlexibilityBehaviour extends OneShotBehaviour {
 		 * learning from the past. How?
 		 * 
 		 */
-		System.out.println(this.myAgent.getName());
 		BatteryInfo batteryInfo = new DbBatteryInfo().getBatteryByIdAgent(this.myAgent.getName());
 		BatteryData batteryData = new DbBatteryData().getLastBatteryData(batteryInfo.getIdBattery());
 		
@@ -73,24 +64,13 @@ public class BatteryFlexibilityBehaviour extends OneShotBehaviour {
 				batteryInfo.getBatteryOutputMax(), newSocObjective);
 		double desideredChoice = socObjectiveDesideredChoice;
 		
+		Calendar cal = Calendar.getInstance();
+		cal.setTime(msgData.get(0).getDateTime());
 		
-		/**
-		 * PRIORITIES!! Think about it!
-		 * 
-		 * How to calculate desideredChoice :
-		 *  - Reaching the SocObjective (33% of final value) ONLY THIS
-		 *  - Be ready for the next requests -> if the requests for the next periods usually (the majority)
-		 *  	are of request of power from batteries, then I need to charge now (33% of final value)
-		 *  - Depending on the prices of electricity and the price of flexibility. If it's much more convenient
-		 *  	to sell now than another time during the day, so sell (33% of final value)
-		 *  DesideredChoice: medium of these 3 values!!
-		 *  
-		 */
-		
-		FlexibilityData result = new FlexibilityData(msgData.get(0).getTime(), maxInput,
+		FlexibilityData result = new FlexibilityData(cal, maxInput,
     			maxOutput, batteryData.getCostKwh(), desideredChoice);
 		
-		BatteryData data = new BatteryData(batteryInfo.getIdBattery(), msgData.get(0).getTime(), 
+		BatteryData data = new BatteryData(batteryInfo.getIdBattery(), cal, 
 				batteryData.getSocObjective(), batteryData.getSoc(), batteryData.getCostKwh(), 
 				maxInput, maxOutput, 0, desideredChoice);
 		

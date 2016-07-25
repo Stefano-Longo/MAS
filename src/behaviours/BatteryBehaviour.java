@@ -1,7 +1,5 @@
 package behaviours;
 
-import java.util.Calendar;
-
 import basicData.BatteryData;
 import basicData.BatteryInfo;
 import basicData.ResultPowerPrice;
@@ -21,7 +19,7 @@ public class BatteryBehaviour  extends OneShotBehaviour {
 
 	ACLMessage msg;
 	ResultPowerPrice msgData;
-	private int timeSlot = new GeneralData().timeSlot;
+	private int timeSlot = new GeneralData().getTimeSlot();
 	
 	public BatteryBehaviour(ACLMessage msg) {
 		this.msg = msg;
