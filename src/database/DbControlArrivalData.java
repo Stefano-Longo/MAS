@@ -17,9 +17,10 @@ public class DbControlArrivalData extends DbConnection {
 	public Boolean addControlArrivalData (ControlFlexibilityData data)
 	{
 		String query = "INSERT INTO ControlArrivalData (IdControlAgent, DateTime,"
-				+ " LowerLimit, UpperLimit, CostKwh, DesideredChoice)"
+				+ " LowerLimit, UpperLimit, CostKwh, DesideredChoice, Type)"
 				+ " VALUES ('"+data.getIdAgent()+"','"+format.format(data.getDatetime().getTime())+"',"
-				+data.getLowerLimit()+","+ data.getUpperLimit()+","+data.getCostKwh()+","+data.getDesideredChoice()+")";
+				+data.getLowerLimit()+","+ data.getUpperLimit()+","+data.getCostKwh()+","
+				+data.getDesideredChoice()+",'"+data.getType()+"')";
 		System.out.println(query);
 		try {
 			return stmt.execute(query);
@@ -29,24 +30,26 @@ public class DbControlArrivalData extends DbConnection {
 		return null;
 	}
 	
-	public ControlFlexibilityData getControlArrivalDatabyType (String idControlAgent, String type)
+	public ControlFlexibilityData getLastControlArrivalData (String idControlAgent)
 	{
-		String query = "SELECT *"
+		String query = "SELECT SUM(LowerLimit) as LowerLimit, SUM(UpperLimit) as UpperLimit, AVG(CostKwh) as CostKwh,"
+				+ " SUM(DesideredChoice) as DesideredChoice, DateTime"
 				+ " FROM ControlArrivalData"
 				+ " WHERE IdControlAgent = '"+idControlAgent+"'"
-				+ " AND Type = '"+type+"'"
-				+ " AND AnalysisDateTime in (SELECT MAX(AnalysisDateTime)"
-											+" FROM ControlArrivalData";
+				+ " AND DateTime in (SELECT MAX(DateTime)"
+											+" FROM ControlArrivalData)"
+				+ " GROUP BY DateTime";
 		System.out.println(query);
 		try {
 			ResultSet rs = stmt.executeQuery(query);
 			while(rs.next())
 			{
 				Calendar cal = Calendar.getInstance();
-				cal.setTime(rs.getDate("DateTime"));
+				cal.setTime(rs.getTimestamp("DateTime"));
 				ControlFlexibilityData data =  new ControlFlexibilityData(
-						rs.getString("IdControlAgent"), cal, rs.getDouble("LowerLimit"), 
-						rs.getDouble("UpperLimit"), rs.getDouble("CostKwh"), rs.getDouble("DesideredChoice"));
+						idControlAgent, cal, rs.getDouble("LowerLimit"), 
+						rs.getDouble("UpperLimit"), rs.getDouble("CostKwh"), 
+						rs.getDouble("DesideredChoice"), rs.getString("Type"));
 				return data;
 			}
 		} catch (SQLException e) {

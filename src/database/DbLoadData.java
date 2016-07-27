@@ -14,14 +14,14 @@ public class DbLoadData extends DbConnection {
 	
 	public Boolean addLoadData(LoadData load)
 	{
-		String query = "INSERT INTO LoadDataHistory (IdLoad, DateTime, CriticalConsumption, NonCriticalConsumption,"
-				+ " CostKwh, ConsumptionMin, ConsumptionMax, PowerRequested, DesideredChoice, ConsumptionShifted,"
+		String query = "INSERT INTO LoadDataHistory (IdLoad, DateTime, CostKwh, CriticalConsumption, NonCriticalConsumption,"
+				+ " ConsumptionMin, ConsumptionMax, PowerRequested, DesideredChoice, ConsumptionShifted,"
 				+ " ToDateTime, Confirmed)"
-				+ " VALUES ('"+load.getIdLoad()+"','"+format.format(load.getDatetime().getTime())+"',"
-						+load.getCriticalConsumption()+","+load.getNonCriticalConsumption()+","
-						+load.getCostKwh()+","+load.getConsumptionMin()+","+load.getConsumptionMax()+","
-						+load.getPowerRequested()+","+load.getDesideredChoice()+","+load.getConsumptionShifted()+","
-						+format.format(load.getToDatetime().getTime())+", false)";
+				+ " VALUES ("+load.getIdLoad()+",'"+format.format(load.getDatetime().getTime())+"',"
+						+load.getCostKwh()+","+load.getCriticalConsumption()+","
+						+load.getNonCriticalConsumption()+","+load.getConsumptionMin()+","+load.getConsumptionMax()+","
+						+load.getPowerRequested()+","+load.getDesideredChoice()+","+load.getConsumptionShifted()+",'"
+						+format.format(load.getToDatetime().getTime())+"', 'false')";
 		System.out.println(query);
 		try {
 			return stmt.execute(query);
@@ -62,10 +62,10 @@ public class DbLoadData extends DbConnection {
 			while(rs.next())
 			{
 				Calendar cal = Calendar.getInstance();
-				cal.setTime(rs.getDate("DateTime"));
+				cal.setTime(rs.getTimestamp("DateTime"));
 
 				Calendar cal1 = Calendar.getInstance();
-				cal1.setTime(rs.getDate("ToDateTime"));
+				cal1.setTime(rs.getTimestamp("ToDateTime"));
 				data = new LoadData(rs.getInt("IdBattery"), cal, rs.getDouble("CostKwh"), 
 						rs.getDouble("CriticalDataConsumption"), rs.getDouble("NonCriticalDataConsumption"), 
 						rs.getDouble("ConsumptionMin"), rs.getDouble("ConsumptionMax"), 

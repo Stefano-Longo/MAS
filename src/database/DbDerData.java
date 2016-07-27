@@ -5,6 +5,7 @@ import java.sql.SQLException;
 import java.text.DateFormat;
 import java.util.Calendar;
 
+import basicData.BatteryData;
 import basicData.DerData;
 import utils.GeneralData;
 
@@ -18,7 +19,7 @@ public class DbDerData extends DbConnection {
 				+ " ProductionMax, ProductionRequested, DesideredChoice, Confirmed)"
 				+ " VALUES ('"+der.getIdDer()+"','"+format.format(der.getDatetime().getTime())+"',"
 						+der.getCostKwh()+","+der.getProductionMin()+","+der.getProductionMax()+","
-						+der.getProductionRequested()+","+der.getDesideredChoice()+", false)";
+						+der.getProductionRequested()+","+der.getDesideredChoice()+", 'false')";
 		System.out.println(query);
 		try {
 			return stmt.execute(query);
@@ -41,12 +42,11 @@ public class DbDerData extends DbConnection {
 		DerData data = null;
 		String query = "SELECT Avg(CostKwh) as CostKwh, Avg(ProductionMin) as ProdMin,"
 				+ " Avg(ProductionMax) as ProdMax, Avg(ProductionRequested) as ProdReq,"
-				+ " Avg(DesideredChoice) as DesChoice, Avg(Usage) as Usage"
+				+ " Avg(DesideredChoice) as DesChoice"
 				+ " FROM DerDataHistory"
 				+ " WHERE IdDer = "+idDer
-				+ " AND DATEPART(mm, Datetime) = "+datetime.get(Calendar.HOUR_OF_DAY)
-				+ " AND DATEPART(hh, Datetime) = "+datetime.get(Calendar.MINUTE)
-				+ " ORDER BY DateTime DESC";
+				+ " AND DATEPART(HOUR, Datetime) = "+datetime.get(Calendar.HOUR_OF_DAY)
+				+ " AND DATEPART(MINUTE, Datetime) = "+datetime.get(Calendar.MINUTE);
 		System.out.println(query);
 		try {
 			ResultSet rs = stmt.executeQuery(query);
@@ -74,7 +74,7 @@ public class DbDerData extends DbConnection {
 			while(rs.next())
 			{
 				Calendar cal = Calendar.getInstance();
-				cal.setTime(rs.getDate("DateTime"));
+				cal.setTime(rs.getTimestamp("DateTime"));
 	
 				data = new DerData(idDer, cal, rs.getDouble("CostKwh"), rs.getDouble("ProdMin"),
 					rs.getDouble("ProdMax"), rs.getDouble("ProdReq"), rs.getDouble("DesChoice"));
@@ -83,6 +83,22 @@ public class DbDerData extends DbConnection {
 			e.printStackTrace();
 		}
 		return data;
+	}
+	
+	public Boolean updateDerData(DerData der)
+	{
+		String query = "UPDATE DerDataHistory"
+				+ " SET ProductionRequested="+der.getProductionRequested()+","
+					+ " Confirmed=true"
+				+ " WHERE IdDer = '"+der.getIdDer()
+				+ " AND DateTime = '"+format.format(der.getDatetime().getTime())+"'";
+		System.out.println(query);
+		try {
+			return stmt.execute(query);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return false;
 	}
 
 }

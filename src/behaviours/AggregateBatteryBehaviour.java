@@ -43,6 +43,8 @@ public class AggregateBatteryBehaviour extends OneShotBehaviour {
 		
 		int messagesReceived = new DbAggregatorBattery().countMessagesReceived(this.myAgent.getName());
 		int batteryAgents = new BaseAgent().getAgentsbyServiceType(this.myAgent, "BatteryAgent").length;
+		
+		System.out.println("messagesReceived: "+messagesReceived+", batteryAgents: "+batteryAgents);
 		if (messagesReceived == batteryAgents)
 		{
 			/**

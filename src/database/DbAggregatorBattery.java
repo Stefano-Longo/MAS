@@ -61,11 +61,11 @@ public class DbAggregatorBattery extends DbConnection {
 			while(rs.next())
 			{	
 				Calendar cal2 = Calendar.getInstance();
-				cal2.setTime(rs.getDate("DateTime"));
+				cal2.setTime(rs.getTimestamp("DateTime"));
 
 				data = new FlexibilityData(cal2, rs.getDouble("LowerLimit"), 
 						rs.getDouble("UpperLimit"), rs.getDouble("CostKwh"), 
-						rs.getDouble("DesideredChoice"));
+						rs.getDouble("DesideredChoice"), "battery");
 				return data;
 			}
 		} catch (SQLException e) {
@@ -118,12 +118,12 @@ public class DbAggregatorBattery extends DbConnection {
 			while(rs.next())
 			{
 				Calendar cal = Calendar.getInstance();
-				cal.setTime(rs.getDate("DateTime"));
+				cal.setTime(rs.getTimestamp("DateTime"));
 				
 				AggregatorFlexibilityData data = new AggregatorFlexibilityData(
 						rs.getString("IdAggregatorAgent"),rs.getInt("IdBattery"),cal,
 						rs.getDouble("LowerLimit"), rs.getDouble("UpperLimit"), 
-						rs.getDouble("CostKwh"), rs.getDouble("DesideredChoice"));
+						rs.getDouble("CostKwh"), rs.getDouble("DesideredChoice"), "battery");
 				list.add(data);
 			}
 		} catch (SQLException e) {
@@ -155,12 +155,12 @@ public class DbAggregatorBattery extends DbConnection {
 			while(rs.next())
 			{
 				Calendar cal = Calendar.getInstance();
-				cal.setTime(rs.getDate("DateTime"));
+				cal.setTime(rs.getTimestamp("DateTime"));
 				
 				AggregatorFlexibilityData data = new AggregatorFlexibilityData(
 						rs.getString("IdAggregatorAgent"),rs.getInt("IdBattery"),cal,
 						rs.getDouble("LowerLimit"), rs.getDouble("UpperLimit"), 
-						rs.getDouble("CostKwh"), rs.getDouble("DesideredChoice"));
+						rs.getDouble("CostKwh"), rs.getDouble("DesideredChoice"), "battery");
 				list.add(data);
 			}
 		} catch (SQLException e) {

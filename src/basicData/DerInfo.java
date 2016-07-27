@@ -1,7 +1,5 @@
 package basicData;
 
-import java.util.Calendar;
-
 public class DerInfo {
 
 	private int idDer;

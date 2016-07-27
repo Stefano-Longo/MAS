@@ -51,7 +51,8 @@ public class DerFlexibilityBehaviour extends OneShotBehaviour {
 			
 		double costKwh = getCostKwh(derInfo);
 		
-		FlexibilityData result = new FlexibilityData(cal, lowerLimit, upperLimit, costKwh, desideredChoice);
+		FlexibilityData result = new FlexibilityData(cal, lowerLimit, upperLimit, costKwh, 
+				desideredChoice, "der");
 
 
 		DerData derData = new DerData(derInfo.getIdDer(), cal, costKwh, 
@@ -69,19 +70,21 @@ public class DerFlexibilityBehaviour extends OneShotBehaviour {
 	
 	private double getUpperLimit(DerInfo derInfo)
 	{
-		if(derInfo.getType() == "generator")
+		if(derInfo.getType().contains("generator"))
 		{
+			System.out.println("\n\ngenerator \n derInfo.getProductionMax(): "+derInfo.getProductionMax());
+			System.out.println("derInfo.getUsageMax(): "+derInfo.getUsageMax()+"\n\n");
 			return derInfo.getProductionMax()*derInfo.getUsageMax()/100;
 		}
-		else if(derInfo.getType() == "photovoltaic")
+		else if(derInfo.getType().contains("photovoltaic"))
 		{
 			return calculatePvMaxProductionTime(derInfo.getProductionMax()); 
 		}
-		else if(derInfo.getType() == "hydro") //To-Do use hydro as a controllable der
+		else if(derInfo.getType().contains("hydro")) //To-Do use hydro as a controllable der
 		{
 			return derInfo.getProductionMax()*derInfo.getUsageMax()/100;
 		}
-		else if(derInfo.getType() == "wind")
+		else if(derInfo.getType().contains("wind"))
 		{
 			return derInfo.getProductionMax()*derInfo.getUsageMax()/100;
 		}

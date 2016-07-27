@@ -34,9 +34,10 @@ public class AggregateDerBehaviour extends OneShotBehaviour {
 		new DbAggregatorDer().addFlexibilityDerMessage(data);
 		
 		int messagesReceived = new DbAggregatorDer().countMessagesReceived(this.myAgent.getName());
-		int loadAgents = new BaseAgent().getAgentsbyServiceType(this.myAgent, "DerAgent").length;
+		int derAgents = new BaseAgent().getAgentsbyServiceType(this.myAgent, "DerAgent").length;
 		
-		if (messagesReceived == loadAgents)
+		System.out.println("DER messagesReceived: "+messagesReceived+" derAgents: "+derAgents);
+		if (messagesReceived == derAgents)
 		{
 			/**
 			 * I have all the messages that I was waiting for so now I can

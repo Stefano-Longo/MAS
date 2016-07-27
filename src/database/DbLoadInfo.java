@@ -28,15 +28,13 @@ public class DbLoadInfo extends DbConnection {
 			while(rs.next())
 			{
 				Calendar cal1 = Calendar.getInstance();
-				cal1.setTime(rs.getDate("DateTime"));
-
+				cal1.setTime(rs.getTimestamp("DateTime"));
 				LoadInfoPrice data = new LoadInfoPrice(rs.getInt("IdLoad"), rs.getString("IdAgent"), rs.getString("IdPlatform"),
 						cal1, rs.getDouble("CriticalConsumption"), rs.getDouble("NonCriticalConsumption"), 
 						rs.getDouble("ConsumptionAdded"));
 				
 				Calendar cal2 = Calendar.getInstance();
-				cal2.setTime(rs.getDate("toDateTime"));
-				
+				cal2.setTime(rs.getTimestamp("ToDateTime"));
 				data.setToDatetime(cal2);
 				list.add(data);
 			}
@@ -51,7 +49,7 @@ public class DbLoadInfo extends DbConnection {
 		LoadInfo data = null;
 		String query = "SELECT *"
 					+ " FROM Load"
-					+ " WHERE RTRIM(IdAgent) = "+idAgent
+					+ " WHERE RTRIM(IdAgent) = '"+idAgent+"'"
 					+ " AND DateTime = '"+format.format(datetime.getTime())+"'";
 		System.out.println(query);
 		try {
@@ -61,9 +59,6 @@ public class DbLoadInfo extends DbConnection {
 				data = new LoadInfo(rs.getInt("IdLoad"), rs.getString("IdAgent"), rs.getString("IdPlatform"),
 						datetime, rs.getDouble("CriticalConsumption"), rs.getDouble("NonCriticalConsumption"), 
 						rs.getDouble("ConsumptionAdded"));
-				
-				Calendar cal2 = Calendar.getInstance();
-				cal2.setTime(rs.getDate("toDateTime"));
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -88,7 +83,7 @@ public class DbLoadInfo extends DbConnection {
 						rs.getDouble("ConsumptionAdded"));
 				
 				Calendar cal2 = Calendar.getInstance();
-				cal2.setTime(rs.getDate("toDateTime"));
+				cal2.setTime(rs.getTimestamp("toDateTime"));
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -96,12 +91,12 @@ public class DbLoadInfo extends DbConnection {
 		return data;
 	}
 	
-	public Boolean updateLoadInfo(int idLoad, Calendar toDateTime, double consumptionAdded)
+	public Boolean updateLoadInfo(LoadInfo loadInfo)
 	{
 		String query = "UPDATE Load"
-				+ " SET  ConsumptionAdded="+consumptionAdded
-				+ " WHERE Id = '"+idLoad+"'"
-				+ " AND ToDateTime = '"+format.format(toDateTime.getTime())+"'";
+				+ " SET  ConsumptionAdded="+loadInfo.getConsumptionAdded()
+				+ " WHERE IdLoad = '"+loadInfo.getIdLoad()+"'"
+				+ " AND DateTime = '"+format.format(loadInfo.getDatetime().getTime())+"'";
 		System.out.println(query);
 		try {
 			return stmt.execute(query);

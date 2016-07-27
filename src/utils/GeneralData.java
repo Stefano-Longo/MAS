@@ -5,7 +5,7 @@ import java.text.SimpleDateFormat;
 
 public class GeneralData {
 
-	private int timeSlot = 900; //seconds 
+	private int timeSlot = 3600; //seconds 
 	private DateFormat format = new SimpleDateFormat("yyyy/MM/dd HH:mm");
 	private double dieselKwhPrice = 1; //expressed in €
 	private double priceKwhSold = 0.15; //expressed in €
@@ -42,4 +42,12 @@ public class GeneralData {
 		this.priceKwhSold = priceKwhSold;
 	}
 	
+	public double round(double value, int places) {
+	    if (places < 0) throw new IllegalArgumentException();
+
+	    long factor = (long) Math.pow(10, places);
+	    value = value * factor;
+	    long tmp = Math.round(value);
+	    return (double) tmp / factor;
+	}
 }

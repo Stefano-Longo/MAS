@@ -8,6 +8,7 @@ import java.util.Random;
 
 import agents.BaseAgent;
 import basicData.TimePowerPrice;
+import database.DbGridData;
 import jade.core.behaviours.OneShotBehaviour;
 import jade.lang.acl.ACLMessage;
 import utils.GeneralData;
@@ -33,7 +34,7 @@ public class CalculatePrices extends OneShotBehaviour {
 		 * Elaborate and calculate the prices for all the hours of the day and put it in a list
 		 * Then add the list to the message's content
 		 */
-		ArrayList<TimePowerPrice> list = new ArrayList<TimePowerPrice>();
+		ArrayList<TimePowerPrice> priceData = new ArrayList<TimePowerPrice>();
 	    Calendar cal = Calendar.getInstance(); // creates calendar
 		DateFormat format = new GeneralData().getFormat();
 		
@@ -47,7 +48,7 @@ public class CalculatePrices extends OneShotBehaviour {
 		}
 		TimePowerPrice element = new TimePowerPrice(cal.getTime(), Double.parseDouble(msgs[1].trim()),
 				Double.parseDouble(msgs[2].trim()));
-		list.add(element);
+		priceData.add(element);
 		
 		int start = cal.get(Calendar.HOUR_OF_DAY)*3600+cal.get(Calendar.MINUTE)*60;
 		
@@ -59,28 +60,20 @@ public class CalculatePrices extends OneShotBehaviour {
 			 */
 			//the new costs can be from 20% to 250% of the last cost
 			double energyPrice = element.getEnergyPrice()*(rn.nextInt(23)+2)/10; 
-			TimePowerPrice e = new TimePowerPrice(cal.getTime(), element.getMaxEnergy(), round(energyPrice, 2));
-			list.add(e);
+			TimePowerPrice e = new TimePowerPrice(cal.getTime(), element.getMaxEnergy(), new GeneralData().round(energyPrice, 2));
+			priceData.add(e);
 		}
 
 		//print list
-		for(int i=0; i<list.size(); i++)
+		for(int i=0; i<priceData.size(); i++)
 		{
-			System.out.println(list.get(i).getDateTime()+" "+list.get(i).getEnergyPrice()+" "
-					+ list.get(i).getMaxEnergy());
+			System.out.println(priceData.get(i).getDateTime()+" "+priceData.get(i).getEnergyPrice()+" "
+					+ priceData.get(i).getMaxEnergy());
 		}
 		//end print list
 		
-		new BaseAgent().sendMessageToAgentsByServiceType(this.myAgent, "ControlAgent", "input", list);
+		new DbGridData().addPriceData(priceData);
+		new BaseAgent().sendMessageToAgentsByServiceType(this.myAgent, "ControlAgent", "input", priceData);
 			
-	}
-	
-	private static double round(double value, int places) {
-	    if (places < 0) throw new IllegalArgumentException();
-
-	    long factor = (long) Math.pow(10, places);
-	    value = value * factor;
-	    long tmp = Math.round(value);
-	    return (double) tmp / factor;
 	}
 }

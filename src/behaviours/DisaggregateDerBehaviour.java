@@ -1,18 +1,34 @@
 package behaviours;
 
-import jade.core.behaviours.OneShotBehaviour;
-import jade.lang.acl.ACLMessage;
+import java.util.ArrayList;
 
+import agents.BaseAgent;
+import basicData.AggregatorFlexibilityData;
+import basicData.DerInfo;
+import basicData.ResultPowerPrice;
+import database.DbAggregatorDer;
+import database.DbDerInfo;
+import jade.core.behaviours.OneShotBehaviour;
+import jade.domain.FIPAAgentManagement.DFAgentDescription;
+import jade.lang.acl.ACLMessage;
+import jade.lang.acl.UnreadableException;
+
+@SuppressWarnings("serial")
 public class DisaggregateDerBehaviour extends OneShotBehaviour{
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
-
 	ACLMessage msg;
-	public DisaggregateDerBehaviour(ACLMessage msg) {
+	ResultPowerPrice msgData;
+	ArrayList<AggregatorFlexibilityData> derChoices = new DbAggregatorDer()
+			.getDersChoice(this.myAgent.getName());
+	
+	public DisaggregateDerBehaviour(ACLMessage msg) 
+	{
 		this.msg = msg;
+		try {
+			msgData = (ResultPowerPrice)msg.getContentObject();
+		} catch (UnreadableException e) {
+			e.printStackTrace();
+		}
 	}
 	
 	@Override
@@ -21,7 +37,40 @@ public class DisaggregateDerBehaviour extends OneShotBehaviour{
 		 * I ask first the maximum from solar, wind and hydro. Then I ask to generator if needed
 		 */
 		
-		
+		DFAgentDescription[] derAgents = new BaseAgent().getAgentsbyServiceType(myAgent, "DerAgent");
+
+		if(derChoices.size() == derAgents.length)
+		{
+			takeFromMostConvenient();
+		}
+	}
+	
+	private void takeFromMostConvenient()
+	{
+		double totalPowerRequested = msgData.getPowerRequested();
+		double derPowerRequested = 0;
+		derChoices.sort((o1, o2) -> Double.compare(o1.getCostKwh(),o2.getCostKwh()));
+		// the first der is the one with lower CostKwh
+
+		for(int i=0; i < derChoices.size(); i++)
+		{
+			//ControlAgent sends this: datetime, power, CostKwh
+			if(totalPowerRequested > derChoices.get(i).getUpperLimit())
+			{
+				derPowerRequested = derChoices.get(i).getUpperLimit();
+				totalPowerRequested -= derChoices.get(i).getUpperLimit();
+			}
+			else 
+			{
+				derPowerRequested = totalPowerRequested;
+				totalPowerRequested = 0;
+			} 
+			ResultPowerPrice derAction = new ResultPowerPrice(msgData.getDatetime(), derPowerRequested, msgData.getCostKwh());
+			
+			DerInfo derInfo = new DbDerInfo().getDerByIdDer(derChoices.get(i).getIdentificator());
+			new BaseAgent().sendMessageToAgentsByServiceType(this.myAgent, 
+					derInfo.getIdAgent(), "response", derAction);
+		}
 	}
 
 }

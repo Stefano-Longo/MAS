@@ -29,6 +29,7 @@ public class DbBatteryInfo extends DbConnection{
 		String query = "SELECT *"
 				+ " FROM Battery"
 				+ " WHERE IdAgent = '"+idAgent+"'";
+		System.out.println(query);
 		try {
 			ResultSet rs = stmt.executeQuery(query);
 			while(rs.next()){ 

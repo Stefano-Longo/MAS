@@ -2,7 +2,9 @@ package behaviours;
 
 import agents.*;
 import aggregators.*;
+import database.DbControlData;
 import jade.core.Agent;
+import jade.core.behaviours.LoaderBehaviour;
 import jade.core.behaviours.TickerBehaviour;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
@@ -41,7 +43,7 @@ public class ReceiveMessages extends TickerBehaviour {
 						new BaseAgent().sendMessageToAgentsByServiceType(this.myAgent, "AggregatorAgent", 
 									"input", msg.getContentObject());
 					}
-					else if(msg.getConversationId().contains("proposal"))
+					else if(msg.getConversationId().equals("proposal"))
 					{
 						this.myAgent.addBehaviour(new ControlBehaviour(msg));
 					}
@@ -65,18 +67,18 @@ public class ReceiveMessages extends TickerBehaviour {
 					}
 					else if(msg.getConversationId().equals("response"))
 					{
-						
+						this.myAgent.addBehaviour(new LoadBehaviour(msg));
 					}
 				}
 				else if(this.myAgent instanceof DerAgent)
 				{
 					if(msg.getConversationId().equals("input"))
 					{
-						
+						this.myAgent.addBehaviour(new DerFlexibilityBehaviour(msg));
 					}
 					else if(msg.getConversationId().equals("response"))
 					{
-						
+						this.myAgent.addBehaviour(new DerBehaviour(msg));
 					}
 				}
 				else if(this.myAgent instanceof LoadAggregatorAgent)

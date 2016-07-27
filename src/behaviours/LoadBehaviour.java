@@ -8,7 +8,6 @@ import database.DbLoadInfo;
 import jade.core.behaviours.OneShotBehaviour;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.UnreadableException;
-import utils.GeneralData;
 
 public class LoadBehaviour extends OneShotBehaviour {
 
@@ -31,15 +30,12 @@ public class LoadBehaviour extends OneShotBehaviour {
 				
 		double consumptionShifted = loadData.getConsumptionMax() - msgData.getPowerRequested();
 		
-		LoadData newloadData = new LoadData(loadInfo.getIdLoad(), msgData.getDatetime(),
+		LoadData newLoadData = new LoadData(loadInfo.getIdLoad(), msgData.getDatetime(),
 				msgData.getPowerRequested(), consumptionShifted);
 
-		new DbLoadData().updateLoadData(newloadData);
-				
-		/**
-		 * TO-DO Aggiornare load info inserendo nel campo ConsumptionAdded della tabella Load
-		 * nel DateTime = toDateTime il valore: consumptionShifted
-		 */
-		new DbLoadInfo().updateLoadInfo(loadInfo.getIdLoad(), loadData.getToDatetime(), consumptionShifted);
+		new DbLoadData().updateLoadData(newLoadData);
+		
+		LoadInfo newLoadInfo = new LoadInfo(loadInfo.getIdLoad(), loadData.getToDatetime(), consumptionShifted);
+		new DbLoadInfo().updateLoadInfo(newLoadInfo);
 	}
 }

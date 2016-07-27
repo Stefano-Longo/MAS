@@ -7,7 +7,7 @@ public class LoadAgent extends BaseAgent {
 
 	protected void setup(){
 
-		registerDfAgent(this.getHap(), "LoadAgent", "LoadAgent1"); //TO-DO
+		registerDfAgent(this.getHap(), "LoadAgent");
 		this.addBehaviour(new ReceiveMessages(this));
 	}
 }

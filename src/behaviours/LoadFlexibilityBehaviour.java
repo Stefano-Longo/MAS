@@ -14,6 +14,7 @@ import database.DbLoadInfo;
 import jade.core.behaviours.OneShotBehaviour;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.UnreadableException;
+import utils.GeneralData;
 
 @SuppressWarnings("serial")
 public class LoadFlexibilityBehaviour extends OneShotBehaviour {
@@ -43,28 +44,31 @@ public class LoadFlexibilityBehaviour extends OneShotBehaviour {
 			double energyPrice = getPriceByDatetime(loadInfoPrice.get(i).getToDatetime());
 			loadInfoPrice.get(i).setPrice(energyPrice);
 		}
-		System.out.println("primo: "+loadInfoPrice.size());
 		loadInfoPrice.sort((o1, o2) -> Double.compare(o1.getPrice(),o2.getPrice()));
-
-		System.out.println("secondo: "+loadInfoPrice.size());
+		
 		// I take always the first element because is the one which has the lower Price
 		double lowerLimit = loadInfoPrice.get(0).getCriticalConsumption() + loadInfoPrice.get(0).getConsumptionAdded();
 		double upperLimit = lowerLimit + loadInfoPrice.get(0).getNonCriticalConsumption();
 		double desideredChoice;
 		double costKwh = msgData.get(0).getEnergyPrice() - loadInfoPrice.get(0).getPrice(); //prezzo attuale meno prezzo futuro stimato
+		costKwh = new GeneralData().round(costKwh, 2);
 		
 		desideredChoice = costKwh < 0 ? lowerLimit : upperLimit;
-
-		//FlexibilityData result = new FlexibilityData(msgData.get(0).getDateTime(), lowerLimit, upperLimit, costKwh, desideredChoice);
 		
-		/*LoadInfo loadInfo = new DbLoadInfo().getLoadInfoByIdAgent(this.myAgent.getName(), msgData.get(0).getDateTime());
-		LoadData loadData = new LoadData(loadInfo.getIdLoad(), msgData.get(0).getDateTime(), costKwh, 
+		Calendar calendar = Calendar.getInstance();
+		calendar.setTime(msgData.get(0).getDateTime());
+		FlexibilityData result = new FlexibilityData(calendar, lowerLimit, upperLimit, 
+				costKwh, desideredChoice, "load");
+		
+		LoadInfo loadInfo = new DbLoadInfo().getLoadInfoByIdAgent(this.myAgent.getName(), calendar);
+		
+		LoadData loadData = new LoadData(loadInfo.getIdLoad(), calendar, costKwh, 
 				loadInfo.getCriticalConsumption(), loadInfo.getNonCriticalConsumption(),
 				lowerLimit, upperLimit, 0, desideredChoice, 0, loadInfoPrice.get(0).getToDatetime());
 		new DbLoadData().addLoadData(loadData);
 		
 		new BaseAgent().sendMessageToAgentsByServiceType(this.myAgent, "LoadAggregatorAgent",
-				"proposal", result);*/
+				"proposal", result);
 	}
 	
 	
@@ -72,8 +76,10 @@ public class LoadFlexibilityBehaviour extends OneShotBehaviour {
 	{
 		for(int i=0; i < msgData.size(); i++)
 		{
-			if(msgData.get(i).getDateTime().equals(datetime))
+			if(msgData.get(i).getDateTime().compareTo(datetime.getTime()) == 0)
+			{
 				return msgData.get(i).getEnergyPrice();
+			}
 		}
 		return 0;
 	}

@@ -50,10 +50,10 @@ public class BatteryFlexibilityBehaviour extends OneShotBehaviour {
 		
 		double newSocObjective = batteryData.getSocObjective(); //always 60% for now
 		
-		double maxInput = getMaxInput(batteryData.getSoc(), batteryInfo.getSocMax(), batteryInfo.getCapacity(), 
-				batteryInfo.getBatteryInputMax());
-		double maxOutput = getMaxOutput(batteryData.getSoc(), batteryInfo.getSocMin(), batteryInfo.getCapacity(), 
-				batteryInfo.getBatteryOutputMax());
+		double maxInput = getMaxInput(batteryData.getSoc(), batteryInfo.getSocMax(), 
+				batteryInfo.getCapacity(), batteryInfo.getBatteryInputMax());
+		double maxOutput = getMaxOutput(batteryData.getSoc(), batteryInfo.getSocMin(), 
+				batteryInfo.getCapacity(), batteryInfo.getBatteryOutputMax());
 		
     	/**
 		 * define what the battery wants to do and the flexibility and the gain it has doing that
@@ -68,11 +68,11 @@ public class BatteryFlexibilityBehaviour extends OneShotBehaviour {
 		cal.setTime(msgData.get(0).getDateTime());
 		
 		FlexibilityData result = new FlexibilityData(cal, maxInput,
-    			maxOutput, batteryData.getCostKwh(), desideredChoice);
+    			maxOutput, batteryData.getCostKwh(), desideredChoice, "battery");
 		
 		BatteryData data = new BatteryData(batteryInfo.getIdBattery(), cal, 
 				batteryData.getSocObjective(), batteryData.getSoc(), batteryData.getCostKwh(), 
-				maxInput, maxOutput, 0, desideredChoice);
+				-maxInput, maxOutput, 0, desideredChoice);
 		
 		new DbBatteryData().addBatteryData(data);
 		new BaseAgent().sendMessageToAgentsByServiceType(this.myAgent, "BatteryAggregatorAgent",

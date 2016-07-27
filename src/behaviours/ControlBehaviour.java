@@ -1,8 +1,12 @@
 package behaviours;
 
+import java.util.ArrayList;
+
 import basicData.ControlFlexibilityData;
 import basicData.FlexibilityData;
+import basicData.TimePowerPrice;
 import database.DbControlArrivalData;
+import database.DbGridData;
 import jade.core.behaviours.OneShotBehaviour;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.UnreadableException;
@@ -42,21 +46,26 @@ public class ControlBehaviour extends OneShotBehaviour {
 		new DbControlArrivalData().addControlArrivalData(controlData);
 
 		int messagesReceived = new DbControlArrivalData().countMessagesReceived(this.myAgent.getName());
-		
+		System.out.println("messagesReceived: "+messagesReceived);
 		if (messagesReceived == 3)
 		{
 			/**
 			 * I have all the messages that I was waiting for so now I can
 			 * think and tell them what to do 
 			 */
-			
-			//FARE LA FUNZIONE GETLASTDATA -> poi vai sui der, lascia perdere qui
-			ControlFlexibilityData BatteryData = new DbControlArrivalData().getControlArrivalDatabyType(this.myAgent.getName(), "battery");
-			ControlFlexibilityData DerData = new DbControlArrivalData().getControlArrivalDatabyType(this.myAgent.getName(), "der");
-			ControlFlexibilityData LoadData = new DbControlArrivalData().getControlArrivalDatabyType(this.myAgent.getName(), "load");
+			ArrayList<TimePowerPrice> balance = new DbGridData().getPriceData(controlData.getDatetime());
+			ControlFlexibilityData data = new DbControlArrivalData().getLastControlArrivalData(this.myAgent.getName());
+			/*ControlFlexibilityData DerData = new DbControlArrivalData().getControlArrivalDatabyType(this.myAgent.getName(), "der");
+			ControlFlexibilityData LoadData = new DbControlArrivalData().getControlArrivalDatabyType(this.myAgent.getName(), "load");*/
 
-			//TO-DO how to get the prices?
-			
+			for(int i=0; i<balance.size(); i++)
+			{
+				System.out.println(balance.get(i).getDateTime()+" "+balance.get(i).getEnergyPrice());
+			}
+			System.out.println("data.getDatetime().getTime()+data.getLowerLimit()+data.getUpperLimit()+"
+					+ "data.getDesideredChoice()+data.getCostKwh()");
+			System.out.println(data.getDatetime().getTime()+" "+data.getLowerLimit()+" "+data.getUpperLimit()+
+					" "+data.getDesideredChoice()+" "+data.getCostKwh());
 		}
 	}
 	

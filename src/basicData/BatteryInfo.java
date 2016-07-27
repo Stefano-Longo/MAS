@@ -1,6 +1,5 @@
 package basicData;
 
-import jade.core.AID;
 
 public class BatteryInfo {
 

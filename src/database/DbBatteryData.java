@@ -15,11 +15,11 @@ public class DbBatteryData extends DbConnection	{
 	public Boolean addBatteryData(BatteryData battery)
 	{
 		String query = "INSERT INTO BatteryDataHistory (IdBattery, DateTime, SocObjective, Soc, CostKwh, InputPowerMax,"
-				+ " OutputPowerMax, PowerRequested, Confirmed)"
+				+ " OutputPowerMax, PowerRequested, DesideredChoice, Confirmed)"
 				+ " VALUES ('"+battery.getIdBattery()+"','"+format.format(battery.getDatetime().getTime())+"',"
 						+battery.getSocObjective()+","+battery.getSoc()+","+battery.getCostKwh()+","
 						+battery.getInputPowerMax()+","+battery.getOutputPowerMax()+","
-						+battery.getPowerRequested()+", false)";
+						+battery.getPowerRequested()+", "+battery.getDesideredChoice()+", 'false')";
 		System.out.println(query);
 		try {
 			return stmt.execute(query);
@@ -35,7 +35,7 @@ public class DbBatteryData extends DbConnection	{
 				+ " SET SocObjective="+battery.getSocObjective()+", Soc="+battery.getSoc()+","
 					+ " CostKwh="+battery.getCostKwh()+", PowerRequested="+battery.getPowerRequested()+","
 					+ " Confirmed=true"
-				+ " WHERE IdBattery = '"+battery.getIdBattery()+"'"
+				+ " WHERE IdBattery = "+battery.getIdBattery()
 				+ " AND DateTime = '"+format.format(battery.getDatetime().getTime())+"'";
 		System.out.println(query);
 		try {
@@ -59,7 +59,7 @@ public class DbBatteryData extends DbConnection	{
 			while(rs.next())
 			{
 				Calendar cal = Calendar.getInstance();
-				cal.setTime(rs.getDate("DateTime"));
+				cal.setTime(rs.getTimestamp("DateTime"));
 
 				data = new BatteryData(rs.getInt("IdBattery"), cal, rs.getDouble("SocObjective"),
 						rs.getDouble("Soc"), rs.getDouble("CostKwh"), rs.getDouble("InputPowerMax"),

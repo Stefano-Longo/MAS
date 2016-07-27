@@ -34,6 +34,13 @@ public class DerData {
 		this.desideredChoice = desideredChoice;
 	}
 
+	public DerData(int idDer, Calendar datetime, double productionRequested) 
+	{
+		this.idDer = idDer;
+		this.datetime = datetime;
+		this.productionRequested = productionRequested;
+	}
+	
 	public int getIdDer() {
 		return idDer;
 	}

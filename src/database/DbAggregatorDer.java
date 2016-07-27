@@ -46,11 +46,11 @@ public class DbAggregatorDer extends DbConnection {
 			while(rs.next())
 			{	
 				Calendar cal2 = Calendar.getInstance();
-				cal2.setTime(rs.getDate("DateTime"));
+				cal2.setTime(rs.getTimestamp("DateTime"));
 
 				data = new FlexibilityData(cal2, rs.getDouble("LowerLimit"), 
 						rs.getDouble("UpperLimit"), rs.getDouble("CostKwh"), 
-						rs.getDouble("DesideredChoice"));
+						rs.getDouble("DesideredChoice"), "der");
 				return data;
 			}
 		} catch (SQLException e) {
@@ -62,7 +62,7 @@ public class DbAggregatorDer extends DbConnection {
 	public int countMessagesReceived (String idAgent)
 	{
 		String query = "SELECT COUNT(*) as Count"
-    			+ " FROM LoadAggregatorData"
+    			+ " FROM DerAggregatorData"
     			+ " WHERE IdAggregatorAgent = '"+idAgent+"'"
     			+ " AND DateTime in (SELECT Max(DateTime)" 
 									+"FROM LoadAggregatorData)";
@@ -78,11 +78,11 @@ public class DbAggregatorDer extends DbConnection {
 		return 0;
 	}
 	
-	public ArrayList<AggregatorFlexibilityData> getLoadsChoice(String idAggregatorAgent)
+	public ArrayList<AggregatorFlexibilityData> getDersChoice(String idAggregatorAgent)
 	{
 		ArrayList<AggregatorFlexibilityData> list = new ArrayList<AggregatorFlexibilityData>();
 		String query = "SELECT *"
-				+ " FROM LoadAggregatorData"
+				+ " FROM DerAggregatorData"
 				+ " WHERE IdAggregatorAgent='"+idAggregatorAgent+"'"
 				+ " AND DateTime in (SELECT MAX(DateTime)"
 								+" FROM LoadAggregatorData"
@@ -92,12 +92,12 @@ public class DbAggregatorDer extends DbConnection {
 			while(rs.next())
 			{
 				Calendar cal = Calendar.getInstance();
-				cal.setTime(rs.getDate("DateTime"));
+				cal.setTime(rs.getTimestamp("DateTime"));
 				
 				AggregatorFlexibilityData data = new AggregatorFlexibilityData(
-						rs.getString("IdAggregatorAgent"),rs.getInt("IdLoad"),cal,
+						rs.getString("IdAggregatorAgent"),rs.getInt("IdDer"),cal,
 						rs.getDouble("LowerLimit"), rs.getDouble("UpperLimit"), 
-						rs.getDouble("CostKwh"), rs.getDouble("DesideredChoice"));
+						rs.getDouble("CostKwh"), rs.getDouble("DesideredChoice"), "der");
 				list.add(data);
 			}
 		} catch (SQLException e) {

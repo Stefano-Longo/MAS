@@ -20,9 +20,9 @@ public class AggregatorFlexibilityData extends FlexibilityData {
 	 * @param desideredChoice
 	 */
 	public AggregatorFlexibilityData(String idAggregatorAgent, int identificator, Calendar datetime, double lowerLimit, 
-			double upperLimit, double costKwh, double desideredChoice) 
+			double upperLimit, double costKwh, double desideredChoice, String type) 
 	{
-		super(datetime, lowerLimit, upperLimit, costKwh, desideredChoice);
+		super(datetime, lowerLimit, upperLimit, costKwh, desideredChoice, type);
 		this.idAgent = idAggregatorAgent;
 		this.identificator = identificator;
 	}
@@ -30,7 +30,7 @@ public class AggregatorFlexibilityData extends FlexibilityData {
 	public AggregatorFlexibilityData(String idAggregatorAgent, int identificator, FlexibilityData data)
 	{
 		super(data.getDatetime(), data.getLowerLimit(), data.getUpperLimit(),
-				data.getCostKwh(), data.getDesideredChoice());
+				data.getCostKwh(), data.getDesideredChoice(), data.getType());
 		this.idAgent = idAggregatorAgent;
 		this.identificator = identificator;
 	}

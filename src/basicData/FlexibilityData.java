@@ -11,7 +11,7 @@ public class FlexibilityData implements Serializable {
 	private double upperLimit;
 	private double costKwh; 
 	private double desideredChoice; // positive or negative value which represent the choice the single agent
-
+	private String type;
 	/**
 	 * 
 	 * @param idSenderAgent
@@ -23,12 +23,14 @@ public class FlexibilityData implements Serializable {
 	 * @param desideredChoice
 	 * @param maxGain
 	 */
-	public FlexibilityData(Calendar datetime, double lowerLimit, double upperLimit, double costKwh, double desideredChoice) {
+	public FlexibilityData(Calendar datetime, double lowerLimit, double upperLimit, 
+			double costKwh, double desideredChoice, String type) {
 		this.datetime = datetime;
 		this.lowerLimit = lowerLimit;
 		this.upperLimit = upperLimit;
 		this.costKwh = costKwh;
 		this.desideredChoice = desideredChoice;
+		this.type = type;
 	}
 
 	public FlexibilityData() {}
@@ -71,6 +73,14 @@ public class FlexibilityData implements Serializable {
 
 	public void setDesideredChoice(double desideredChoice) {
 		this.desideredChoice = desideredChoice;
+	}
+
+	public String getType() {
+		return type;
+	}
+
+	public void setType(String type) {
+		this.type = type;
 	}
 	
 }
