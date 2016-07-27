@@ -11,28 +11,46 @@ import jade.core.AID;
  */
 public class ControlData {
 
-	private AID idAgent;
+	private String idAgent;
 	private String idPlatform;
 	private Calendar datetime;
 	private double derPower;
 	private double batteryPower;
 	private double loadPower;
+	private double gridPower;
+	private double costKwh;
+	private int confirmed;
 	
-	public ControlData(AID idAgent, String idPlatform, Calendar datetime, double derPower,
-			double batteryPower, double loadPower) {
+	/**
+	 * 
+	 * @param idAgent
+	 * @param idPlatform
+	 * @param datetime
+	 * @param derPower
+	 * @param batteryPower
+	 * @param loadPower
+	 * @param gridPower
+	 * @param costKwh
+	 * @param confirmed
+	 */
+	public ControlData(String idAgent, String idPlatform, Calendar datetime, double derPower, double batteryPower,
+			double loadPower, double gridPower, double costKwh, int confirmed) {
 		this.idAgent = idAgent;
 		this.idPlatform = idPlatform;
 		this.datetime = datetime;
 		this.derPower = derPower;
 		this.batteryPower = batteryPower;
 		this.loadPower = loadPower;
+		this.gridPower = gridPower;
+		this.costKwh = costKwh;
+		this.confirmed = confirmed;
 	}
 
-	public AID getIdAgent() {
+	public String getIdAgent() {
 		return idAgent;
 	}
 
-	public void setIdAgent(AID idAgent) {
+	public void setIdAgent(String idAgent) {
 		this.idAgent = idAgent;
 	}
 
@@ -74,5 +92,29 @@ public class ControlData {
 
 	public void setLoadPower(double loadPower) {
 		this.loadPower = loadPower;
+	}
+
+	public double getGridPower() {
+		return gridPower;
+	}
+
+	public void setGridPower(double gridPower) {
+		this.gridPower = gridPower;
+	}
+
+	public double getCostKwh() {
+		return costKwh;
+	}
+
+	public void setCostKwh(double costKwh) {
+		this.costKwh = costKwh;
+	}
+
+	public int getConfirmed() {
+		return confirmed;
+	}
+
+	public void setConfirmed(int confirmed) {
+		this.confirmed = confirmed;
 	}
 }

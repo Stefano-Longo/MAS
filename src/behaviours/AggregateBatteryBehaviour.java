@@ -36,7 +36,7 @@ public class AggregateBatteryBehaviour extends OneShotBehaviour {
 
 	public void action() 
 	{
-		BatteryInfo batteryInfo = new DbBatteryInfo().getBatteryByIdAgent(msg.getSender().getName());
+		BatteryInfo batteryInfo = new DbBatteryInfo().getBatteryInfoByIdAgent(msg.getSender().getName());
 		AggregatorFlexibilityData data = new AggregatorFlexibilityData(this.myAgent.getName(), 
 					batteryInfo.getIdBattery(), msgData);
 		new DbAggregatorBattery().addFlexibilityBatteryMessage(data);

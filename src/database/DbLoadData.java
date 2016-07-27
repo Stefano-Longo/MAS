@@ -22,7 +22,6 @@ public class DbLoadData extends DbConnection {
 						+load.getNonCriticalConsumption()+","+load.getConsumptionMin()+","+load.getConsumptionMax()+","
 						+load.getPowerRequested()+","+load.getDesideredChoice()+","+load.getConsumptionShifted()+",'"
 						+format.format(load.getToDatetime().getTime())+"', 'false')";
-		System.out.println(query);
 		try {
 			return stmt.execute(query);
 		} catch (SQLException e) {
@@ -40,7 +39,6 @@ public class DbLoadData extends DbConnection {
 					+ " Confirmed = true"
 				+ " WHERE Id = '"+load.getIdLoad()+"'"
 				+ " AND DateTime = '"+format.format(load.getDatetime().getTime())+"'";
-		System.out.println(query);
 		try {
 			return stmt.execute(query);
 		} catch (SQLException e) {
@@ -56,7 +54,6 @@ public class DbLoadData extends DbConnection {
 				+ " FROM LoadDataHistory"
 				+ " WHERE RTRIM(IdBattery) = "+idLoad
 				+ " ORDER BY DateTime DESC";
-		System.out.println(query);
 		try {
 			ResultSet rs = stmt.executeQuery(query);
 			while(rs.next())

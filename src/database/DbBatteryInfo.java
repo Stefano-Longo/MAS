@@ -24,12 +24,11 @@ public class DbBatteryInfo extends DbConnection{
 	}
 	
 	
-	public BatteryInfo getBatteryByIdAgent (String idAgent)
+	public BatteryInfo getBatteryInfoByIdAgent (String idAgent)
 	{
 		String query = "SELECT *"
 				+ " FROM Battery"
 				+ " WHERE IdAgent = '"+idAgent+"'";
-		System.out.println(query);
 		try {
 			ResultSet rs = stmt.executeQuery(query);
 			while(rs.next()){ 
@@ -46,7 +45,7 @@ public class DbBatteryInfo extends DbConnection{
 		return null;
 	}
 	
-	public BatteryInfo getBatteryByIdBattery (int idBattery)
+	public BatteryInfo getBatteryInfoByIdBattery (int idBattery)
 	{
 		String query = "SELECT TOP 1 *"
 				+ " FROM Battery"

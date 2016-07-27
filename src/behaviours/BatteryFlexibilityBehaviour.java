@@ -45,7 +45,7 @@ public class BatteryFlexibilityBehaviour extends OneShotBehaviour {
 		 * learning from the past. How?
 		 * 
 		 */
-		BatteryInfo batteryInfo = new DbBatteryInfo().getBatteryByIdAgent(this.myAgent.getName());
+		BatteryInfo batteryInfo = new DbBatteryInfo().getBatteryInfoByIdAgent(this.myAgent.getName());
 		BatteryData batteryData = new DbBatteryData().getLastBatteryData(batteryInfo.getIdBattery());
 		
 		double newSocObjective = batteryData.getSocObjective(); //always 60% for now
@@ -72,7 +72,7 @@ public class BatteryFlexibilityBehaviour extends OneShotBehaviour {
 		
 		BatteryData data = new BatteryData(batteryInfo.getIdBattery(), cal, 
 				batteryData.getSocObjective(), batteryData.getSoc(), batteryData.getCostKwh(), 
-				-maxInput, maxOutput, 0, desideredChoice);
+				maxInput, maxOutput, 0, desideredChoice);
 		
 		new DbBatteryData().addBatteryData(data);
 		new BaseAgent().sendMessageToAgentsByServiceType(this.myAgent, "BatteryAggregatorAgent",
@@ -114,7 +114,7 @@ public class BatteryFlexibilityBehaviour extends OneShotBehaviour {
         {
         	return maxOutputBattery;
         }
-    	return maxBatteryOutputPercentage;
+    	return -maxBatteryOutputPercentage;
     }
 		
 }

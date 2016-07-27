@@ -18,7 +18,6 @@ public class DbDerInfo extends DbConnection {
 		String query = "SELECT TOP 1 *"
 					+ " FROM Der"
 					+ " WHERE RTRIM(IdAgent) = '"+idAgent+"'";
-		System.out.println(query);
 		try {
 			ResultSet rs = stmt.executeQuery(query);
 			while(rs.next())
@@ -39,9 +38,7 @@ public class DbDerInfo extends DbConnection {
 		DerInfo data = null;
 		String query = "SELECT TOP 1 *"
 					+ " FROM Der"
-					+ " WHERE IdDer = "+identificator
-					+ " ORDER BY DateTime";
-		System.out.println(query);
+					+ " WHERE IdDer = "+identificator;
 		try {
 			ResultSet rs = stmt.executeQuery(query);
 			while(rs.next())

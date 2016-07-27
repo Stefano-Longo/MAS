@@ -18,8 +18,7 @@ public class DisaggregateDerBehaviour extends OneShotBehaviour{
 
 	ACLMessage msg;
 	ResultPowerPrice msgData;
-	ArrayList<AggregatorFlexibilityData> derChoices = new DbAggregatorDer()
-			.getDersChoice(this.myAgent.getName());
+	ArrayList<AggregatorFlexibilityData> derChoices = new ArrayList<AggregatorFlexibilityData>();
 	
 	public DisaggregateDerBehaviour(ACLMessage msg) 
 	{
@@ -36,7 +35,7 @@ public class DisaggregateDerBehaviour extends OneShotBehaviour{
 		/**
 		 * I ask first the maximum from solar, wind and hydro. Then I ask to generator if needed
 		 */
-		
+		derChoices = new DbAggregatorDer().getDersChoice(this.myAgent.getName());
 		DFAgentDescription[] derAgents = new BaseAgent().getAgentsbyServiceType(myAgent, "DerAgent");
 
 		if(derChoices.size() == derAgents.length)
@@ -69,7 +68,7 @@ public class DisaggregateDerBehaviour extends OneShotBehaviour{
 			
 			DerInfo derInfo = new DbDerInfo().getDerByIdDer(derChoices.get(i).getIdentificator());
 			new BaseAgent().sendMessageToAgentsByServiceType(this.myAgent, 
-					derInfo.getIdAgent(), "response", derAction);
+					derInfo.getIdAgent(), "result", derAction);
 		}
 	}
 

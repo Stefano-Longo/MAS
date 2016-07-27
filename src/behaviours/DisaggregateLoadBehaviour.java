@@ -22,8 +22,7 @@ public class DisaggregateLoadBehaviour extends OneShotBehaviour{
 
 	ACLMessage msg;
 	ResultPowerPrice msgData;
-	ArrayList<AggregatorFlexibilityData> loadsChoice = new DbAggregatorLoad()
-			.getLoadsChoice(this.myAgent.getName());
+	ArrayList<AggregatorFlexibilityData> loadsChoice = new ArrayList<AggregatorFlexibilityData>();
 	
 	public DisaggregateLoadBehaviour(ACLMessage msg) 
 	{
@@ -38,6 +37,7 @@ public class DisaggregateLoadBehaviour extends OneShotBehaviour{
 	@Override
 	public void action() 
 	{
+		loadsChoice = new DbAggregatorLoad().getLoadsChoice(this.myAgent.getName());
 		DFAgentDescription[] loadAgents = new BaseAgent().getAgentsbyServiceType(myAgent, "LoadAgent");
 		
 		FlexibilityData loadAggregatedData = new DbAggregatorLoad().aggregateMessageReceived(this.myAgent.getName());
@@ -94,7 +94,7 @@ public class DisaggregateLoadBehaviour extends OneShotBehaviour{
 
 			LoadInfo loadInfo = new DbLoadInfo().getLoadInfoByIdLoad(loadsChoice.get(i).getIdentificator(), msgData.getDatetime());
 			new BaseAgent().sendMessageToAgentsByServiceType(this.myAgent, 
-					loadInfo.getIdAgent(), "response", loadAction);
+					loadInfo.getIdAgent(), "result", loadAction);
 		}
 	}
 
@@ -122,7 +122,7 @@ public class DisaggregateLoadBehaviour extends OneShotBehaviour{
 
 			LoadInfo loadInfo = new DbLoadInfo().getLoadInfoByIdLoad(loadsChoice.get(i).getIdentificator(), msgData.getDatetime());
 			new BaseAgent().sendMessageToAgentsByServiceType(this.myAgent, 
-					loadInfo.getIdAgent(), "response", loadAction);
+					loadInfo.getIdAgent(), "result", loadAction);
 		}
 	}
 	
@@ -134,7 +134,7 @@ public class DisaggregateLoadBehaviour extends OneShotBehaviour{
 
 			LoadInfo loadInfo = new DbLoadInfo().getLoadInfoByIdLoad(loadsChoice.get(i).getIdentificator(), msgData.getDatetime());
 			new BaseAgent().sendMessageToAgentsByServiceType(this.myAgent, 
-					loadInfo.getIdAgent(), "response", loadAction);
+					loadInfo.getIdAgent(), "result", loadAction);
 		}
 	}
 	

@@ -14,7 +14,7 @@ import jade.lang.acl.ACLMessage;
 import utils.GeneralData;
 	
 @SuppressWarnings("serial")
-public class CalculatePrices extends OneShotBehaviour {
+public class CalculatePricesBehaviour extends OneShotBehaviour {
 
 	/**
 	 * This class takes in input the prices for the next hour and calculate 
@@ -24,7 +24,7 @@ public class CalculatePrices extends OneShotBehaviour {
 	private ACLMessage msg;
 	int timeSlot = new GeneralData().getTimeSlot();
 
-	public CalculatePrices(ACLMessage msg){
+	public CalculatePricesBehaviour(ACLMessage msg){
 		this.msg = msg;
 	}
 
@@ -59,7 +59,7 @@ public class CalculatePrices extends OneShotBehaviour {
 			 * TO-DO Here there should be the forecast!!!
 			 */
 			//the new costs can be from 20% to 250% of the last cost
-			double energyPrice = element.getEnergyPrice()*(rn.nextInt(23)+2)/10; 
+			double energyPrice = new GeneralData().getMeanKwhPrice()*(rn.nextInt(23)+2)/10; 
 			TimePowerPrice e = new TimePowerPrice(cal.getTime(), element.getMaxEnergy(), new GeneralData().round(energyPrice, 2));
 			priceData.add(e);
 		}

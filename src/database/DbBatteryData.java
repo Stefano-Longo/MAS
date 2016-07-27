@@ -20,7 +20,6 @@ public class DbBatteryData extends DbConnection	{
 						+battery.getSocObjective()+","+battery.getSoc()+","+battery.getCostKwh()+","
 						+battery.getInputPowerMax()+","+battery.getOutputPowerMax()+","
 						+battery.getPowerRequested()+", "+battery.getDesideredChoice()+", 'false')";
-		System.out.println(query);
 		try {
 			return stmt.execute(query);
 		} catch (SQLException e) {
@@ -37,7 +36,6 @@ public class DbBatteryData extends DbConnection	{
 					+ " Confirmed=true"
 				+ " WHERE IdBattery = "+battery.getIdBattery()
 				+ " AND DateTime = '"+format.format(battery.getDatetime().getTime())+"'";
-		System.out.println(query);
 		try {
 			return stmt.execute(query);
 		} catch (SQLException e) {
@@ -53,7 +51,6 @@ public class DbBatteryData extends DbConnection	{
 				+ " FROM BatteryDataHistory"
 				+ " WHERE IdBattery = "+idBattery
 				+ " ORDER BY DateTime DESC";
-		System.out.println(query);
 		try {
 			ResultSet rs = stmt.executeQuery(query);
 			while(rs.next())

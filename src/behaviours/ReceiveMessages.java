@@ -27,11 +27,11 @@ public class ReceiveMessages extends TickerBehaviour {
 				{
 					if(msg.getConversationId().equals("input"))
 					{
-						this.myAgent.addBehaviour(new CalculatePrices(msg));
+						this.myAgent.addBehaviour(new CalculatePricesBehaviour(msg));
 					}
 					else if(msg.getConversationId().equals("result"))
 					{//TO-DO sicuro?
-						this.myAgent.addBehaviour(new GiveOutput());
+						this.myAgent.addBehaviour(new GiveOutput(msg));
 					}
 				}
 				else if(this.myAgent instanceof ControlAgent)
@@ -47,6 +47,10 @@ public class ReceiveMessages extends TickerBehaviour {
 					{
 						this.myAgent.addBehaviour(new ControlBehaviour(msg));
 					}
+					else if(msg.getConversationId().equals("ok"))
+					{
+						this.myAgent.addBehaviour(new ControlOkBehaviour(msg));
+					}
 				}
 				else if(this.myAgent instanceof BatteryAgent)
 				{
@@ -54,7 +58,7 @@ public class ReceiveMessages extends TickerBehaviour {
 					{
 						this.myAgent.addBehaviour(new BatteryFlexibilityBehaviour(msg));
 					}
-					else if(msg.getConversationId().equals("response"))
+					else if(msg.getConversationId().equals("result"))
 					{
 						this.myAgent.addBehaviour(new BatteryBehaviour(msg));
 					}
@@ -65,7 +69,7 @@ public class ReceiveMessages extends TickerBehaviour {
 					{
 						this.myAgent.addBehaviour(new LoadFlexibilityBehaviour(msg));
 					}
-					else if(msg.getConversationId().equals("response"))
+					else if(msg.getConversationId().equals("result"))
 					{
 						this.myAgent.addBehaviour(new LoadBehaviour(msg));
 					}
@@ -76,7 +80,7 @@ public class ReceiveMessages extends TickerBehaviour {
 					{
 						this.myAgent.addBehaviour(new DerFlexibilityBehaviour(msg));
 					}
-					else if(msg.getConversationId().equals("response"))
+					else if(msg.getConversationId().equals("result"))
 					{
 						this.myAgent.addBehaviour(new DerBehaviour(msg));
 					}
@@ -91,9 +95,13 @@ public class ReceiveMessages extends TickerBehaviour {
 					{
 						this.myAgent.addBehaviour(new AggregateLoadBehaviour(msg));
 					}
-					else if(msg.getConversationId().equals("response"))
+					else if(msg.getConversationId().equals("result"))
 					{
 						this.myAgent.addBehaviour(new DisaggregateLoadBehaviour(msg));
+					}
+					else if(msg.getConversationId().equals("ok"))
+					{
+						this.myAgent.addBehaviour(new AggregateOkLoadBehaviour(msg));
 					}
 				}
 				else if(this.myAgent instanceof BatteryAggregatorAgent)
@@ -106,10 +114,15 @@ public class ReceiveMessages extends TickerBehaviour {
 					{
 						this.myAgent.addBehaviour(new AggregateBatteryBehaviour(msg));
 					}
-					else if(msg.getConversationId().equals("response"))
+					else if(msg.getConversationId().equals("result"))
 					{
 						this.myAgent.addBehaviour(new DisaggregateBatteryBehaviour(msg));
 					}
+					else if(msg.getConversationId().equals("ok"))
+					{
+						this.myAgent.addBehaviour(new AggregateOkBatteryBehaviour(msg));
+					}
+					
 				}
 				else if(this.myAgent instanceof DerAggregatorAgent)
 				{
@@ -121,9 +134,13 @@ public class ReceiveMessages extends TickerBehaviour {
 					{
 						this.myAgent.addBehaviour(new AggregateDerBehaviour(msg));
 					}
-					else if(msg.getConversationId().equals("response"))
+					else if(msg.getConversationId().equals("result"))
 					{	
 						this.myAgent.addBehaviour(new DisaggregateDerBehaviour(msg));
+					}
+					else if(msg.getConversationId().equals("ok"))
+					{
+						this.myAgent.addBehaviour(new AggregateOkDerBehaviour(msg));
 					}
 				}
 			}

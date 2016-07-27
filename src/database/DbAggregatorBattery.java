@@ -28,7 +28,6 @@ public class DbAggregatorBattery extends DbConnection {
 				+ " VALUES ('"+data.getIdAgent()+"',"+data.getIdentificator()+",'"
 				+ format.format(data.getDatetime().getTime())+"',"+data.getLowerLimit()+","+data.getUpperLimit()+","
 				+ data.getCostKwh()+","+data.getDesideredChoice()+")";
-		System.out.println(query);
 		try {
 			return stmt.execute(query);
 		} catch (SQLException e) {
@@ -55,7 +54,6 @@ public class DbAggregatorBattery extends DbConnection {
 				+ " AND Datetime in (SELECT Max(Datetime)" 
 									+"FROM BatteryAggregatorData)"
 				+ " GROUP BY DateTime";
-		System.out.println(query);
 		try {
 			ResultSet rs = stmt.executeQuery(query);
 			while(rs.next())
@@ -111,8 +109,9 @@ public class DbAggregatorBattery extends DbConnection {
 				+ " FROM BatteryAggregatorData"
 				+ " WHERE IdAggregatorAgent='"+idAggregatorAgent+"'"
 				+ " AND DateTime in (SELECT MAX(DateTime)"
-								+" FROM BatteryAggregatorData"
+								+" FROM BatteryAggregatorData)"
 				+ " ORDER BY Diff";
+		System.out.println(query);
 		try {
 			ResultSet rs = stmt.executeQuery(query);
 			while(rs.next())
@@ -170,4 +169,40 @@ public class DbAggregatorBattery extends DbConnection {
 		return list;
 	}
 	
+	public Boolean updateLastBatteryConfirmedChoice(String idAggregatorAgent, int idBattery, boolean confirmed)
+	{
+		String query = "UPDATE BatteryAggregatorAgent"
+				+ " SET Confirmed = '"+confirmed+"'"
+				+ " WHERE IdAggregatorAgent = '"+idAggregatorAgent+"'"
+				+ " AND IdBattery = '"+idBattery+"'"
+				+ " AND DateTime IN (SELECT MAX(DateTime)"
+									+ "	FROM ControlData)'";
+		try {
+			return stmt.execute(query);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return false;
+	}
+	
+	public int getLastConfirmedByChoice (String idAggregatorAgent, int idBattery, boolean confirmed)
+	{
+		String query = "SELECT COUNT(*) as Count"
+				+ " FROM BatteryAggregatorData"
+				+ " WHERE IdAggregatorAgent = '"+idAggregatorAgent+"'"
+				+ " AND IdBattery = "+idBattery
+				+ " AND Confirmed = '"+confirmed+"'"
+				+ " AND DateTime in (SELECT MAX(DateTime)"
+								+" FROM LoadAggregatorData)";;
+		try {
+			ResultSet rs = stmt.executeQuery(query);
+			while(rs.next())
+			{
+				return rs.getInt("Count");
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return 0;
+	}
 }

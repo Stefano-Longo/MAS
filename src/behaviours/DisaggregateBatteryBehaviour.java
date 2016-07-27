@@ -19,9 +19,8 @@ public class DisaggregateBatteryBehaviour extends OneShotBehaviour {
 
 	ACLMessage msg;
 	ResultPowerPrice msgData;
-	ArrayList<AggregatorFlexibilityData> batteryChoices = new DbAggregatorBattery()
-			.getBatteriesChoice(this.myAgent.getName());
-	
+	ArrayList<AggregatorFlexibilityData> batteryChoices = new ArrayList<AggregatorFlexibilityData>();
+
 	public DisaggregateBatteryBehaviour(ACLMessage msg) 
 	{
 		this.msg = msg;
@@ -42,15 +41,7 @@ public class DisaggregateBatteryBehaviour extends OneShotBehaviour {
 		 * Linear Programming -> Operative Research
 		 */
 		
-		/**
-		 * ONLY FLEXIBILITY:
-		 * Aggregator takes upperLimit energy from the most convenient Battery, and do the same with the 
-		 * second etc until he finishes to take all the energy that the control agent needs.
-		 * 
-		 * Aggregator takes the energy from the most convenient Batteries.
-		 */
-		
-		
+		batteryChoices = new DbAggregatorBattery().getBatteriesChoice(this.myAgent.getName());
 		DFAgentDescription[] batteryAgents = new BaseAgent().getAgentsbyServiceType(myAgent, "BatteryAgent");
 		
 		if(batteryChoices.size() == batteryAgents.length)
@@ -93,9 +84,9 @@ public class DisaggregateBatteryBehaviour extends OneShotBehaviour {
 			} 
 			ResultPowerPrice batteryAction = new ResultPowerPrice(msgData.getDatetime(), batteryPowerRequested, msgData.getCostKwh());
 			
-			BatteryInfo batteryInfo = new DbBatteryInfo().getBatteryByIdBattery(batteryChoices.get(i).getIdentificator());
+			BatteryInfo batteryInfo = new DbBatteryInfo().getBatteryInfoByIdBattery(batteryChoices.get(i).getIdentificator());
 			new BaseAgent().sendMessageToAgentsByServiceType(this.myAgent, 
-					batteryInfo.getIdAgent(), "response", batteryAction);
+					batteryInfo.getIdAgent(), "result", batteryAction);
 		}
 	}
 
@@ -170,9 +161,9 @@ public class DisaggregateBatteryBehaviour extends OneShotBehaviour {
 			
 			ResultPowerPrice batteryAction = new ResultPowerPrice(msgData.getDatetime(), batteryPowerGiven, msgData.getCostKwh());
 
-			BatteryInfo batteryInfo = new DbBatteryInfo().getBatteryByIdBattery(batteryChoices.get(i).getIdentificator());
+			BatteryInfo batteryInfo = new DbBatteryInfo().getBatteryInfoByIdBattery(batteryChoices.get(i).getIdentificator());
 			new BaseAgent().sendMessageToAgentsByServiceType(this.myAgent, 
-					batteryInfo.getIdAgent(), "response", batteryAction);
+					batteryInfo.getIdAgent(), "result", batteryAction);
 		}
 	}
 	
@@ -185,9 +176,9 @@ public class DisaggregateBatteryBehaviour extends OneShotBehaviour {
 		{
 			ResultPowerPrice batteryAction = new ResultPowerPrice(msgData.getDatetime(), 0, msgData.getCostKwh());
 
-			BatteryInfo batteryInfo = new DbBatteryInfo().getBatteryByIdBattery(batteryChoices.get(i).getIdentificator());
+			BatteryInfo batteryInfo = new DbBatteryInfo().getBatteryInfoByIdBattery(batteryChoices.get(i).getIdentificator());
 			new BaseAgent().sendMessageToAgentsByServiceType(this.myAgent, 
-					batteryInfo.getIdAgent(), "response", batteryAction);
+					batteryInfo.getIdAgent(), "result", batteryAction);
 		}
 	}
 }

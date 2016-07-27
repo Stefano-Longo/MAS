@@ -40,7 +40,6 @@ public class DbAggregatorDer extends DbConnection {
 				+ " AND Datetime in (SELECT Max(Datetime)" 
 									+"FROM LoadAggregatorData)"
 				+ " GROUP BY DateTime";
-		System.out.println(query);
 		try {
 			ResultSet rs = stmt.executeQuery(query);
 			while(rs.next())
@@ -85,7 +84,7 @@ public class DbAggregatorDer extends DbConnection {
 				+ " FROM DerAggregatorData"
 				+ " WHERE IdAggregatorAgent='"+idAggregatorAgent+"'"
 				+ " AND DateTime in (SELECT MAX(DateTime)"
-								+" FROM LoadAggregatorData"
+								+" FROM LoadAggregatorData)"
 				+ " ORDER BY CostKwh";
 		try {
 			ResultSet rs = stmt.executeQuery(query);
@@ -104,5 +103,42 @@ public class DbAggregatorDer extends DbConnection {
 			e.printStackTrace();
 		}
 		return list;
+	}
+	
+	public Boolean updateLastDerConfirmedChoice(String idAggregatorAgent, int idDer, boolean confirmed)
+	{
+		String query = "UPDATE DerAggregatorAgent"
+				+ " SET Confirmed = '"+confirmed+"'"
+				+ " WHERE IdAggregatorAgent = '"+idAggregatorAgent+"'"
+				+ " AND IdDer = '"+idDer+"'"
+				+ " AND DateTime IN (SELECT MAX(DateTime)"
+									+ "	FROM ControlData)'";
+		try {
+			return stmt.execute(query);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return false;
+	}
+	
+	public int getLastConfirmedByChoice (String idAggregatorAgent, int idDer, boolean confirmed)
+	{
+		String query = "SELECT COUNT(*) as Count"
+				+ " FROM DerAggregatorData"
+				+ " WHERE IdAggregatorAgent = '"+idAggregatorAgent+"'"
+				+ " AND IdDer = "+idDer
+				+ " AND Confirmed = '"+confirmed+"'"
+				+ " AND DateTime in (SELECT MAX(DateTime)"
+								+" FROM LoadAggregatorData)";;
+		try {
+			ResultSet rs = stmt.executeQuery(query);
+			while(rs.next())
+			{
+				return rs.getInt("Count");
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return 0;
 	}
 }

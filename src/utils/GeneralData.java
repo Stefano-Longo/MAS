@@ -9,6 +9,7 @@ public class GeneralData {
 	private DateFormat format = new SimpleDateFormat("yyyy/MM/dd HH:mm");
 	private double dieselKwhPrice = 1; //expressed in €
 	private double priceKwhSold = 0.15; //expressed in €
+	private double meanKwhPrice = 0.2;
 	
 	public int getTimeSlot() {
 		return timeSlot;
@@ -42,6 +43,14 @@ public class GeneralData {
 		this.priceKwhSold = priceKwhSold;
 	}
 	
+	public double getMeanKwhPrice() {
+		return meanKwhPrice;
+	}
+
+	public void setMeanKwhPrice(double meanKwhPrice) {
+		this.meanKwhPrice = meanKwhPrice;
+	}
+
 	public double round(double value, int places) {
 	    if (places < 0) throw new IllegalArgumentException();
 

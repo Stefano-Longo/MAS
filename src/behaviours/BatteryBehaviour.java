@@ -1,7 +1,9 @@
 package behaviours;
 
+import agents.BaseAgent;
 import basicData.BatteryData;
 import basicData.BatteryInfo;
+import basicData.OkData;
 import basicData.ResultPowerPrice;
 import database.DbBatteryData;
 import database.DbBatteryInfo;
@@ -43,9 +45,17 @@ public class BatteryBehaviour  extends OneShotBehaviour {
 		 *  - OutputPowerMax: I should have it also
 		 */
 		
-		BatteryInfo batteryInfo = new DbBatteryInfo().getBatteryByIdAgent(this.myAgent.getName());
+		BatteryInfo batteryInfo = new DbBatteryInfo().getBatteryInfoByIdAgent(this.myAgent.getName());
 		//get the data to update
 		BatteryData lastBatteryData = new DbBatteryData().getLastBatteryData(batteryInfo.getIdBattery());
+		
+		if(msgData.getPowerRequested() < lastBatteryData.getInputPowerMax() || 
+				msgData.getPowerRequested() > lastBatteryData.getOutputPowerMax())
+		{
+			new BaseAgent().sendMessageToAgentsByServiceType(this.myAgent, "BatteryAggregatorAgent",
+					"ok", "ko");
+			return;
+		}
 		
 		double newSoc = calculateSoc(lastBatteryData.getSoc(), lastBatteryData.getCapacity(), msgData.getPowerRequested());
 		double newSocObjective = lastBatteryData.getSocObjective();
@@ -57,6 +67,10 @@ public class BatteryBehaviour  extends OneShotBehaviour {
 		BatteryData batteryData = new BatteryData(batteryInfo.getIdBattery(), lastBatteryData.getDatetime(), 
 				newSocObjective, newSoc, newCostKwh, msgData.getPowerRequested());
 		new DbBatteryData().updateBatteryData(batteryData); //salvo nello storico
+		
+		OkData ok = new OkData(msgData.getDatetime(), "battery", true);
+		new BaseAgent().sendMessageToAgentsByServiceType(this.myAgent, "BatteryAggregatorAgent",
+				"ok", ok);
 	}
 
 	private double calculateSoc(double soc, double capacity, double powerRequested)
@@ -74,7 +88,7 @@ public class BatteryBehaviour  extends OneShotBehaviour {
 		{
 			return oldCostKwh;
 		}
-		BatteryInfo bInfo = new DbBatteryInfo().getBatteryByIdAgent(this.myAgent.getName());
+		BatteryInfo bInfo = new DbBatteryInfo().getBatteryInfoByIdAgent(this.myAgent.getName());
 		double cycleCost = (bInfo.getCapitalCost() + bInfo.getMaintenanceCost())/bInfo.getCyclesNumber();
 		double costNewKwh = (cycleCost/(2*bInfo.getCapacity()))+((1-bInfo.getRoundTripEfficiency())*msgData.getCostKwh());
 		//TO-DO control Agent sends the price expressed in costKwh!!

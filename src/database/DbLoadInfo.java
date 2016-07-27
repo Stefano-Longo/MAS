@@ -22,7 +22,6 @@ public class DbLoadInfo extends DbConnection {
 					+ " WHERE RTRIM(IdAgent) = '"+idAgent+"'"
 					+ " AND DateTime = '"+format.format(datetime.getTime())+"'"
 					+ " ORDER BY DateTime";
-		System.out.println(query);
 		try {
 			ResultSet rs = stmt.executeQuery(query);
 			while(rs.next())
@@ -51,7 +50,6 @@ public class DbLoadInfo extends DbConnection {
 					+ " FROM Load"
 					+ " WHERE RTRIM(IdAgent) = '"+idAgent+"'"
 					+ " AND DateTime = '"+format.format(datetime.getTime())+"'";
-		System.out.println(query);
 		try {
 			ResultSet rs = stmt.executeQuery(query);
 			while(rs.next())
@@ -73,7 +71,6 @@ public class DbLoadInfo extends DbConnection {
 					+ " FROM Load"
 					+ " WHERE IdLoad = "+idLoad
 					+ " AND DateTime = '"+format.format(datetime.getTime())+"'";
-		System.out.println(query);
 		try {
 			ResultSet rs = stmt.executeQuery(query);
 			while(rs.next())
@@ -81,9 +78,6 @@ public class DbLoadInfo extends DbConnection {
 				data = new LoadInfo(rs.getInt("IdLoad"), rs.getString("IdAgent"), rs.getString("IdPlatform"),
 						datetime, rs.getDouble("CriticalConsumption"), rs.getDouble("NonCriticalConsumption"), 
 						rs.getDouble("ConsumptionAdded"));
-				
-				Calendar cal2 = Calendar.getInstance();
-				cal2.setTime(rs.getTimestamp("toDateTime"));
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -97,7 +91,6 @@ public class DbLoadInfo extends DbConnection {
 				+ " SET  ConsumptionAdded="+loadInfo.getConsumptionAdded()
 				+ " WHERE IdLoad = '"+loadInfo.getIdLoad()+"'"
 				+ " AND DateTime = '"+format.format(loadInfo.getDatetime().getTime())+"'";
-		System.out.println(query);
 		try {
 			return stmt.execute(query);
 		} catch (SQLException e) {

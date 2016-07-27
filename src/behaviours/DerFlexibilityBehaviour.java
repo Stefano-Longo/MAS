@@ -72,8 +72,6 @@ public class DerFlexibilityBehaviour extends OneShotBehaviour {
 	{
 		if(derInfo.getType().contains("generator"))
 		{
-			System.out.println("\n\ngenerator \n derInfo.getProductionMax(): "+derInfo.getProductionMax());
-			System.out.println("derInfo.getUsageMax(): "+derInfo.getUsageMax()+"\n\n");
 			return derInfo.getProductionMax()*derInfo.getUsageMax()/100;
 		}
 		else if(derInfo.getType().contains("photovoltaic"))

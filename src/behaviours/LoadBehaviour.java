@@ -1,7 +1,9 @@
 package behaviours;
 
+import agents.BaseAgent;
 import basicData.LoadData;
 import basicData.LoadInfo;
+import basicData.OkData;
 import basicData.ResultPowerPrice;
 import database.DbLoadData;
 import database.DbLoadInfo;
@@ -9,9 +11,8 @@ import jade.core.behaviours.OneShotBehaviour;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.UnreadableException;
 
+@SuppressWarnings("serial")
 public class LoadBehaviour extends OneShotBehaviour {
-
-	private static final long serialVersionUID = 1L;
 
 	ResultPowerPrice msgData;
 	public LoadBehaviour(ACLMessage msg) {
@@ -37,5 +38,9 @@ public class LoadBehaviour extends OneShotBehaviour {
 		
 		LoadInfo newLoadInfo = new LoadInfo(loadInfo.getIdLoad(), loadData.getToDatetime(), consumptionShifted);
 		new DbLoadInfo().updateLoadInfo(newLoadInfo);
+		
+		OkData ok = new OkData(msgData.getDatetime(), "load", true);
+		new BaseAgent().sendMessageToAgentsByServiceType(this.myAgent, "LoadAggregatorAgent",
+				"ok", ok);
 	}
 }
