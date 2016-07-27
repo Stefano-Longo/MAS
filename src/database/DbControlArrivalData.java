@@ -76,14 +76,14 @@ public class DbControlArrivalData extends DbConnection {
 		return 0;
 	}
 	
-	public Boolean updateControlArrivalData (String idAgent, String type, boolean confirmed)
+	public Boolean updateControlArrivalData (String idControlAgent, String type, boolean confirmed)
 	{
-		String query = "UPDATE ControlData"
+		String query = "UPDATE ControlArrivalData"
 				+ " SET Confirmed = '"+confirmed+"'"
-				+ " WHERE IdAgent = '"+idAgent+"'"
+				+ " WHERE IdControlAgent = '"+idControlAgent+"'"
 				+ " AND Type = '"+type+"'"
 				+ " AND DateTime IN (SELECT MAX(DateTime)"
-									+ "	FROM ControlData)'";
+									+ "	FROM ControlData)";
 		try {
 			return stmt.execute(query);
 		} catch (SQLException e) {

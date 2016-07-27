@@ -171,12 +171,12 @@ public class DbAggregatorBattery extends DbConnection {
 	
 	public Boolean updateLastBatteryConfirmedChoice(String idAggregatorAgent, int idBattery, boolean confirmed)
 	{
-		String query = "UPDATE BatteryAggregatorAgent"
+		String query = "UPDATE BatteryAggregatorData"
 				+ " SET Confirmed = '"+confirmed+"'"
 				+ " WHERE IdAggregatorAgent = '"+idAggregatorAgent+"'"
-				+ " AND IdBattery = '"+idBattery+"'"
+				+ " AND IdBattery = "+idBattery
 				+ " AND DateTime IN (SELECT MAX(DateTime)"
-									+ "	FROM ControlData)'";
+									+ "	FROM ControlData)";
 		try {
 			return stmt.execute(query);
 		} catch (SQLException e) {

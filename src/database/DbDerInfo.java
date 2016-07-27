@@ -43,9 +43,6 @@ public class DbDerInfo extends DbConnection {
 			ResultSet rs = stmt.executeQuery(query);
 			while(rs.next())
 			{
-				Calendar cal1 = Calendar.getInstance();
-				cal1.setTime(rs.getTimestamp("DateTime"));
-
 				data = new DerInfo(rs.getInt("IdDer"), rs.getString("IdAgent"), rs.getString("IdPlatform"),
 						rs.getDouble("ProductionMax"), rs.getString("Type"), rs.getDouble("UsageMin"), 
 						rs.getDouble("UsageMax"), rs.getDouble("CapitalCost"), rs.getDouble("MaintenanceCost"),

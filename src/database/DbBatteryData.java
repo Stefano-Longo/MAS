@@ -31,9 +31,9 @@ public class DbBatteryData extends DbConnection	{
 	public Boolean updateBatteryData(BatteryData battery)
 	{
 		String query = "UPDATE BatteryDataHistory"
-				+ " SET SocObjective="+battery.getSocObjective()+", Soc="+battery.getSoc()+","
-					+ " CostKwh="+battery.getCostKwh()+", PowerRequested="+battery.getPowerRequested()+","
-					+ " Confirmed=true"
+				+ " SET SocObjective = "+battery.getSocObjective()+", Soc="+battery.getSoc()+","
+					+ " CostKwh = "+battery.getCostKwh()+", PowerRequested="+battery.getPowerRequested()+","
+					+ " Confirmed = 'true'"
 				+ " WHERE IdBattery = "+battery.getIdBattery()
 				+ " AND DateTime = '"+format.format(battery.getDatetime().getTime())+"'";
 		try {

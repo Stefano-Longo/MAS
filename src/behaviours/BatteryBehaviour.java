@@ -49,13 +49,14 @@ public class BatteryBehaviour  extends OneShotBehaviour {
 		//get the data to update
 		BatteryData lastBatteryData = new DbBatteryData().getLastBatteryData(batteryInfo.getIdBattery());
 		
-		if(msgData.getPowerRequested() < lastBatteryData.getInputPowerMax() || 
+		/*if(msgData.getPowerRequested() < lastBatteryData.getInputPowerMax() || 
 				msgData.getPowerRequested() > lastBatteryData.getOutputPowerMax())
 		{
+			OkData ko = new OkData(msgData.getDatetime(), "battery", false);
 			new BaseAgent().sendMessageToAgentsByServiceType(this.myAgent, "BatteryAggregatorAgent",
-					"ok", "ko");
+					"ok", ko);
 			return;
-		}
+		}*/
 		
 		double newSoc = calculateSoc(lastBatteryData.getSoc(), lastBatteryData.getCapacity(), msgData.getPowerRequested());
 		double newSocObjective = lastBatteryData.getSocObjective();
@@ -75,9 +76,9 @@ public class BatteryBehaviour  extends OneShotBehaviour {
 
 	private double calculateSoc(double soc, double capacity, double powerRequested)
 	{
-		//BatteryInput -> powerRequested negative value
-		//BatteryOutput -> powerRequested positive value
-		 double newSoc = soc - (int)((powerRequested / (3600 / timeSlot))*100 / capacity);
+		//BatteryOutput -> powerRequested negative value
+		//BatteryInput -> powerRequested positive value
+		 double newSoc = soc + (int)((powerRequested / (3600 / timeSlot))*100 / capacity);
 
 		return newSoc;
 	}

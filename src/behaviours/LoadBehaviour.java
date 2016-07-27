@@ -33,7 +33,7 @@ public class LoadBehaviour extends OneShotBehaviour {
 		
 		LoadData newLoadData = new LoadData(loadInfo.getIdLoad(), msgData.getDatetime(),
 				msgData.getPowerRequested(), consumptionShifted);
-
+		
 		new DbLoadData().updateLoadData(newLoadData);
 		
 		LoadInfo newLoadInfo = new LoadInfo(loadInfo.getIdLoad(), loadData.getToDatetime(), consumptionShifted);

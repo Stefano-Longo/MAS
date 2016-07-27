@@ -108,12 +108,12 @@ public class DbAggregatorLoad extends DbConnection {
 	
 	public Boolean updateLastLoadConfirmedChoice(String idAggregatorAgent, int idLoad, boolean confirmed)
 	{
-		String query = "UPDATE LoadAggregatorAgent"
+		String query = "UPDATE LoadAggregatorData"
 				+ " SET Confirmed = '"+confirmed+"'"
 				+ " WHERE IdAggregatorAgent = '"+idAggregatorAgent+"'"
-				+ " AND IdLoad = '"+idLoad+"'"
+				+ " AND IdLoad = "+idLoad
 				+ " AND DateTime IN (SELECT MAX(DateTime)"
-									+ "	FROM ControlData)'";
+									+ "	FROM ControlData)";
 		try {
 			return stmt.execute(query);
 		} catch (SQLException e) {

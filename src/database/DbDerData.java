@@ -73,8 +73,8 @@ public class DbDerData extends DbConnection {
 				Calendar cal = Calendar.getInstance();
 				cal.setTime(rs.getTimestamp("DateTime"));
 	
-				data = new DerData(idDer, cal, rs.getDouble("CostKwh"), rs.getDouble("ProdMin"),
-					rs.getDouble("ProdMax"), rs.getDouble("ProdReq"), rs.getDouble("DesChoice"));
+				data = new DerData(idDer, cal, rs.getDouble("CostKwh"), rs.getDouble("ProductionMin"),
+					rs.getDouble("ProductionMax"), rs.getDouble("ProductionRequested"), rs.getDouble("DesideredChoice"));
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -85,9 +85,9 @@ public class DbDerData extends DbConnection {
 	public Boolean updateDerData(DerData der)
 	{
 		String query = "UPDATE DerDataHistory"
-				+ " SET ProductionRequested="+der.getProductionRequested()+","
-					+ " Confirmed=true"
-				+ " WHERE IdDer = '"+der.getIdDer()
+				+ " SET ProductionRequested = "+der.getProductionRequested()+","
+					+ " Confirmed = 'true'"
+				+ " WHERE IdDer = "+der.getIdDer()
 				+ " AND DateTime = '"+format.format(der.getDatetime().getTime())+"'";
 		try {
 			return stmt.execute(query);

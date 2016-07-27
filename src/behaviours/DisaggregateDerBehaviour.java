@@ -8,6 +8,7 @@ import basicData.DerInfo;
 import basicData.ResultPowerPrice;
 import database.DbAggregatorDer;
 import database.DbDerInfo;
+import jade.core.AID;
 import jade.core.behaviours.OneShotBehaviour;
 import jade.domain.FIPAAgentManagement.DFAgentDescription;
 import jade.lang.acl.ACLMessage;
@@ -37,7 +38,7 @@ public class DisaggregateDerBehaviour extends OneShotBehaviour{
 		 */
 		derChoices = new DbAggregatorDer().getDersChoice(this.myAgent.getName());
 		DFAgentDescription[] derAgents = new BaseAgent().getAgentsbyServiceType(myAgent, "DerAgent");
-
+		System.out.println("Disaggregate: "+derAgents.length+" derChoices: "+derChoices.size());
 		if(derChoices.size() == derAgents.length)
 		{
 			takeFromMostConvenient();
@@ -67,8 +68,10 @@ public class DisaggregateDerBehaviour extends OneShotBehaviour{
 			ResultPowerPrice derAction = new ResultPowerPrice(msgData.getDatetime(), derPowerRequested, msgData.getCostKwh());
 			
 			DerInfo derInfo = new DbDerInfo().getDerByIdDer(derChoices.get(i).getIdentificator());
+			
+			String shortName = new BaseAgent().getShortName(derInfo.getIdAgent());
 			new BaseAgent().sendMessageToAgentsByServiceType(this.myAgent, 
-					derInfo.getIdAgent(), "result", derAction);
+					myAgent.getAID(shortName), "result", derAction);
 		}
 	}
 

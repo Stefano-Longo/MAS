@@ -93,8 +93,9 @@ public class DisaggregateLoadBehaviour extends OneShotBehaviour{
 					loadPowerRequested, msgData.getCostKwh());
 
 			LoadInfo loadInfo = new DbLoadInfo().getLoadInfoByIdLoad(loadsChoice.get(i).getIdentificator(), msgData.getDatetime());
+			String shortName = new BaseAgent().getShortName(loadInfo.getIdAgent());
 			new BaseAgent().sendMessageToAgentsByServiceType(this.myAgent, 
-					loadInfo.getIdAgent(), "result", loadAction);
+					this.myAgent.getAID(shortName), "result", loadAction);
 		}
 	}
 
@@ -121,8 +122,9 @@ public class DisaggregateLoadBehaviour extends OneShotBehaviour{
 					loadPowerRequested, msgData.getCostKwh());
 
 			LoadInfo loadInfo = new DbLoadInfo().getLoadInfoByIdLoad(loadsChoice.get(i).getIdentificator(), msgData.getDatetime());
+			String shortName = new BaseAgent().getShortName(loadInfo.getIdAgent());
 			new BaseAgent().sendMessageToAgentsByServiceType(this.myAgent, 
-					loadInfo.getIdAgent(), "result", loadAction);
+					this.myAgent.getAID(shortName), "result", loadAction);
 		}
 	}
 	
@@ -133,8 +135,9 @@ public class DisaggregateLoadBehaviour extends OneShotBehaviour{
 			ResultPowerPrice loadAction = new ResultPowerPrice(msgData.getDatetime(), 0, msgData.getCostKwh());
 
 			LoadInfo loadInfo = new DbLoadInfo().getLoadInfoByIdLoad(loadsChoice.get(i).getIdentificator(), msgData.getDatetime());
+			String shortName = new BaseAgent().getShortName(loadInfo.getIdAgent());
 			new BaseAgent().sendMessageToAgentsByServiceType(this.myAgent, 
-					loadInfo.getIdAgent(), "result", loadAction);
+					this.myAgent.getAID(shortName), "result", loadAction);
 		}
 	}
 	

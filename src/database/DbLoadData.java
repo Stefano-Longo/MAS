@@ -34,11 +34,11 @@ public class DbLoadData extends DbConnection {
 	{
 		String query = "UPDATE LoadDataHistory"
 				+ " SET  PowerRequested="+load.getPowerRequested()+","
-					+ " ConsumptionShifted="+load.getConsumptionShifted()
-					+ " ToDateTime="+format.format(load.getToDatetime().getTime())
-					+ " Confirmed = true"
-				+ " WHERE Id = '"+load.getIdLoad()+"'"
+					+ " ConsumptionShifted="+load.getConsumptionShifted()+", "
+					+ " Confirmed = 'true'"
+				+ " WHERE IdLoad = "+load.getIdLoad()
 				+ " AND DateTime = '"+format.format(load.getDatetime().getTime())+"'";
+		System.out.println(query);
 		try {
 			return stmt.execute(query);
 		} catch (SQLException e) {
@@ -52,8 +52,9 @@ public class DbLoadData extends DbConnection {
 		LoadData data = null;
 		String query = "SELECT TOP 1 *"
 				+ " FROM LoadDataHistory"
-				+ " WHERE RTRIM(IdBattery) = "+idLoad
+				+ " WHERE IdLoad = "+idLoad
 				+ " ORDER BY DateTime DESC";
+		System.out.println(query);
 		try {
 			ResultSet rs = stmt.executeQuery(query);
 			while(rs.next())
@@ -63,8 +64,8 @@ public class DbLoadData extends DbConnection {
 
 				Calendar cal1 = Calendar.getInstance();
 				cal1.setTime(rs.getTimestamp("ToDateTime"));
-				data = new LoadData(rs.getInt("IdBattery"), cal, rs.getDouble("CostKwh"), 
-						rs.getDouble("CriticalDataConsumption"), rs.getDouble("NonCriticalDataConsumption"), 
+				data = new LoadData(rs.getInt("IdLoad"), cal, rs.getDouble("CostKwh"), 
+						rs.getDouble("CriticalConsumption"), rs.getDouble("NonCriticalConsumption"), 
 						rs.getDouble("ConsumptionMin"), rs.getDouble("ConsumptionMax"), 
 						rs.getDouble("PowerRequested"), rs.getDouble("DesideredChoice"), 
 						rs.getDouble("ConsumptionShifted"), cal1);

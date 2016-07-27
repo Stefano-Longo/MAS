@@ -3,6 +3,7 @@ package agents;
 import java.io.IOException;
 import java.io.Serializable;
 
+import jade.core.AID;
 import jade.core.Agent;
 import jade.domain.DFService;
 import jade.domain.FIPAException;
@@ -69,6 +70,22 @@ public class BaseAgent extends Agent {
 		return false;
 	}
 	
+	public Boolean sendMessageToAgentsByServiceType (Agent myAgent, AID receiver, 
+			String conversationId, Serializable messageData)
+	{
+		try {
+			ACLMessage message = new ACLMessage(ACLMessage.INFORM);
+			message.setContentObject(messageData);
+			message.addReceiver(receiver); 
+			message.setConversationId(conversationId);
+			myAgent.send(message);
+			return true;
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return false;
+	}
+	
 	public DFAgentDescription[] getAgentsbyServiceType (Agent myAgent, String serviceType)
 	{
 		DFAgentDescription ad = new DFAgentDescription();
@@ -82,6 +99,12 @@ public class BaseAgent extends Agent {
 			e.printStackTrace();
 		}
 		return ca;
+	}
+	
+	public String getShortName (String idAgent)
+	{
+		String[] names = idAgent.split("@");
+		return names[0];
 	}
 	
 	

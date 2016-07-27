@@ -83,14 +83,14 @@ public class ControlBehaviour extends OneShotBehaviour {
 
 				//se sono molto scariche e se conviene assai, carico le batterie, altrimenti no
 				
-				if(-batteryData.getLowerLimit() <= batteryData.getUpperLimit()*1.5
+				if(batteryData.getLowerLimit() <= -batteryData.getUpperLimit()*1.5
 						&& meanPrice > prices.get(0).getEnergyPrice() + 0.5*meanPrice)
 				{
 					batteryEnergyRequest = batteryData.getDesideredChoice(); 
 				}
-				
+
 				costKwh = prices.get(0).getEnergyPrice();
-				gridEnergyRequest = loadEnergyRequest+batteryEnergyRequest+derEnergyRequest;
+				gridEnergyRequest = loadEnergyRequest+batteryEnergyRequest-derEnergyRequest;
 			}
 			else if(meanPrice < prices.get(0).getEnergyPrice() - 0.2*meanPrice)
 			{
@@ -115,24 +115,23 @@ public class ControlBehaviour extends OneShotBehaviour {
 					" "+derData.getDesideredChoice()+" "+derData.getCostKwh());
 			System.out.println(loadData.getType()+" "+loadData.getDatetime().getTime()+" "+loadData.getLowerLimit()+" "+loadData.getUpperLimit()+
 					" "+loadData.getDesideredChoice()+" "+loadData.getCostKwh());
-			System.out.println("gridEnergyRequest: "+gridEnergyRequest);
+			
+			System.out.println("\ngridEnergyRequest: "+gridEnergyRequest);
+			System.out.println("\n derEnergyRequest: "+derEnergyRequest);
+			System.out.println("\n batteryEnergyRequest: "+batteryEnergyRequest);
+			System.out.println("\n loadEnergyRequest: "+loadEnergyRequest);
 			
 			ResultPowerPrice derResult = new ResultPowerPrice(msgData.getDatetime(), derEnergyRequest, costKwh);
 			ResultPowerPrice batteryResult = new ResultPowerPrice(msgData.getDatetime(), batteryEnergyRequest, costKwh);
 			ResultPowerPrice loadResult = new ResultPowerPrice(msgData.getDatetime(), loadEnergyRequest, costKwh);
-			ResultPowerPrice gridResult = new ResultPowerPrice(msgData.getDatetime(), gridEnergyRequest, costKwh);
 
-			System.out.println("\n derEnergyRequest: "+derEnergyRequest);
-			System.out.println("\n batteryEnergyRequest: "+batteryEnergyRequest);
-			System.out.println("\n loadEnergyRequest: "+loadEnergyRequest);
+			
 			new BaseAgent().sendMessageToAgentsByServiceType(this.myAgent, "BatteryAggregatorAgent",
 					"result", batteryResult);
 			new BaseAgent().sendMessageToAgentsByServiceType(this.myAgent, "DerAggregatorAgent",
 					"result", derResult);
 			new BaseAgent().sendMessageToAgentsByServiceType(this.myAgent, "LoadAggregatorAgent",
 					"result", loadResult);
-			new BaseAgent().sendMessageToAgentsByServiceType(this.myAgent, "GridAgent",
-					"result", gridResult);
 			
 			ControlData newControlData = new ControlData(this.myAgent.getName(), this.myAgent.getHap(),
 					msgData.getDatetime(), derEnergyRequest, batteryEnergyRequest, loadEnergyRequest, 

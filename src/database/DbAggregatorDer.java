@@ -107,12 +107,12 @@ public class DbAggregatorDer extends DbConnection {
 	
 	public Boolean updateLastDerConfirmedChoice(String idAggregatorAgent, int idDer, boolean confirmed)
 	{
-		String query = "UPDATE DerAggregatorAgent"
+		String query = "UPDATE DerAggregatorData"
 				+ " SET Confirmed = '"+confirmed+"'"
 				+ " WHERE IdAggregatorAgent = '"+idAggregatorAgent+"'"
-				+ " AND IdDer = '"+idDer+"'"
+				+ " AND IdDer = "+idDer
 				+ " AND DateTime IN (SELECT MAX(DateTime)"
-									+ "	FROM ControlData)'";
+									+ "	FROM ControlData)";
 		try {
 			return stmt.execute(query);
 		} catch (SQLException e) {
