@@ -43,8 +43,16 @@ public class DisaggregateLoadBehaviour extends OneShotBehaviour{
 		FlexibilityData loadAggregatedData = new DbAggregatorLoad().aggregateMessageReceived(this.myAgent.getName());
 		if(loadsChoice.size() == loadAgents.length)
 		{
-			if(msgData.getPowerRequested() > loadAggregatedData.getDesideredChoice())
+			System.out.println("\nENTRAAAAATOOOOO Aggregate LOAD");
+			System.out.println(msgData.getPowerRequested()+ " > "+ loadAggregatedData.getDesideredChoice()+" ?");
+			if(msgData.getPowerRequested() == 0)
 			{
+				System.out.println("\nENTRAAAAATOOOOO Aggregate LOAD - spegni");
+				switchOff();
+			}
+			else if(msgData.getPowerRequested() >= loadAggregatedData.getDesideredChoice())
+			{
+				System.out.println("\nENTRAAAAATOOOOO Aggregate LOAD - di più");
 				/**
 				 * Garantisco a tutti la loro scelta (desideredChoice) e il surplus lo dò 
 				 * a chi mi garantisce un prezzo basso per ogni Kwh spostato
@@ -54,6 +62,7 @@ public class DisaggregateLoadBehaviour extends OneShotBehaviour{
 			}
 			else if(msgData.getPowerRequested() < loadAggregatedData.getDesideredChoice())
 			{
+				System.out.println("\nENTRAAAAATOOOOO Aggregate LOAD - di meno");
 				/**
 				 * Garantisco a tutti il minimo (lowerLimit) e il surplus lo dò 
 				 * a chi mi garantisce un prezzo basso per ogni Kwh spostato (A CHI HA UN PREZZO NEGATIVO!!)
@@ -61,10 +70,7 @@ public class DisaggregateLoadBehaviour extends OneShotBehaviour{
 				double residualPower = msgData.getPowerRequested() - loadAggregatedData.getLowerLimit();
 				giveMinimumPlusResidual(residualPower);
 			}
-			else if(msgData.getPowerRequested() == 0)
-			{
-				switchOff();
-			}
+			
 		}
 		
 	}

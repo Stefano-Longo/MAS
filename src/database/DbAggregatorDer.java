@@ -121,15 +121,14 @@ public class DbAggregatorDer extends DbConnection {
 		return false;
 	}
 	
-	public int getLastConfirmedByChoice (String idAggregatorAgent, int idDer, boolean confirmed)
+	public int getLastConfirmedByChoice (String idAggregatorAgent, boolean confirmed)
 	{
 		String query = "SELECT COUNT(*) as Count"
 				+ " FROM DerAggregatorData"
 				+ " WHERE IdAggregatorAgent = '"+idAggregatorAgent+"'"
-				+ " AND IdDer = "+idDer
 				+ " AND Confirmed = '"+confirmed+"'"
 				+ " AND DateTime in (SELECT MAX(DateTime)"
-								+" FROM LoadAggregatorData)";;
+								+" FROM LoadAggregatorData)";
 		try {
 			ResultSet rs = stmt.executeQuery(query);
 			while(rs.next())

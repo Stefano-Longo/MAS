@@ -111,7 +111,6 @@ public class DbAggregatorBattery extends DbConnection {
 				+ " AND DateTime in (SELECT MAX(DateTime)"
 								+" FROM BatteryAggregatorData)"
 				+ " ORDER BY Diff";
-		System.out.println(query);
 		try {
 			ResultSet rs = stmt.executeQuery(query);
 			while(rs.next())
@@ -185,12 +184,11 @@ public class DbAggregatorBattery extends DbConnection {
 		return false;
 	}
 	
-	public int getLastConfirmedByChoice (String idAggregatorAgent, int idBattery, boolean confirmed)
+	public int getLastConfirmedByChoice (String idAggregatorAgent, boolean confirmed)
 	{
 		String query = "SELECT COUNT(*) as Count"
 				+ " FROM BatteryAggregatorData"
 				+ " WHERE IdAggregatorAgent = '"+idAggregatorAgent+"'"
-				+ " AND IdBattery = "+idBattery
 				+ " AND Confirmed = '"+confirmed+"'"
 				+ " AND DateTime in (SELECT MAX(DateTime)"
 								+" FROM LoadAggregatorData)";;

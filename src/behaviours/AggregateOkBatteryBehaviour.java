@@ -32,8 +32,7 @@ public class AggregateOkBatteryBehaviour extends OneShotBehaviour {
 		new DbAggregatorBattery().updateLastBatteryConfirmedChoice(this.myAgent.getName(), 
 				batteryInfo.getIdBattery(), msgData.getOk());
 		
-		int confirmedTrue = new DbAggregatorBattery().getLastConfirmedByChoice(this.myAgent.getName(),
-				batteryInfo.getIdBattery(), true);
+		int confirmedTrue = new DbAggregatorBattery().getLastConfirmedByChoice(this.myAgent.getName(), true);
 		int batteryAgents = new BaseAgent().getAgentsbyServiceType(this.myAgent, "BatteryAgent").length;
 		System.out.println("BatteryOk - confirmedTrue:"+confirmedTrue+" batteryAgents: "+batteryAgents);
 		if(confirmedTrue == batteryAgents)

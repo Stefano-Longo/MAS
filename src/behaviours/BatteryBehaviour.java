@@ -49,14 +49,14 @@ public class BatteryBehaviour  extends OneShotBehaviour {
 		//get the data to update
 		BatteryData lastBatteryData = new DbBatteryData().getLastBatteryData(batteryInfo.getIdBattery());
 		
-		/*if(msgData.getPowerRequested() < lastBatteryData.getInputPowerMax() || 
-				msgData.getPowerRequested() > lastBatteryData.getOutputPowerMax())
+		if(msgData.getPowerRequested() > lastBatteryData.getInputPowerMax() || 
+				msgData.getPowerRequested() < lastBatteryData.getOutputPowerMax())
 		{
 			OkData ko = new OkData(msgData.getDatetime(), "battery", false);
 			new BaseAgent().sendMessageToAgentsByServiceType(this.myAgent, "BatteryAggregatorAgent",
 					"ok", ko);
 			return;
-		}*/
+		}
 		
 		double newSoc = calculateSoc(lastBatteryData.getSoc(), lastBatteryData.getCapacity(), msgData.getPowerRequested());
 		double newSocObjective = lastBatteryData.getSocObjective();
@@ -64,9 +64,11 @@ public class BatteryBehaviour  extends OneShotBehaviour {
 		//TO-DO per ora newSocObjective sempre uguale. Poi vediamo se è meglio che si aggiorni per ogni ora
 		
 		double newCostKwh = calculateNewCostKwh(lastBatteryData.getSoc(), lastBatteryData.getCapacity(), lastBatteryData.getCostKwh());
+		newCostKwh = new GeneralData().round(newCostKwh, 4);
 		
 		BatteryData batteryData = new BatteryData(batteryInfo.getIdBattery(), lastBatteryData.getDatetime(), 
 				newSocObjective, newSoc, newCostKwh, msgData.getPowerRequested());
+		System.out.println(newCostKwh);
 		new DbBatteryData().updateBatteryData(batteryData); //salvo nello storico
 		
 		OkData ok = new OkData(msgData.getDatetime(), "battery", true);

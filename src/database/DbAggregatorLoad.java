@@ -86,7 +86,6 @@ public class DbAggregatorLoad extends DbConnection {
 				+ " AND DateTime in (SELECT MAX(DateTime)"
 								+" FROM LoadAggregatorData)"
 				+ " ORDER BY CostKwh";
-		System.out.println(query);
 		try {
 			ResultSet rs = stmt.executeQuery(query);
 			while(rs.next())
@@ -122,12 +121,11 @@ public class DbAggregatorLoad extends DbConnection {
 		return false;
 	}
 	
-	public int getLastConfirmedByChoice (String idAggregatorAgent, int idLoad, boolean confirmed)
+	public int getLastConfirmedByChoice (String idAggregatorAgent, boolean confirmed)
 	{
 		String query = "SELECT COUNT(*) as Count"
 				+ " FROM LoadAggregatorData"
 				+ " WHERE IdAggregatorAgent = '"+idAggregatorAgent+"'"
-				+ " AND IdLoad = "+idLoad
 				+ " AND Confirmed = '"+confirmed+"'"
 				+ " AND DateTime in (SELECT MAX(DateTime)"
 								+" FROM LoadAggregatorData)";;

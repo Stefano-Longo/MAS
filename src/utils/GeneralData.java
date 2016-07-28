@@ -6,7 +6,7 @@ import java.text.SimpleDateFormat;
 public class GeneralData {
 
 	private int timeSlot = 3600; //seconds 
-	private DateFormat format = new SimpleDateFormat("yyyy/MM/dd HH:mm");
+	private DateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
 	private double dieselKwhPrice = 1; //expressed in €
 	private double priceKwhSold = 0.15; //expressed in €
 	private double meanKwhPrice = 0.2;

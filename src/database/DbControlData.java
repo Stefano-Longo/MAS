@@ -20,7 +20,6 @@ public class DbControlData extends DbConnection {
 						+format.format(controlData.getDatetime().getTime())+"',"+controlData.getDerPower()+","
 						+controlData.getBatteryPower()+","+controlData.getLoadPower()+", "+controlData.getGridPower()+", "
 						+controlData.getCostKwh()+", "+controlData.getConfirmed()+")";
-		System.out.println(query);
 		try {
 			return stmt.execute(query);
 		} catch (SQLException e) {

@@ -14,14 +14,17 @@ public class DbLoadData extends DbConnection {
 	
 	public Boolean addLoadData(LoadData load)
 	{
+		String datetime = load.getToDatetime()==null ? null : format.format(load.getToDatetime().getTime());
 		String query = "INSERT INTO LoadDataHistory (IdLoad, DateTime, CostKwh, CriticalConsumption, NonCriticalConsumption,"
 				+ " ConsumptionMin, ConsumptionMax, PowerRequested, DesideredChoice, ConsumptionShifted,"
 				+ " ToDateTime, Confirmed)"
 				+ " VALUES ("+load.getIdLoad()+",'"+format.format(load.getDatetime().getTime())+"',"
 						+load.getCostKwh()+","+load.getCriticalConsumption()+","
 						+load.getNonCriticalConsumption()+","+load.getConsumptionMin()+","+load.getConsumptionMax()+","
-						+load.getPowerRequested()+","+load.getDesideredChoice()+","+load.getConsumptionShifted()+",'"
-						+format.format(load.getToDatetime().getTime())+"', 'false')";
+						+load.getPowerRequested()+","+load.getDesideredChoice()+","+load.getConsumptionShifted()+",";
+		query += datetime == null ? datetime : "'"+datetime+"'";
+		query += ", 'false')";
+		System.out.println(query);
 		try {
 			return stmt.execute(query);
 		} catch (SQLException e) {
@@ -38,7 +41,6 @@ public class DbLoadData extends DbConnection {
 					+ " Confirmed = 'true'"
 				+ " WHERE IdLoad = "+load.getIdLoad()
 				+ " AND DateTime = '"+format.format(load.getDatetime().getTime())+"'";
-		System.out.println(query);
 		try {
 			return stmt.execute(query);
 		} catch (SQLException e) {
@@ -54,16 +56,19 @@ public class DbLoadData extends DbConnection {
 				+ " FROM LoadDataHistory"
 				+ " WHERE IdLoad = "+idLoad
 				+ " ORDER BY DateTime DESC";
-		System.out.println(query);
 		try {
 			ResultSet rs = stmt.executeQuery(query);
 			while(rs.next())
 			{
 				Calendar cal = Calendar.getInstance();
 				cal.setTime(rs.getTimestamp("DateTime"));
-
-				Calendar cal1 = Calendar.getInstance();
-				cal1.setTime(rs.getTimestamp("ToDateTime"));
+				
+				Calendar cal1 = null;
+				if(rs.getTimestamp("ToDateTime") != null)
+				{
+					cal1 = Calendar.getInstance();
+					cal1.setTime(rs.getTimestamp("ToDateTime"));
+				}
 				data = new LoadData(rs.getInt("IdLoad"), cal, rs.getDouble("CostKwh"), 
 						rs.getDouble("CriticalConsumption"), rs.getDouble("NonCriticalConsumption"), 
 						rs.getDouble("ConsumptionMin"), rs.getDouble("ConsumptionMax"), 

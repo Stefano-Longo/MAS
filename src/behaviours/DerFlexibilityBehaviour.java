@@ -49,12 +49,20 @@ public class DerFlexibilityBehaviour extends OneShotBehaviour {
 		double lowerLimit = getLowerLimit(derInfo);
 		double upperLimit = getUpperLimit(derInfo);
 			
-		double costKwh = getCostKwh(derInfo);
+		if(desideredChoice < lowerLimit || desideredChoice > upperLimit)
+		{
+			desideredChoice = (lowerLimit + upperLimit) / 2;
+		}
 		
+		double costKwh = getCostKwh(derInfo);
+		System.out.println(costKwh+" derType: "+derInfo.getType());
+		
+		lowerLimit = new GeneralData().round(lowerLimit, 2);
+		upperLimit = new GeneralData().round(upperLimit, 2);
+		desideredChoice = new GeneralData().round(desideredChoice, 2);
+
 		FlexibilityData result = new FlexibilityData(cal, lowerLimit, upperLimit, costKwh, 
 				desideredChoice, "der");
-
-
 		DerData derData = new DerData(derInfo.getIdDer(), cal, costKwh, 
 				lowerLimit, upperLimit, 0, desideredChoice);
 		new DbDerData().addDerData(derData);
@@ -119,6 +127,6 @@ public class DerFlexibilityBehaviour extends OneShotBehaviour {
 			costKwh += new GeneralData().getDieselKwhPrice();
 		}
 		
-		return costKwh;
+		return new GeneralData().round(costKwh, 4);
 	}
 }

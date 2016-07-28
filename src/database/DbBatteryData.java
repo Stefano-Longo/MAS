@@ -36,6 +36,7 @@ public class DbBatteryData extends DbConnection	{
 					+ " Confirmed = 'true'"
 				+ " WHERE IdBattery = "+battery.getIdBattery()
 				+ " AND DateTime = '"+format.format(battery.getDatetime().getTime())+"'";
+		System.out.println(query);
 		try {
 			return stmt.execute(query);
 		} catch (SQLException e) {

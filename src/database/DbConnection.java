@@ -13,10 +13,10 @@ public class DbConnection {
     public DbConnection(){
     	
 		try {
-			String connectionUrl = "jdbc:sqlserver://172.17.200.1:1433;"
-		   	      + "databaseName=MicroGrid;user=Longo;password=Admin.Longo";
-			//String connectionUrl = "jdbc:sqlserver://DESKTOP-5KCT80R\\CITADEL:1433;databaseName=MicroGrid"
-			//		+ "user='';password=''";
+			//String connectionUrl = "jdbc:sqlserver://172.17.200.1:1433;"
+		   	//      + "databaseName=MicroGrid;user=Longo;password=Admin.Longo";
+			String connectionUrl = "jdbc:sqlserver://DESKTOP-5KCT80R\\CITADEL;"
+					+"databaseName=MicroGrid;user=sa;password=ciaociao";
 			conn = DriverManager.getConnection(connectionUrl);
 			stmt = conn.createStatement();
 			Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");

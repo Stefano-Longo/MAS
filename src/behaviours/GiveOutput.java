@@ -22,7 +22,7 @@ public class GiveOutput extends OneShotBehaviour {
 	public void action() {
 
 		int slotTime = new GeneralData().getTimeSlot();
-		System.out.println("I am the Grid Agent: "+this.myAgent.getName());
+		System.out.println("\n Hi! I am the Grid Agent: "+this.myAgent.getName());
 		System.out.println("The energy requested to the grid for the next "+slotTime/60+" minutes is: "+msgData.getPowerRequested()+" Kw");
 		
 	}

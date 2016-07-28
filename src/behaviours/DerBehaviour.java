@@ -38,15 +38,15 @@ public class DerBehaviour extends OneShotBehaviour {
 					msgData.getPowerRequested());	
 
 		//attention! The value is negative
-		/*if(msgData.getPowerRequested()*(-1) < derData.getProductionMin() || 
-				msgData.getPowerRequested()*(-1) > derInfo.getProductionMax())
+		if(-msgData.getPowerRequested() < derData.getProductionMin() || 
+				-msgData.getPowerRequested() > derData.getProductionMax())
 		{
 			OkData ko = new OkData(msgData.getDatetime(), "der", false);
 			new BaseAgent().sendMessageToAgentsByServiceType(this.myAgent, "DerAggregatorAgent",
 					"ok", ko);
 			return;
 		}
-		*/
+		
 		new DbDerData().updateDerData(newDerData);
 		
 		OkData ok = new OkData(msgData.getDatetime(), "der", true);

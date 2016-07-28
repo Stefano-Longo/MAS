@@ -38,7 +38,7 @@ public class DbDerData extends DbConnection {
 	 */
 	public DerData getAverageLastMonthProduction (int idDer, Calendar datetime)
 	{
-		DerData data = null;
+		DerData data = new DerData();
 		String query = "SELECT Avg(CostKwh) as CostKwh, Avg(ProductionMin) as ProdMin,"
 				+ " Avg(ProductionMax) as ProdMax, Avg(ProductionRequested) as ProdReq,"
 				+ " Avg(DesideredChoice) as DesChoice"
@@ -61,7 +61,7 @@ public class DbDerData extends DbConnection {
 	
 	public DerData getLastDerData (int idDer)
 	{
-		DerData data = null;
+		DerData data = new DerData();
 		String query = "SELECT TOP 1 *"
 				+ " FROM DerDataHistory"
 				+ " WHERE IdDer = "+idDer

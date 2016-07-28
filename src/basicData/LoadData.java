@@ -56,6 +56,8 @@ public class LoadData implements Serializable {
 		this.powerRequested = powerRequested;
 		this.consumptionShifted = consumptionShifted;
 	}
+	
+	public LoadData() { }
 
 	public int getIdLoad() {
 		return idLoad;
@@ -79,14 +81,6 @@ public class LoadData implements Serializable {
 
 	public void setCostKwh(double costKwh) {
 		this.costKwh = costKwh;
-	}
-
-	public Calendar getDateTime() {
-		return datetime;
-	}
-
-	public void setDateTime(Calendar datetime) {
-		this.datetime = datetime;
 	}
 
 	public double getCriticalConsumption() {

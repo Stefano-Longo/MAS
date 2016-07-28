@@ -41,6 +41,8 @@ public class DerData {
 		this.productionRequested = productionRequested;
 	}
 	
+	public DerData() {}
+	
 	public int getIdDer() {
 		return idDer;
 	}

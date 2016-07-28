@@ -25,10 +25,20 @@ public class LoadBehaviour extends OneShotBehaviour {
 
 	@Override
 	public void action() {
-		
+		System.out.println("\nENTRAAAAATOOOOO LOAD");
 		LoadInfo loadInfo = new DbLoadInfo().getLoadInfoByIdAgent(this.myAgent.getName(), msgData.getDatetime());
 		LoadData loadData = new DbLoadData().getLastLoadData(loadInfo.getIdLoad());
-				
+			
+		
+		if(msgData.getPowerRequested() < loadData.getConsumptionMin() || 
+				msgData.getPowerRequested() > loadData.getConsumptionMax())
+		{
+			OkData ko = new OkData(msgData.getDatetime(), "der", false);
+			new BaseAgent().sendMessageToAgentsByServiceType(this.myAgent, "DerAggregatorAgent",
+					"ok", ko);
+			return;
+		}
+		
 		double consumptionShifted = loadData.getConsumptionMax() - msgData.getPowerRequested();
 		
 		LoadData newLoadData = new LoadData(loadInfo.getIdLoad(), msgData.getDatetime(),
@@ -36,8 +46,11 @@ public class LoadBehaviour extends OneShotBehaviour {
 		
 		new DbLoadData().updateLoadData(newLoadData);
 		
-		LoadInfo newLoadInfo = new LoadInfo(loadInfo.getIdLoad(), loadData.getToDatetime(), consumptionShifted);
-		new DbLoadInfo().updateLoadInfo(newLoadInfo);
+		if(msgData.getPowerRequested() < loadData.getConsumptionMax())
+		{
+			LoadInfo newLoadInfo = new LoadInfo(loadInfo.getIdLoad(), loadData.getToDatetime(), consumptionShifted);
+			new DbLoadInfo().updateLoadInfo(newLoadInfo);
+		}
 		
 		OkData ok = new OkData(msgData.getDatetime(), "load", true);
 		new BaseAgent().sendMessageToAgentsByServiceType(this.myAgent, "LoadAggregatorAgent",
