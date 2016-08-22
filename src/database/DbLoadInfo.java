@@ -18,9 +18,11 @@ public class DbLoadInfo extends DbConnection {
 	{
 		ArrayList<LoadInfoPrice> list = new ArrayList<LoadInfoPrice>();
 		String query = "SELECT *" //subquery prende i dati del giorno e ora subito dopo now
-					+ " FROM Load as A JOIN LoadManagement as B ON A.Id = B.IdLoadDateTime"
+					+ " FROM (Load as A JOIN LoadInfo as B ON A.IdLoad = B.IdLoad)"
+						+ " JOIN LoadManagement as C ON B.Id = C.IdLoadDateTime"
 					+ " WHERE RTRIM(IdAgent) = '"+idAgent+"'"
 					+ " AND DateTime = '"+format.format(datetime.getTime())+"'"
+					+ " AND NonCriticalConsumption > 0"
 					+ " ORDER BY DateTime";
 		System.out.println(query);
 		try {
@@ -48,9 +50,10 @@ public class DbLoadInfo extends DbConnection {
 	{
 		LoadInfo data = null;
 		String query = "SELECT *"
-					+ " FROM Load"
+					+ " FROM LoadInfo A JOIN Load B ON A.IdLoad = B.IdLoad "
 					+ " WHERE RTRIM(IdAgent) = '"+idAgent+"'"
 					+ " AND DateTime = '"+format.format(datetime.getTime())+"'";
+		System.out.println(query);
 		try {
 			ResultSet rs = stmt.executeQuery(query);
 			while(rs.next())
@@ -68,9 +71,9 @@ public class DbLoadInfo extends DbConnection {
 	public LoadInfo getLoadInfoByIdLoad (int idLoad, Calendar datetime)
 	{
 		LoadInfo data = null;
-		String query = "SELECT TOP 1 *"
-					+ " FROM Load"
-					+ " WHERE IdLoad = "+idLoad
+		String query = "SELECT *"
+					+ " FROM LoadInfo as A JOIN Load as B ON A.IdLoad = B.IdLoad"
+					+ " WHERE A.IdLoad = "+idLoad
 					+ " AND DateTime = '"+format.format(datetime.getTime())+"'";
 		try {
 			ResultSet rs = stmt.executeQuery(query);
@@ -88,10 +91,16 @@ public class DbLoadInfo extends DbConnection {
 	
 	public Boolean updateLoadInfo(LoadInfo loadInfo)
 	{
-		String query = "UPDATE Load"
+		String datetime = loadInfo.getDatetime() == null ? null : format.format(loadInfo.getDatetime().getTime());
+
+		String query = "UPDATE LoadInfo"
 				+ " SET  ConsumptionAdded="+loadInfo.getConsumptionAdded()
-				+ " WHERE IdLoad = '"+loadInfo.getIdLoad()+"'"
-				+ " AND DateTime = '"+format.format(loadInfo.getDatetime().getTime())+"'";
+				+ " WHERE IdLoad = '"+loadInfo.getIdLoad()+"'";
+		if(datetime == null)
+			query += " AND DateTime = null";
+		else 
+			query += " AND DateTime = '"+format.format(loadInfo.getDatetime().getTime())+"'";
+
 		try {
 			return stmt.execute(query);
 		} catch (SQLException e) {

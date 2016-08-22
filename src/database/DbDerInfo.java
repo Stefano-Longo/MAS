@@ -15,9 +15,10 @@ public class DbDerInfo extends DbConnection {
 	public DerInfo getDerInfoByIdAgent (String idAgent)
 	{
 		DerInfo data = null;
-		String query = "SELECT TOP 1 *"
+		String query = "SELECT *"
 					+ " FROM Der"
 					+ " WHERE RTRIM(IdAgent) = '"+idAgent+"'";
+		System.out.println(query);
 		try {
 			ResultSet rs = stmt.executeQuery(query);
 			while(rs.next())

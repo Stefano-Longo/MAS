@@ -13,7 +13,7 @@ public class TimePowerPrice implements Serializable {
 	 * It is the type of input message in the system
 	 */
 	private Date dateTime;
-	private double maxEnergy; //range in which I have that price, KW_min = 0
+	private double threshold; //range in which I have that price, KW_min = 0
 	private double energyPrice; // in € for each kw of change producing less or more
 	
 	/**
@@ -22,10 +22,10 @@ public class TimePowerPrice implements Serializable {
 	 * @param maxEnergy
 	 * @param energyPrice
 	 */
-	public TimePowerPrice(Date dateTime, double maxEnergy, double energyPrice) 
+	public TimePowerPrice(Date dateTime, double threshold, double energyPrice) 
 	{
 		this.dateTime = dateTime;
-		this.maxEnergy = maxEnergy;
+		this.threshold = threshold;
 		this.energyPrice = energyPrice;
 	}
 	
@@ -39,12 +39,12 @@ public class TimePowerPrice implements Serializable {
 		this.dateTime = dateTime;
 	}
 
-	public double getMaxEnergy() {
-		return maxEnergy;
+	public double getThreshold() {
+		return threshold;
 	}
 
-	public void setMaxEnergy(double maxEnergy) {
-		this.maxEnergy = maxEnergy;
+	public void setThreshold(double threshold) {
+		this.threshold = threshold;
 	}
 
 	public double getEnergyPrice() {

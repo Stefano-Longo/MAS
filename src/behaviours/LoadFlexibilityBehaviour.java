@@ -38,16 +38,12 @@ public class LoadFlexibilityBehaviour extends OneShotBehaviour {
 		LoadInfo loadInfo = new DbLoadInfo().getLoadInfoByIdAgent(this.myAgent.getName(), cal);
 		ArrayList<LoadInfoPrice> loadInfoPrice = new DbLoadInfo().getLoadInfoPricebyIdAgent(this.myAgent.getName(), cal);
 		
-		
-		
-		
-		
-		
 		// I take always the first element because is the one which has the lower Price
 		double lowerLimit = loadInfo.getCriticalConsumption() + loadInfo.getConsumptionAdded();
 		double upperLimit = lowerLimit + loadInfo.getNonCriticalConsumption();
 		double desideredChoice;
 		double costKwh = msgData.get(0).getEnergyPrice(); //prezzo attuale meno prezzo futuro stimato
+		costKwh = new GeneralData().round(costKwh, 2);
 		
 		desideredChoice = costKwh < 0 ? lowerLimit : upperLimit;
 

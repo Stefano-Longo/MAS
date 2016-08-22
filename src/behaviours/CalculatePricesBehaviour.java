@@ -60,7 +60,7 @@ public class CalculatePricesBehaviour extends OneShotBehaviour {
 			 */
 			//the new costs can be from 20% to 250% of the last cost
 			double energyPrice = new GeneralData().getMeanKwhPrice()*(rn.nextInt(23)+2)/10; 
-			TimePowerPrice e = new TimePowerPrice(cal.getTime(), element.getMaxEnergy(), new GeneralData().round(energyPrice, 4));
+			TimePowerPrice e = new TimePowerPrice(cal.getTime(), element.getThreshold(), new GeneralData().round(energyPrice, 4));
 			priceData.add(e);
 		}
 
@@ -68,7 +68,7 @@ public class CalculatePricesBehaviour extends OneShotBehaviour {
 		for(int i=0; i<priceData.size(); i++)
 		{
 			System.out.println(priceData.get(i).getDateTime()+" "+priceData.get(i).getEnergyPrice()+" "
-					+ priceData.get(i).getMaxEnergy());
+					+ priceData.get(i).getThreshold());
 		}
 		//end print list
 		

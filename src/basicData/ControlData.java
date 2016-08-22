@@ -4,11 +4,6 @@ import java.util.Calendar;
 
 import jade.core.AID;
 
-/**
- * TO-DO tabella db controldata
- * @author Longo
- *
- */
 public class ControlData {
 
 	private String idAgent;

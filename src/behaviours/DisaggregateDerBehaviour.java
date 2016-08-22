@@ -38,7 +38,6 @@ public class DisaggregateDerBehaviour extends OneShotBehaviour{
 		 */
 		derChoices = new DbAggregatorDer().getDersChoice(this.myAgent.getName());
 		DFAgentDescription[] derAgents = new BaseAgent().getAgentsbyServiceType(myAgent, "DerAgent");
-		System.out.println("Disaggregate: "+derAgents.length+" derChoices: "+derChoices.size());
 		if(derChoices.size() == derAgents.length)
 		{
 			takeFromMostConvenient();
@@ -59,6 +58,7 @@ public class DisaggregateDerBehaviour extends OneShotBehaviour{
 			{
 				derPowerRequested = derChoices.get(i).getUpperLimit();
 				totalPowerRequested -= derChoices.get(i).getUpperLimit();
+
 			}
 			else 
 			{

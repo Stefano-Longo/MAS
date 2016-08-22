@@ -38,8 +38,11 @@ public class DerBehaviour extends OneShotBehaviour {
 					msgData.getPowerRequested());	
 
 		//attention! The value is negative
-		if(-msgData.getPowerRequested() < derData.getProductionMin() || 
-				-msgData.getPowerRequested() > derData.getProductionMax())
+		System.out.println("I'm "+this.myAgent.getName()+" and Control Agent requested "+msgData.getPowerRequested()+" Kw from me");
+		System.out.println("My limits are: derData.getProductionMin(): "+derData.getProductionMin()+" derData.getProductionMax():"+derData.getProductionMax());
+		
+		if(msgData.getPowerRequested() < derData.getProductionMin() || 
+				msgData.getPowerRequested() > derData.getProductionMax())
 		{
 			OkData ko = new OkData(msgData.getDatetime(), "der", false);
 			new BaseAgent().sendMessageToAgentsByServiceType(this.myAgent, "DerAggregatorAgent",

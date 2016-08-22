@@ -19,6 +19,17 @@ import utils.GeneralData;
 @SuppressWarnings("serial")
 public class ControlBehaviour extends OneShotBehaviour {
 
+	ArrayList<TimePowerPrice> prices;
+	ControlFlexibilityData batteryData;
+	ControlFlexibilityData derData;
+	ControlFlexibilityData loadData;
+	
+	double derEnergyRequest = 0;
+	double loadEnergyRequest = 0;
+	double batteryEnergyRequest = 0;
+	double costKwh = 0;
+	double gridEnergyRequest = 0;
+	
 	ACLMessage msg;
 	FlexibilityData msgData;
 	public ControlBehaviour(ACLMessage msg) {
@@ -58,18 +69,14 @@ public class ControlBehaviour extends OneShotBehaviour {
 			 * I have all the messages that I was waiting for so now I can
 			 * think and tell them what to do 
 			 */
-			ArrayList<TimePowerPrice> prices = new DbGridData().getPriceData(controlArrivalData.getDatetime());
-			ControlFlexibilityData batteryData = new DbControlArrivalData().getLastControlArrivalData(this.myAgent.getName(), "battery");
-			ControlFlexibilityData derData = new DbControlArrivalData().getLastControlArrivalData(this.myAgent.getName(), "der");
-			ControlFlexibilityData loadData = new DbControlArrivalData().getLastControlArrivalData(this.myAgent.getName(), "load");
+			prices = new DbGridData().getPriceData(controlArrivalData.getDatetime());
+			batteryData = new DbControlArrivalData().getLastControlArrivalData(this.myAgent.getName(), "battery");
+			derData = new DbControlArrivalData().getLastControlArrivalData(this.myAgent.getName(), "der");
+			loadData = new DbControlArrivalData().getLastControlArrivalData(this.myAgent.getName(), "load");
 			
 			double meanPrice = calculateMeanPrice(prices);
 			System.out.println("meanPrice :"+meanPrice);
-			double derEnergyRequest = 0;
-			double loadEnergyRequest = 0;
-			double batteryEnergyRequest = 0;
-			double costKwh = 0;
-			double gridEnergyRequest = 0;
+			
 			if(meanPrice > prices.get(0).getEnergyPrice() + 0.2*meanPrice)
 			{
 				System.out.println("Now buy energy from the grid - no use battery, maybe charge it");
@@ -140,21 +147,14 @@ public class ControlBehaviour extends OneShotBehaviour {
 			
 			gridEnergyRequest = new GeneralData().round(loadEnergyRequest+batteryEnergyRequest-derEnergyRequest, 2);
 
-			System.out.println("\n\nType    -   Datetime       -   LowerLimit  -  UpperLimit  "
-					+ "DesideredChoice    -   CostKwh");
-			System.out.println(batteryData.getType()+" "+batteryData.getDatetime().getTime()+" "+batteryData.getLowerLimit()+" "+batteryData.getUpperLimit()+
-					" "+batteryData.getDesideredChoice()+" "+batteryData.getCostKwh());
-			System.out.println(derData.getType()+" "+derData.getDatetime().getTime()+" "+derData.getLowerLimit()+" "+derData.getUpperLimit()+
-					" "+derData.getDesideredChoice()+" "+derData.getCostKwh());
-			System.out.println(loadData.getType()+" "+loadData.getDatetime().getTime()+" "+loadData.getLowerLimit()+" "+loadData.getUpperLimit()+
-					" "+loadData.getDesideredChoice()+" "+loadData.getCostKwh());
+			peakShaving();
 			
 			System.out.println("\ngridEnergyRequest: "+gridEnergyRequest);
 			System.out.println("\n derEnergyRequest: "+-derEnergyRequest);
 			System.out.println("\n batteryEnergyRequest: "+batteryEnergyRequest);
 			System.out.println("\n loadEnergyRequest: "+loadEnergyRequest);
 			
-			ResultPowerPrice derResult = new ResultPowerPrice(msgData.getDatetime(), -derEnergyRequest, costKwh);
+			ResultPowerPrice derResult = new ResultPowerPrice(msgData.getDatetime(), derEnergyRequest, costKwh);
 			ResultPowerPrice batteryResult = new ResultPowerPrice(msgData.getDatetime(), batteryEnergyRequest, costKwh);
 			ResultPowerPrice loadResult = new ResultPowerPrice(msgData.getDatetime(), loadEnergyRequest, costKwh);
 
@@ -177,10 +177,22 @@ public class ControlBehaviour extends OneShotBehaviour {
 	 * Checks if the list of what the agents decided to does not overcome the limit given as input 
 	 * @return
 	 */
-	private boolean peakShaving()
+	private void peakShaving()
 	{
-		boolean ok = false;
-		return ok;
+		if(gridEnergyRequest > prices.get(0).getThreshold())
+		{
+			derEnergyRequest = derData.getUpperLimit();
+			gridEnergyRequest = new GeneralData().round(batteryEnergyRequest+loadEnergyRequest-derEnergyRequest, 2);
+			if(gridEnergyRequest > prices.get(0).getThreshold())
+			{
+				batteryEnergyRequest = batteryData.getUpperLimit();
+			}
+			gridEnergyRequest = new GeneralData().round(batteryEnergyRequest+loadEnergyRequest-derEnergyRequest, 2);
+			if(gridEnergyRequest > prices.get(0).getThreshold())
+			{
+				loadEnergyRequest = loadData.getLowerLimit();
+			}
+		}
 	}
 	
 	private double calculateMeanPrice (ArrayList<TimePowerPrice> prices)

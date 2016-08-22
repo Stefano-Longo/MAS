@@ -21,7 +21,7 @@ public class DbGridData extends DbConnection {
 			String query = "INSERT INTO Price (AnalysisDateTime, DateTime, Threshold, EnergyPrice)"
 					+ " VALUES ('"+format.format(priceData.get(0).getDateTime())
 								+"','"+format.format(priceData.get(i).getDateTime())+"',"
-								+priceData.get(i).getMaxEnergy()+","+priceData.get(i).getEnergyPrice()+")";
+								+priceData.get(i).getThreshold()+","+priceData.get(i).getEnergyPrice()+")";
 			try {
 				stmt.execute(query);
 			} catch (SQLException e) {

@@ -29,10 +29,10 @@ public class ControlOkBehaviour extends OneShotBehaviour {
 	
 	@Override
 	public void action() {
-		
 		new DbControlArrivalData().updateControlArrivalData(this.myAgent.getName(), msgData.getType(), msgData.getOk());
 		int confirmedTrue = new DbControlArrivalData().getLastConfirmedByChoice(this.myAgent.getName(), true);
-		
+		System.out.println("\nControlOkBehaviour: confirmedTrue: "+confirmedTrue);
+
 		if (confirmedTrue == 3)
 		{
 			System.out.println("entrato");
