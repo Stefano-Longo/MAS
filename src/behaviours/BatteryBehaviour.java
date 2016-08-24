@@ -64,7 +64,7 @@ public class BatteryBehaviour  extends OneShotBehaviour {
 		//TO-DO per ora newSocObjective sempre uguale. Poi vediamo se è meglio che si aggiorni per ogni ora
 		
 		double newCostKwh = calculateNewCostKwh(lastBatteryData.getSoc(), lastBatteryData.getCapacity(), lastBatteryData.getCostKwh());
-		newCostKwh = new GeneralData().round(newCostKwh, 4);
+		newCostKwh = GeneralData.round(newCostKwh, 4);
 		
 		BatteryData batteryData = new BatteryData(batteryInfo.getIdBattery(), lastBatteryData.getDatetime(), 
 				newSocObjective, newSoc, newCostKwh, msgData.getPowerRequested());

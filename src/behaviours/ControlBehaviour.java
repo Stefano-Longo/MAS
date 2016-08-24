@@ -10,7 +10,7 @@ import basicData.ResultPowerPrice;
 import basicData.TimePowerPrice;
 import database.DbControlArrivalData;
 import database.DbControlData;
-import database.DbGridData;
+import database.DbTimePowerPrice;
 import jade.core.behaviours.OneShotBehaviour;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.UnreadableException;
@@ -69,7 +69,7 @@ public class ControlBehaviour extends OneShotBehaviour {
 			 * I have all the messages that I was waiting for so now I can
 			 * think and tell them what to do 
 			 */
-			prices = new DbGridData().getPriceData(controlArrivalData.getDatetime());
+			prices = new DbTimePowerPrice().getDailyTimePowerPrice(controlArrivalData.getDatetime());
 			batteryData = new DbControlArrivalData().getLastControlArrivalData(this.myAgent.getName(), "battery");
 			derData = new DbControlArrivalData().getLastControlArrivalData(this.myAgent.getName(), "der");
 			loadData = new DbControlArrivalData().getLastControlArrivalData(this.myAgent.getName(), "load");
@@ -84,14 +84,17 @@ public class ControlBehaviour extends OneShotBehaviour {
 				 * Now buy energy from the grid - no use battery, maybe charge it
 				 */
 				derEnergyRequest = derData.getDesideredChoice();
-				loadEnergyRequest = loadData.getUpperLimit();
-				
+				loadEnergyRequest = loadData.getUpperLimit();			
+				System.out.println("\n1 - gridEnergyRequest: "+gridEnergyRequest);
+				System.out.println("\n1 - derEnergyRequest: "+derEnergyRequest);
+				System.out.println("\n1 - batteryEnergyRequest: "+batteryEnergyRequest);
+				System.out.println("\n1 - loadEnergyRequest: "+loadEnergyRequest);
 				//se la produzione è maggiore del carico, carico le batterie
-				if (-derEnergyRequest > loadEnergyRequest)
+				if (derEnergyRequest > loadEnergyRequest)
 				{
-					System.out.println("La produzione in eccedenza la metto in batteria finché possibile");
-					batteryEnergyRequest = (-derEnergyRequest - loadEnergyRequest) > batteryData.getUpperLimit()
-							? batteryData.getUpperLimit() : (-derEnergyRequest - loadEnergyRequest);
+					System.out.println("1La produzione in eccedenza la metto in batteria finché possibile");
+					batteryEnergyRequest = (derEnergyRequest - loadEnergyRequest) > batteryData.getUpperLimit()
+							? batteryData.getUpperLimit() : (derEnergyRequest - loadEnergyRequest);
 				}
 				
 				//se sono molto scariche e se conviene assai, carico le batterie, altrimenti no
@@ -119,6 +122,13 @@ public class ControlBehaviour extends OneShotBehaviour {
 					derEnergyRequest = -derData.getDesideredChoice();
 					batteryEnergyRequest = 0;
 				}
+				//se la produzione è maggiore del carico, carico le batterie
+				if (derEnergyRequest > loadEnergyRequest)
+				{
+					System.out.println("2La produzione in eccedenza la metto in batteria finché possibile");
+					batteryEnergyRequest = (derEnergyRequest - loadEnergyRequest) > batteryData.getUpperLimit()
+							? batteryData.getUpperLimit() : (derEnergyRequest - loadEnergyRequest);
+				}
 			}
 			else
 			{
@@ -143,9 +153,17 @@ public class ControlBehaviour extends OneShotBehaviour {
 				{
 					derEnergyRequest = derData.getUpperLimit();
 				}
+				
+				//se la produzione è maggiore del carico, carico le batterie
+				if (derEnergyRequest > loadEnergyRequest)
+				{
+					System.out.println("3La produzione in eccedenza la metto in batteria finché possibile");
+					batteryEnergyRequest = (derEnergyRequest - loadEnergyRequest) > batteryData.getUpperLimit()
+							? batteryData.getUpperLimit() : (derEnergyRequest - loadEnergyRequest);
+				}
 			}
 			
-			gridEnergyRequest = new GeneralData().round(loadEnergyRequest+batteryEnergyRequest-derEnergyRequest, 2);
+			gridEnergyRequest = GeneralData.round(loadEnergyRequest+batteryEnergyRequest-derEnergyRequest, 2);
 
 			peakShaving();
 			
@@ -182,12 +200,12 @@ public class ControlBehaviour extends OneShotBehaviour {
 		if(gridEnergyRequest > prices.get(0).getThreshold())
 		{
 			derEnergyRequest = derData.getUpperLimit();
-			gridEnergyRequest = new GeneralData().round(batteryEnergyRequest+loadEnergyRequest-derEnergyRequest, 2);
+			gridEnergyRequest = GeneralData.round(batteryEnergyRequest+loadEnergyRequest-derEnergyRequest, 2);
 			if(gridEnergyRequest > prices.get(0).getThreshold())
 			{
 				batteryEnergyRequest = batteryData.getUpperLimit();
 			}
-			gridEnergyRequest = new GeneralData().round(batteryEnergyRequest+loadEnergyRequest-derEnergyRequest, 2);
+			gridEnergyRequest = GeneralData.round(batteryEnergyRequest+loadEnergyRequest-derEnergyRequest, 2);
 			if(gridEnergyRequest > prices.get(0).getThreshold())
 			{
 				loadEnergyRequest = loadData.getLowerLimit();
@@ -202,7 +220,7 @@ public class ControlBehaviour extends OneShotBehaviour {
 		{
 			sum += prices.get(i).getEnergyPrice();
 		}
-		return new GeneralData().round(sum/prices.size(), 4);
+		return GeneralData.round(sum/prices.size(), 4);
 	}
 
 }

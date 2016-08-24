@@ -5,13 +5,12 @@ import java.sql.SQLException;
 import java.text.DateFormat;
 import java.util.Calendar;
 
-import basicData.BatteryData;
 import basicData.DerData;
 import utils.GeneralData;
 
 public class DbDerData extends DbConnection {
 
-	DateFormat format = new GeneralData().getFormat();
+	DateFormat format = GeneralData.getFormat();
 
 	public Boolean addDerData(DerData der)
 	{

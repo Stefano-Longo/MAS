@@ -2,7 +2,6 @@ package behaviours;
 
 
 import java.util.ArrayList;
-import java.util.Calendar;
 
 import agents.BaseAgent;
 import basicData.BatteryData;
@@ -64,17 +63,17 @@ public class BatteryFlexibilityBehaviour extends OneShotBehaviour {
 				batteryInfo.getBatteryOutputMax(), newSocObjective);
 		double desideredChoice = socObjectiveDesideredChoice;
 		
-		Calendar cal = Calendar.getInstance();
+		/*Calendar cal = Calendar.getInstance();
 		cal.setTime(msgData.get(0).getDateTime());
-		
-		FlexibilityData result = new FlexibilityData(cal, maxInput,
+		*/
+		FlexibilityData result = new FlexibilityData(msgData.get(0).getDateTime(), maxInput,
     			maxOutput, batteryData.getCostKwh(), desideredChoice, "battery");
 		
-		maxInput = new GeneralData().round(maxInput, 2);
-		maxOutput = new GeneralData().round(maxOutput, 2);
-		desideredChoice = new GeneralData().round(desideredChoice, 2);
+		maxInput = GeneralData.round(maxInput, 2);
+		maxOutput = GeneralData.round(maxOutput, 2);
+		desideredChoice = GeneralData.round(desideredChoice, 2);
 		
-		BatteryData data = new BatteryData(batteryInfo.getIdBattery(), cal, 
+		BatteryData data = new BatteryData(batteryInfo.getIdBattery(), msgData.get(0).getDateTime(), 
 				batteryData.getSocObjective(), batteryData.getSoc(), batteryData.getCostKwh(), 
 				maxInput, maxOutput, 0, desideredChoice);
 		

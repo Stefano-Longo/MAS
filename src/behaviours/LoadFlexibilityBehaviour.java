@@ -33,23 +33,24 @@ public class LoadFlexibilityBehaviour extends OneShotBehaviour {
 	@Override
 	public void action() 
 	{
-		Calendar cal = Calendar.getInstance();
-		cal.setTime(msgData.get(0).getDateTime());
-		LoadInfo loadInfo = new DbLoadInfo().getLoadInfoByIdAgent(this.myAgent.getName(), cal);
-		ArrayList<LoadInfoPrice> loadInfoPrice = new DbLoadInfo().getLoadInfoPricebyIdAgent(this.myAgent.getName(), cal);
+		/*Calendar cal = Calendar.getInstance();
+		cal.setTime(msgData.get(0).getDateTime());*/
+		LoadInfo loadInfo = new DbLoadInfo().getLoadInfoByIdAgent(this.myAgent.getName(), msgData.get(0).getDateTime());
+		ArrayList<LoadInfoPrice> loadInfoPrice = new DbLoadInfo().
+				getLoadInfoPricebyIdAgent(this.myAgent.getName(), msgData.get(0).getDateTime());
 		
 		// I take always the first element because is the one which has the lower Price
 		double lowerLimit = loadInfo.getCriticalConsumption() + loadInfo.getConsumptionAdded();
 		double upperLimit = lowerLimit + loadInfo.getNonCriticalConsumption();
 		double desideredChoice;
 		double costKwh = msgData.get(0).getEnergyPrice(); //prezzo attuale meno prezzo futuro stimato
-		costKwh = new GeneralData().round(costKwh, 2);
+		costKwh = GeneralData.round(costKwh, 2);
 		
 		desideredChoice = costKwh < 0 ? lowerLimit : upperLimit;
 
-		lowerLimit = new GeneralData().round(lowerLimit, 2);
-		upperLimit = new GeneralData().round(upperLimit, 2);
-		desideredChoice = new GeneralData().round(desideredChoice, 2);
+		lowerLimit = GeneralData.round(lowerLimit, 2);
+		upperLimit = GeneralData.round(upperLimit, 2);
+		desideredChoice = GeneralData.round(desideredChoice, 2);
 		
 		LoadData loadData = new LoadData();
 		//If I can shift some part of the load to another slotTime
@@ -65,18 +66,18 @@ public class LoadFlexibilityBehaviour extends OneShotBehaviour {
 			}
 			loadInfoPrice.sort((o1, o2) -> Double.compare(o1.getPrice(),o2.getPrice()));
 			costKwh = msgData.get(0).getEnergyPrice() - loadInfoPrice.get(0).getPrice();
-			loadData = new LoadData(loadInfo.getIdLoad(), cal, costKwh, 
+			loadData = new LoadData(loadInfo.getIdLoad(), msgData.get(0).getDateTime(), costKwh, 
 					loadInfo.getCriticalConsumption(), loadInfo.getNonCriticalConsumption(),
 					lowerLimit, upperLimit, 0, desideredChoice, 0, loadInfoPrice.get(0).getToDatetime());
 		}
 		else
 		{
-			loadData = new LoadData(loadInfo.getIdLoad(), cal, costKwh, 
+			loadData = new LoadData(loadInfo.getIdLoad(), msgData.get(0).getDateTime(), costKwh, 
 					loadInfo.getCriticalConsumption(), loadInfo.getNonCriticalConsumption(),
 					lowerLimit, upperLimit, 0, desideredChoice, 0, null);
 		}
 		
-		FlexibilityData result = new FlexibilityData(cal, lowerLimit, upperLimit, 
+		FlexibilityData result = new FlexibilityData(msgData.get(0).getDateTime(), lowerLimit, upperLimit, 
 				costKwh, desideredChoice, "load");
 		System.out.println(this.myAgent.getName());
 		System.out.println(loadData.getToDatetime());
@@ -92,7 +93,7 @@ public class LoadFlexibilityBehaviour extends OneShotBehaviour {
 	{
 		for(int i=0; i < msgData.size(); i++)
 		{
-			if(msgData.get(i).getDateTime().compareTo(datetime.getTime()) == 0)
+			if(msgData.get(i).getDateTime().getTime().compareTo(datetime.getTime()) == 0)
 			{
 				return msgData.get(i).getEnergyPrice();
 			}

@@ -12,19 +12,18 @@ import utils.GeneralData;
 
 public class DbLoadInfo extends DbConnection {
 
-	DateFormat format = new GeneralData().getFormat();
+	DateFormat format = GeneralData.getFormat();
 
 	public ArrayList<LoadInfoPrice> getLoadInfoPricebyIdAgent (String idAgent, Calendar datetime)
 	{
 		ArrayList<LoadInfoPrice> list = new ArrayList<LoadInfoPrice>();
-		String query = "SELECT *" //subquery prende i dati del giorno e ora subito dopo now
+		String query = "SELECT *" 
 					+ " FROM (Load as A JOIN LoadInfo as B ON A.IdLoad = B.IdLoad)"
 						+ " JOIN LoadManagement as C ON B.Id = C.IdLoadDateTime"
 					+ " WHERE RTRIM(IdAgent) = '"+idAgent+"'"
 					+ " AND DateTime = '"+format.format(datetime.getTime())+"'"
 					+ " AND NonCriticalConsumption > 0"
 					+ " ORDER BY DateTime";
-		System.out.println(query);
 		try {
 			ResultSet rs = stmt.executeQuery(query);
 			while(rs.next())
@@ -53,7 +52,6 @@ public class DbLoadInfo extends DbConnection {
 					+ " FROM LoadInfo A JOIN Load B ON A.IdLoad = B.IdLoad "
 					+ " WHERE RTRIM(IdAgent) = '"+idAgent+"'"
 					+ " AND DateTime = '"+format.format(datetime.getTime())+"'";
-		System.out.println(query);
 		try {
 			ResultSet rs = stmt.executeQuery(query);
 			while(rs.next())

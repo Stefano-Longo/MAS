@@ -3,14 +3,10 @@ package behaviours;
 import agents.BaseAgent;
 import basicData.DerData;
 import basicData.DerInfo;
-import basicData.LoadData;
-import basicData.LoadInfo;
 import basicData.OkData;
 import basicData.ResultPowerPrice;
 import database.DbDerData;
 import database.DbDerInfo;
-import database.DbLoadData;
-import database.DbLoadInfo;
 import jade.core.behaviours.OneShotBehaviour;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.UnreadableException;
@@ -38,7 +34,7 @@ public class DerBehaviour extends OneShotBehaviour {
 					msgData.getPowerRequested());	
 
 		//attention! The value is negative
-		System.out.println("I'm "+this.myAgent.getName()+" and Control Agent requested "+msgData.getPowerRequested()+" Kw from me");
+		System.out.println("\nI'm "+this.myAgent.getName()+" and Control Agent requested "+msgData.getPowerRequested()+" Kw from me");
 		System.out.println("My limits are: derData.getProductionMin(): "+derData.getProductionMin()+" derData.getProductionMax():"+derData.getProductionMax());
 		
 		if(msgData.getPowerRequested() < derData.getProductionMin() || 

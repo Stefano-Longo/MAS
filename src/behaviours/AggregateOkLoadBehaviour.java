@@ -1,18 +1,15 @@
 package behaviours;
 
 import agents.BaseAgent;
-import basicData.BatteryInfo;
-import basicData.FlexibilityData;
 import basicData.LoadInfo;
 import basicData.OkData;
-import database.DbAggregatorBattery;
 import database.DbAggregatorLoad;
-import database.DbBatteryInfo;
 import database.DbLoadInfo;
 import jade.core.behaviours.OneShotBehaviour;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.UnreadableException;
 
+@SuppressWarnings("serial")
 public class AggregateOkLoadBehaviour extends OneShotBehaviour {
 	
 	ACLMessage msg;

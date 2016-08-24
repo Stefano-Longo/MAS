@@ -3,7 +3,6 @@ package database;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 
@@ -13,7 +12,7 @@ import utils.GeneralData;
 
 public class DbAggregatorLoad extends DbConnection {
 
-	DateFormat format = new GeneralData().getFormat();
+	DateFormat format = GeneralData.getFormat();
 	
 	public Boolean addFlexibilityLoadMessage (AggregatorFlexibilityData data)
 	{

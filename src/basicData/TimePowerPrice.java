@@ -2,8 +2,6 @@ package basicData;
 
 import java.io.Serializable;
 import java.util.Calendar;
-import java.util.Date;
-
 
 @SuppressWarnings("serial")
 public class TimePowerPrice implements Serializable {
@@ -12,7 +10,7 @@ public class TimePowerPrice implements Serializable {
 	 * This class will be a type of data
 	 * It is the type of input message in the system
 	 */
-	private Date dateTime;
+	private Calendar dateTime;
 	private double threshold; //range in which I have that price, KW_min = 0
 	private double energyPrice; // in € for each kw of change producing less or more
 	
@@ -22,7 +20,7 @@ public class TimePowerPrice implements Serializable {
 	 * @param maxEnergy
 	 * @param energyPrice
 	 */
-	public TimePowerPrice(Date dateTime, double threshold, double energyPrice) 
+	public TimePowerPrice(Calendar dateTime, double threshold, double energyPrice) 
 	{
 		this.dateTime = dateTime;
 		this.threshold = threshold;
@@ -31,11 +29,11 @@ public class TimePowerPrice implements Serializable {
 	
 	public TimePowerPrice(){	}
 
-	public Date getDateTime() {
+	public Calendar getDateTime() {
 		return dateTime;
 	}
 
-	public void setDateTime(Date dateTime) {
+	public void setDateTime(Calendar dateTime) {
 		this.dateTime = dateTime;
 	}
 

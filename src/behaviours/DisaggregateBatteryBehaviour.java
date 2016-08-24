@@ -1,6 +1,5 @@
 package behaviours;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import agents.BaseAgent;
 import basicData.AggregatorFlexibilityData;
@@ -8,7 +7,6 @@ import basicData.BatteryInfo;
 import basicData.ResultPowerPrice;
 import database.DbAggregatorBattery;
 import database.DbBatteryInfo;
-import jade.core.AID;
 import jade.core.behaviours.OneShotBehaviour;
 import jade.domain.FIPAAgentManagement.DFAgentDescription;
 import jade.lang.acl.ACLMessage;

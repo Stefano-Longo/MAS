@@ -2,11 +2,8 @@ package behaviours;
 
 import agents.BaseAgent;
 import basicData.ControlData;
-import basicData.ControlFlexibilityData;
-import basicData.FlexibilityData;
 import basicData.OkData;
 import basicData.ResultPowerPrice;
-import database.DbAggregatorBattery;
 import database.DbControlArrivalData;
 import database.DbControlData;
 import jade.core.behaviours.OneShotBehaviour;

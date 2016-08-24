@@ -3,14 +3,13 @@ package database;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.DateFormat;
-import java.util.Calendar;
 
 import basicData.DerInfo;
 import utils.GeneralData;
 
 public class DbDerInfo extends DbConnection {
 	
-	DateFormat format = new GeneralData().getFormat();
+	DateFormat format = GeneralData.getFormat();
 
 	public DerInfo getDerInfoByIdAgent (String idAgent)
 	{
@@ -18,7 +17,6 @@ public class DbDerInfo extends DbConnection {
 		String query = "SELECT *"
 					+ " FROM Der"
 					+ " WHERE RTRIM(IdAgent) = '"+idAgent+"'";
-		System.out.println(query);
 		try {
 			ResultSet rs = stmt.executeQuery(query);
 			while(rs.next())

@@ -2,8 +2,6 @@ package basicData;
 
 import java.util.Calendar;
 
-import jade.core.AID;
-
 public class ControlData {
 
 	private String idAgent;

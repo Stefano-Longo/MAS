@@ -3,14 +3,13 @@ package database;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import basicData.BatteryData;
 import utils.GeneralData;
 
 public class DbBatteryData extends DbConnection	{
 
-	DateFormat format = new GeneralData().getFormat();
+	DateFormat format = GeneralData.getFormat();
 
 	public Boolean addBatteryData(BatteryData battery)
 	{
@@ -36,7 +35,6 @@ public class DbBatteryData extends DbConnection	{
 					+ " Confirmed = 'true'"
 				+ " WHERE IdBattery = "+battery.getIdBattery()
 				+ " AND DateTime = '"+format.format(battery.getDatetime().getTime())+"'";
-		System.out.println(query);
 		try {
 			return stmt.execute(query);
 		} catch (SQLException e) {

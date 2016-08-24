@@ -4,7 +4,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import basicData.BatteryInfo;
-import jade.core.AID;
 
 public class DbBatteryInfo extends DbConnection{
 

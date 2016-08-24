@@ -3,6 +3,7 @@ package basicData;
 import java.io.Serializable;
 import java.util.Calendar;
 
+@SuppressWarnings("serial")
 public class OkData implements Serializable {
 
 	private Calendar datetime;

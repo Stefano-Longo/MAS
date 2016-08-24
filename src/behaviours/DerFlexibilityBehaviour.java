@@ -2,21 +2,14 @@ package behaviours;
 
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.List;
 
 import agents.BaseAgent;
-import basicData.BatteryData;
 import basicData.DerData;
 import basicData.DerInfo;
 import basicData.FlexibilityData;
-import basicData.LoadData;
-import basicData.LoadInfo;
 import basicData.TimePowerPrice;
-import database.DbBatteryData;
 import database.DbDerData;
 import database.DbDerInfo;
-import database.DbLoadData;
-import database.DbLoadInfo;
 import jade.core.behaviours.OneShotBehaviour;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.UnreadableException;
@@ -39,11 +32,11 @@ public class DerFlexibilityBehaviour extends OneShotBehaviour {
 	
 	@Override
 	public void action() {
-		Calendar cal = Calendar.getInstance();
+		/*Calendar cal = Calendar.getInstance();
 		cal.setTime(msgData.get(0).getDateTime());
-		
+		*/
 		DerInfo derInfo = new DbDerInfo().getDerInfoByIdAgent(this.myAgent.getName());
-		DerData derDataAvg = new DbDerData().getAverageLastMonthProduction(derInfo.getIdDer(), cal);
+		DerData derDataAvg = new DbDerData().getAverageLastMonthProduction(derInfo.getIdDer(), msgData.get(0).getDateTime());
 		
 		double desideredChoice = derDataAvg.getProductionRequested();
 		double lowerLimit = getLowerLimit(derInfo);
@@ -57,13 +50,13 @@ public class DerFlexibilityBehaviour extends OneShotBehaviour {
 		double costKwh = getCostKwh(derInfo);
 		System.out.println(costKwh+" derType: "+derInfo.getType());
 		
-		lowerLimit = new GeneralData().round(lowerLimit, 2);
-		upperLimit = new GeneralData().round(upperLimit, 2);
-		desideredChoice = new GeneralData().round(desideredChoice, 2);
+		lowerLimit = GeneralData.round(lowerLimit, 2);
+		upperLimit = GeneralData.round(upperLimit, 2);
+		desideredChoice = GeneralData.round(desideredChoice, 2);
 
-		FlexibilityData result = new FlexibilityData(cal, lowerLimit, upperLimit, costKwh, 
-				desideredChoice, "der");
-		DerData derData = new DerData(derInfo.getIdDer(), cal, costKwh, 
+		FlexibilityData result = new FlexibilityData(msgData.get(0).getDateTime(), 
+				lowerLimit, upperLimit, costKwh, desideredChoice, "der");
+		DerData derData = new DerData(derInfo.getIdDer(), msgData.get(0).getDateTime(), costKwh, 
 				lowerLimit, upperLimit, 0, desideredChoice);
 		new DbDerData().addDerData(derData);
 		
@@ -99,11 +92,9 @@ public class DerFlexibilityBehaviour extends OneShotBehaviour {
 
 	private double calculatePvMaxProductionTime(double ProductionMax)
 	{
-		Calendar cal = Calendar.getInstance();
-		cal.setTime(msgData.get(0).getDateTime());
 		
 		double UpperLimit = ProductionMax;
-		int hour = cal.get(Calendar.HOUR);
+		int hour = msgData.get(0).getDateTime().get(Calendar.HOUR);
 		
 		if(hour < 6 || hour > 19)
 		{
@@ -127,6 +118,6 @@ public class DerFlexibilityBehaviour extends OneShotBehaviour {
 			costKwh += new GeneralData().getDieselKwhPrice();
 		}
 		
-		return new GeneralData().round(costKwh, 4);
+		return GeneralData.round(costKwh, 4);
 	}
 }

@@ -2,9 +2,7 @@ package behaviours;
 
 import agents.*;
 import aggregators.*;
-import database.DbControlData;
 import jade.core.Agent;
-import jade.core.behaviours.LoaderBehaviour;
 import jade.core.behaviours.TickerBehaviour;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;

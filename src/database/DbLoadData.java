@@ -10,7 +10,7 @@ import utils.GeneralData;
 
 public class DbLoadData extends DbConnection {
 
-	DateFormat format = new GeneralData().getFormat();
+	DateFormat format = GeneralData.getFormat();
 	
 	public Boolean addLoadData(LoadData load)
 	{
@@ -25,7 +25,6 @@ public class DbLoadData extends DbConnection {
 						+load.getPowerRequested()+","+load.getDesideredChoice()+","+load.getConsumptionShifted()+",";
 		query += datetime == null ? datetime : "'"+datetime+"'";
 		query += ", 'false')";
-		System.out.println(query);
 		try {
 			return stmt.execute(query);
 		} catch (SQLException e) {

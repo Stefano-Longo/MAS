@@ -6,10 +6,10 @@ import java.text.SimpleDateFormat;
 public class GeneralData {
 
 	private int timeSlot = 3600; //seconds 
-	private DateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+	static private DateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
 	private double dieselKwhPrice = 1; //expressed in €
 	private double priceKwhSold = 0.15; //expressed in €
-	private double meanKwhPrice = 0.2;
+	private double meanKwhPrice = 0.4;
 	
 	public int getTimeSlot() {
 		return timeSlot;
@@ -19,12 +19,8 @@ public class GeneralData {
 		this.timeSlot = timeSlot;
 	}
 	
-	public DateFormat getFormat() {
+	static public DateFormat getFormat() {
 		return format;
-	}
-	
-	public void setFormat(DateFormat format) {
-		this.format = format;
 	}
 	
 	public double getDieselKwhPrice() {
@@ -51,7 +47,7 @@ public class GeneralData {
 		this.meanKwhPrice = meanKwhPrice;
 	}
 
-	public double round(double value, int places) {
+	static public double round(double value, int places) {
 	    if (places < 0) throw new IllegalArgumentException();
 
 	    long factor = (long) Math.pow(10, places);

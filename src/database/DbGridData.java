@@ -6,20 +6,19 @@ import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 
-import basicData.BatteryData;
 import basicData.TimePowerPrice;
 import utils.GeneralData;
 
 public class DbGridData extends DbConnection {
 
-	DateFormat format = new GeneralData().getFormat();
+	DateFormat format = GeneralData.getFormat();
 	
 	public  Boolean addPriceData (ArrayList<TimePowerPrice> priceData)
 	{
 		for(int i=0; i < priceData.size(); i++)
 		{
 			String query = "INSERT INTO Price (AnalysisDateTime, DateTime, Threshold, EnergyPrice)"
-					+ " VALUES ('"+format.format(priceData.get(0).getDateTime())
+					+ " VALUES ('"+format.format(priceData.get(0).getDateTime().getTime())
 								+"','"+format.format(priceData.get(i).getDateTime())+"',"
 								+priceData.get(i).getThreshold()+","+priceData.get(i).getEnergyPrice()+")";
 			try {
@@ -45,7 +44,7 @@ public class DbGridData extends DbConnection {
 				Calendar cal = Calendar.getInstance();
 				cal.setTime(rs.getTimestamp("DateTime"));
 
-				TimePowerPrice price = new TimePowerPrice(cal.getTime(), 
+				TimePowerPrice price = new TimePowerPrice(cal, 
 						rs.getDouble("Threshold"), rs.getDouble("EnergyPrice"));
 				prices.add(price);
 			}

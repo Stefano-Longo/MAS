@@ -6,12 +6,11 @@ import java.text.DateFormat;
 import java.util.Calendar;
 
 import basicData.ControlData;
-import basicData.DerData;
 import utils.GeneralData;
 
 public class DbControlData extends DbConnection {
 
-	DateFormat format = new GeneralData().getFormat();
+	DateFormat format = GeneralData.getFormat();
 	
 	public Boolean addControlData (ControlData controlData)
 	{

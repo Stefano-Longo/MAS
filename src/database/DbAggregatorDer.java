@@ -13,7 +13,7 @@ import utils.GeneralData;
 
 public class DbAggregatorDer extends DbConnection {
 
-	DateFormat format = new GeneralData().getFormat();
+	DateFormat format = GeneralData.getFormat();
 	
 	public Boolean addFlexibilityDerMessage (AggregatorFlexibilityData data)
 	{

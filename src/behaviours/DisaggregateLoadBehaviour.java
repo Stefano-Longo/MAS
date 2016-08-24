@@ -4,13 +4,10 @@ import java.util.ArrayList;
 
 import agents.BaseAgent;
 import basicData.AggregatorFlexibilityData;
-import basicData.BatteryInfo;
 import basicData.FlexibilityData;
 import basicData.LoadInfo;
 import basicData.ResultPowerPrice;
-import database.DbAggregatorBattery;
 import database.DbAggregatorLoad;
-import database.DbBatteryInfo;
 import database.DbLoadInfo;
 import jade.core.behaviours.OneShotBehaviour;
 import jade.domain.FIPAAgentManagement.DFAgentDescription;

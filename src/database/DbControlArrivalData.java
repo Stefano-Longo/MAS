@@ -3,8 +3,6 @@ package database;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Calendar;
 
 import basicData.ControlFlexibilityData;
@@ -12,7 +10,7 @@ import utils.GeneralData;
 
 public class DbControlArrivalData extends DbConnection {
 
-	DateFormat format = new GeneralData().getFormat();
+	DateFormat format = GeneralData.getFormat();
 
 	public Boolean addControlArrivalData (ControlFlexibilityData data)
 	{
