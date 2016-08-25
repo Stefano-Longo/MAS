@@ -45,12 +45,17 @@ public class BatteryBehaviour  extends OneShotBehaviour {
 		 *  - OutputPowerMax: I should have it also
 		 */
 		
+		System.out.println("batteryEnergyRequest 3: "+msgData.getPowerRequested());
+
 		BatteryInfo batteryInfo = new DbBatteryInfo().getBatteryInfoByIdAgent(this.myAgent.getName());
 		//get the data to update
 		BatteryData lastBatteryData = new DbBatteryData().getLastBatteryData(batteryInfo.getIdBattery());
 		
-		if(msgData.getPowerRequested() > lastBatteryData.getInputPowerMax() || 
-				msgData.getPowerRequested() < lastBatteryData.getOutputPowerMax())
+
+		//BatteryOutput -> powerRequested negative value
+		//BatteryInput -> powerRequested positive value
+		if((msgData.getPowerRequested() > 0 && msgData.getPowerRequested() > lastBatteryData.getInputPowerMax()) || 
+				(msgData.getPowerRequested() < 0 && msgData.getPowerRequested() < lastBatteryData.getOutputPowerMax()))
 		{
 			OkData ko = new OkData(msgData.getDatetime(), "battery", false);
 			new BaseAgent().sendMessageToAgentsByServiceType(this.myAgent, "BatteryAggregatorAgent",
@@ -58,7 +63,7 @@ public class BatteryBehaviour  extends OneShotBehaviour {
 			return;
 		}
 		
-		double newSoc = calculateSoc(lastBatteryData.getSoc(), lastBatteryData.getCapacity(), msgData.getPowerRequested());
+		double newSoc = calculateSoc(lastBatteryData.getSoc(), batteryInfo.getCapacity(), msgData.getPowerRequested());
 		double newSocObjective = lastBatteryData.getSocObjective();
 		
 		//TO-DO per ora newSocObjective sempre uguale. Poi vediamo se è meglio che si aggiorni per ogni ora
@@ -68,7 +73,7 @@ public class BatteryBehaviour  extends OneShotBehaviour {
 		
 		BatteryData batteryData = new BatteryData(batteryInfo.getIdBattery(), lastBatteryData.getDatetime(), 
 				newSocObjective, newSoc, newCostKwh, msgData.getPowerRequested());
-		System.out.println(newCostKwh);
+		System.out.println("battery newCostKwh: "+newCostKwh);
 		new DbBatteryData().updateBatteryData(batteryData); //salvo nello storico
 		
 		OkData ok = new OkData(msgData.getDatetime(), "battery", true);
@@ -78,16 +83,16 @@ public class BatteryBehaviour  extends OneShotBehaviour {
 
 	private double calculateSoc(double soc, double capacity, double powerRequested)
 	{
-		//BatteryOutput -> powerRequested negative value
-		//BatteryInput -> powerRequested positive value
-		 double newSoc = soc + (int)((powerRequested / (3600 / timeSlot))*100 / capacity);
-
-		return newSoc;
+		System.out.println("\nNeed to calculate the next soc");
+		System.out.println("powerRequested: "+powerRequested+" timeSlot: "+timeSlot+" capacity: "+capacity);
+		double newSoc = soc + ((powerRequested / (3600 / timeSlot))*100 / capacity);
+		System.out.println("newSoc: "+newSoc);
+		return GeneralData.round(newSoc, 2);
 	}
 	
 	private double calculateNewCostKwh(double soc, double capacity, double oldCostKwh)
 	{
-		if(msgData.getPowerRequested() > 0) // output energy -> the cost does not change
+		if(msgData.getPowerRequested() <= 0) // output energy -> the cost does not change
 		{
 			return oldCostKwh;
 		}

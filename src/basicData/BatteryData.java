@@ -29,6 +29,7 @@ public class BatteryData {
 	 * @param inputPowerMax
 	 * @param outputPowerMax
 	 * @param powerRequested
+	 * @param desideredChoice
 	 */
 	public BatteryData(int idBattery, Calendar datetime, double socObjective, double soc, double costKwh, 
 			double inputPowerMax, double outputPowerMax, double powerRequested, double desideredChoice)

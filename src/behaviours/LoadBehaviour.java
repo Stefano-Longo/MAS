@@ -25,7 +25,6 @@ public class LoadBehaviour extends OneShotBehaviour {
 
 	@Override
 	public void action() {
-		System.out.println("\nENTRAAAAATOOOOO LOAD");
 		LoadInfo loadInfo = new DbLoadInfo().getLoadInfoByIdAgent(this.myAgent.getName(), msgData.getDatetime());
 		LoadData loadData = new DbLoadData().getLastLoadData(loadInfo.getIdLoad());
 			

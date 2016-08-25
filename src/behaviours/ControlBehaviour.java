@@ -105,7 +105,6 @@ public class ControlBehaviour extends OneShotBehaviour {
 					batteryEnergyRequest = batteryData.getDesideredChoice() > 0 ? 
 							batteryData.getDesideredChoice() : batteryEnergyRequest;
 				}
-				costKwh = prices.get(0).getEnergyPrice();
 			}
 			else if(meanPrice < prices.get(0).getEnergyPrice() - 0.2*meanPrice)
 			{
@@ -158,8 +157,9 @@ public class ControlBehaviour extends OneShotBehaviour {
 				if (derEnergyRequest > loadEnergyRequest)
 				{
 					System.out.println("3La produzione in eccedenza la metto in batteria finché possibile");
-					batteryEnergyRequest = (derEnergyRequest - loadEnergyRequest) > batteryData.getUpperLimit()
-							? batteryData.getUpperLimit() : (derEnergyRequest - loadEnergyRequest);
+					batteryEnergyRequest = (derEnergyRequest - loadEnergyRequest) > batteryData.getLowerLimit()
+							? batteryData.getLowerLimit() : (derEnergyRequest - loadEnergyRequest);
+					batteryEnergyRequest = GeneralData.round(batteryEnergyRequest, 2);
 				}
 			}
 			
@@ -172,10 +172,12 @@ public class ControlBehaviour extends OneShotBehaviour {
 			System.out.println("\n batteryEnergyRequest: "+batteryEnergyRequest);
 			System.out.println("\n loadEnergyRequest: "+loadEnergyRequest);
 			
+			costKwh = prices.get(0).getEnergyPrice();
+
 			ResultPowerPrice derResult = new ResultPowerPrice(msgData.getDatetime(), derEnergyRequest, costKwh);
 			ResultPowerPrice batteryResult = new ResultPowerPrice(msgData.getDatetime(), batteryEnergyRequest, costKwh);
 			ResultPowerPrice loadResult = new ResultPowerPrice(msgData.getDatetime(), loadEnergyRequest, costKwh);
-
+			
 			
 			new BaseAgent().sendMessageToAgentsByServiceType(this.myAgent, "BatteryAggregatorAgent",
 					"result", batteryResult);
@@ -183,6 +185,8 @@ public class ControlBehaviour extends OneShotBehaviour {
 					"result", derResult);
 			new BaseAgent().sendMessageToAgentsByServiceType(this.myAgent, "LoadAggregatorAgent",
 					"result", loadResult);
+			
+			System.out.println("batteryEnergyRequest 1: "+batteryEnergyRequest);
 			
 			ControlData newControlData = new ControlData(this.myAgent.getName(), this.myAgent.getHap(),
 					msgData.getDatetime(), -derEnergyRequest, batteryEnergyRequest, loadEnergyRequest, 
@@ -221,6 +225,30 @@ public class ControlBehaviour extends OneShotBehaviour {
 			sum += prices.get(i).getEnergyPrice();
 		}
 		return GeneralData.round(sum/prices.size(), 4);
+	}
+	
+	/**
+	 * 
+	 * @return 1 if currentEnergyPrice is in the 30% higher price
+	 * @return -1 if currentEnergyPrice is in the 30% lower price
+	 * @return 0 otherwise
+	 */
+	private int checkPercentile(double currentEnergyPrice)
+	{
+		int counter = 0;
+		ArrayList<TimePowerPrice> lastWeekPrices = 
+		for(int i=0; i < prices.size(); i++)
+		{
+			if(currentEnergyPrice > prices.get(i).getEnergyPrice())
+				counter++;
+		}
+		double percentile = counter/prices.size();
+		if(percentile > 0.7) 
+			return 1;
+		else if(percentile < 0.3)
+			return -1;
+		else 
+			return 0;
 	}
 
 }

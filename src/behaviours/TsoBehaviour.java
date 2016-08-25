@@ -23,7 +23,7 @@ public class TsoBehaviour extends Behaviour {
 					"GridAgent", "input", data);
 			data = new DbTimePowerPrice().getTimePowerPrice(data.getDateTime());
 			try {
-				TimeUnit.SECONDS.sleep(50);
+				TimeUnit.SECONDS.sleep(38);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}

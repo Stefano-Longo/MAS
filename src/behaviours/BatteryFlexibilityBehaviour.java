@@ -115,7 +115,7 @@ public class BatteryFlexibilityBehaviour extends OneShotBehaviour {
 
         if (maxBatteryOutputPercentage > maxOutputBattery)
         {
-        	return maxOutputBattery;
+        	return -maxOutputBattery;
         }
     	return -maxBatteryOutputPercentage;
     }

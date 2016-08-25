@@ -72,4 +72,30 @@ public class DbTimePowerPrice extends DbConnection {
 		return list;
 	}
 
+	public ArrayList<TimePowerPrice> getLastWeekPowerPrice (Calendar datetime)
+	{
+		ArrayList<TimePowerPrice> list = new ArrayList<TimePowerPrice>();
+		
+		String query = "SELECT *" 
+				+ " FROM Price"
+				+ " WHERE DateTime <= '"+format.format(datetime.getTime())+"'"
+				+ " AND DateTime > dateadd(wk, datediff(wk, 0, '"+format.format(datetime.getTime())+"') - 1, 0) + 4 "
+				+ " AND DATEPART(DAY, DateTime) = "+datetime.get(Calendar.DAY_OF_MONTH)
+				+ " ORDER BY DateTime";
+		System.out.println(query);
+		try {
+			//ResultSet rs = stmt.executeQuery(query);
+			while(rs.next())
+			{
+				Calendar cal = Calendar.getInstance();
+				cal.setTime(rs.getTimestamp("DateTime"));
+				TimePowerPrice data = new TimePowerPrice(cal, 
+						rs.getDouble("Threshold"), rs.getDouble("EnergyPrice"));
+				list.add(data);
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return list;
+	}
 }
