@@ -39,6 +39,7 @@ public class AggregateDerBehaviour extends OneShotBehaviour {
 		System.out.println("DER messagesReceived: "+messagesReceived+" derAgents: "+derAgents);
 		if (messagesReceived == derAgents)
 		{
+			System.out.println("messages: "+messagesReceived+" derAgents: "+derAgents);
 			/**
 			 * I have all the messages that I was waiting for so now I can
 			 * send the message to ControlAgent

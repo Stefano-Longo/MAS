@@ -104,12 +104,12 @@ public class DbAggregatorBattery extends DbConnection {
 	public ArrayList<AggregatorFlexibilityData> getBatteriesChoice(String idAggregatorAgent)
 	{
 		ArrayList<AggregatorFlexibilityData> list = new ArrayList<AggregatorFlexibilityData>();
-		String query = "SELECT *, DesideredChoice-InputPowerMax as Diff"
+		String query = "SELECT *, InputPowerMax-DesideredChoice as Diff"
 				+ " FROM BatteryAggregatorData"
 				+ " WHERE IdAggregatorAgent='"+idAggregatorAgent+"'"
 				+ " AND DateTime in (SELECT MAX(DateTime)"
 								+" FROM BatteryAggregatorData)"
-				+ " ORDER BY Diff";
+				+ " ORDER BY Diff, IdBattery";
 		try {
 			ResultSet rs = stmt.executeQuery(query);
 			while(rs.next())
@@ -130,10 +130,11 @@ public class DbAggregatorBattery extends DbConnection {
 		return list;
 	}
 	
-	public ArrayList<AggregatorFlexibilityData> getBatteriesChoiceByValue(String idAggregatorAgent, String choice)
+	public ArrayList<AggregatorFlexibilityData> getBatteriesChoiceByValue(String idAggregatorAgent, 
+			String choice, Calendar datetime)
 	{
 		ArrayList<AggregatorFlexibilityData> list = new ArrayList<AggregatorFlexibilityData>();
-		String query = "SELECT *, DesideredChoice-InputPowerMax as Diff"
+		String query = "SELECT *, InputPowerMax-DesideredChoice as Diff"
 				+ " FROM BatteryAggregatorData A JOIN Battery B ON A.IdBattery = B.IdBattery"
 				+ " WHERE";
 		if(choice.equals("positive"))
@@ -145,9 +146,8 @@ public class DbAggregatorBattery extends DbConnection {
 			query += " DesideredChoice < 0 AND";
 		}
 		query += " IdAggregatorAgent='"+idAggregatorAgent+"'"
-				//+ " AND AnalysisDateTime in (SELECT MAX(AnalysisDateTime)"
-				//							+" FROM BatteryAggregatorData)"
-				+ " ORDER BY Diff";
+			   + " AND DateTime = '"+format.format(datetime.getTime())+"'"
+			   + " ORDER BY Diff, B.IdBattery";
 		try {
 			ResultSet rs = stmt.executeQuery(query);
 			while(rs.next())

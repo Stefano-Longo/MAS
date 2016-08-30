@@ -15,21 +15,10 @@ public class DbTimePowerPrice extends DbConnection {
 
 	public TimePowerPrice getTimePowerPrice (Calendar datetime)
 	{
-		String query;
-		if(datetime == null)
-		{
-			query = "SELECT TOP 1 *"
-					+ " FROM Price"
-					+ " ORDER BY DateTime";
-		}
-		else
-		{
-			query = "SELECT TOP 1 *" 
-					+ " FROM Price"
-					+ " WHERE DateTime > '"+format.format(datetime.getTime())+"'"
-					+ " ORDER BY DateTime";
-		}
-		
+		 String query = "SELECT TOP 1 *" 
+				+ " FROM Price"
+				+ " WHERE DateTime > '"+format.format(datetime.getTime())+"'"
+				+ " ORDER BY DateTime";
 		try {
 			ResultSet rs = stmt.executeQuery(query);
 			while(rs.next())
@@ -80,11 +69,9 @@ public class DbTimePowerPrice extends DbConnection {
 				+ " FROM Price"
 				+ " WHERE DateTime <= '"+format.format(datetime.getTime())+"'"
 				+ " AND DateTime > dateadd(wk, datediff(wk, 0, '"+format.format(datetime.getTime())+"') - 1, 0) + 4 "
-				+ " AND DATEPART(DAY, DateTime) = "+datetime.get(Calendar.DAY_OF_MONTH)
 				+ " ORDER BY DateTime";
-		System.out.println(query);
 		try {
-			//ResultSet rs = stmt.executeQuery(query);
+			ResultSet rs = stmt.executeQuery(query);
 			while(rs.next())
 			{
 				Calendar cal = Calendar.getInstance();

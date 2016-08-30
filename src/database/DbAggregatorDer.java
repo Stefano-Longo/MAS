@@ -64,7 +64,7 @@ public class DbAggregatorDer extends DbConnection {
     			+ " FROM DerAggregatorData"
     			+ " WHERE IdAggregatorAgent = '"+idAgent+"'"
     			+ " AND DateTime in (SELECT Max(DateTime)" 
-									+"FROM LoadAggregatorData)";
+									+"FROM DerAggregatorData)";
 		try{
 			ResultSet rs = stmt.executeQuery(query);
 			while(rs.next())

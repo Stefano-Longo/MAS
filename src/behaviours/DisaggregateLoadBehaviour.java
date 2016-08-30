@@ -13,6 +13,7 @@ import jade.core.behaviours.OneShotBehaviour;
 import jade.domain.FIPAAgentManagement.DFAgentDescription;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.UnreadableException;
+import utils.GeneralData;
 
 @SuppressWarnings("serial")
 public class DisaggregateLoadBehaviour extends OneShotBehaviour{
@@ -34,37 +35,41 @@ public class DisaggregateLoadBehaviour extends OneShotBehaviour{
 	@Override
 	public void action() 
 	{
+		System.out.println("Ciao, controllami. Power request: "+msgData.getPowerRequested());
 		loadsChoice = new DbAggregatorLoad().getLoadsChoice(this.myAgent.getName());
 		DFAgentDescription[] loadAgents = new BaseAgent().getAgentsbyServiceType(myAgent, "LoadAgent");
 		
 		FlexibilityData loadAggregatedData = new DbAggregatorLoad().aggregateMessageReceived(this.myAgent.getName());
-		if(loadsChoice.size() == loadAgents.length)
+		
+		if(loadsChoice.size() != loadAgents.length)
 		{
-			if(msgData.getPowerRequested() == 0)
-			{
-				switchOff();
-			}
-			else if(msgData.getPowerRequested() >= loadAggregatedData.getDesideredChoice())
-			{
-				/**
-				 * Garantisco a tutti la loro scelta (desideredChoice) e il surplus lo dò 
-				 * a chi mi garantisce un prezzo basso per ogni Kwh spostato
-				 */
-				double residualPower = msgData.getPowerRequested() - loadAggregatedData.getDesideredChoice();
-				giveDesideredChoicePlusResidual(residualPower);
-			}
-			else if(msgData.getPowerRequested() < loadAggregatedData.getDesideredChoice())
-			{
-				/**
-				 * Garantisco a tutti il minimo (lowerLimit) e il surplus lo dò 
-				 * a chi mi garantisce un prezzo basso per ogni Kwh spostato (A CHI HA UN PREZZO NEGATIVO!!)
-				 */
-				double residualPower = msgData.getPowerRequested() - loadAggregatedData.getLowerLimit();
-				giveMinimumPlusResidual(residualPower);
-			}
-			
+			System.out.println("The number of loads is not the same anymore");
+			return;
 		}
 		
+		if(msgData.getPowerRequested() == 0)
+		{
+			switchOff();
+		}
+		else if(msgData.getPowerRequested() >= loadAggregatedData.getDesideredChoice())
+		{
+			/**
+			 * Garantisco a tutti la loro scelta (desideredChoice) e il surplus lo dò 
+			 * a chi mi garantisce un prezzo basso per ogni Kwh spostato
+			 */
+			double residualPower = msgData.getPowerRequested() - loadAggregatedData.getDesideredChoice();
+			giveDesideredChoicePlusResidual(residualPower);
+		}
+		else if(msgData.getPowerRequested() < loadAggregatedData.getDesideredChoice())
+		{
+			/**
+			 * Garantisco a tutti il minimo (lowerLimit) e il surplus lo dò 
+			 * a chi mi garantisce un prezzo basso per ogni Kwh spostato (A CHI HA UN PREZZO NEGATIVO!!)
+			 */
+			double residualPower = msgData.getPowerRequested() - loadAggregatedData.getLowerLimit();
+			giveMinimumPlusResidual(residualPower);
+		}
+			
 	}
 	
 	private void giveDesideredChoicePlusResidual(double residualPowerRequested)
@@ -87,12 +92,8 @@ public class DisaggregateLoadBehaviour extends OneShotBehaviour{
 				loadPowerRequested = loadsChoice.get(i).getLowerLimit();
 			} 
 			ResultPowerPrice loadAction = new ResultPowerPrice(msgData.getDatetime(), 
-					loadPowerRequested, msgData.getCostKwh());
-
-			LoadInfo loadInfo = new DbLoadInfo().getLoadInfoByIdLoad(loadsChoice.get(i).getIdentificator(), msgData.getDatetime());
-			String shortName = new BaseAgent().getShortName(loadInfo.getIdAgent());
-			new BaseAgent().sendMessageToAgentsByServiceType(this.myAgent, 
-					this.myAgent.getAID(shortName), "result", loadAction);
+					GeneralData.round(loadPowerRequested, 2), msgData.getCostKwh());
+			sendMessage(loadAction, i);
 		}
 	}
 
@@ -116,12 +117,8 @@ public class DisaggregateLoadBehaviour extends OneShotBehaviour{
 				loadPowerRequested = loadsChoice.get(i).getLowerLimit();
 			} 
 			ResultPowerPrice loadAction = new ResultPowerPrice(msgData.getDatetime(), 
-					loadPowerRequested, msgData.getCostKwh());
-
-			LoadInfo loadInfo = new DbLoadInfo().getLoadInfoByIdLoad(loadsChoice.get(i).getIdentificator(), msgData.getDatetime());
-			String shortName = new BaseAgent().getShortName(loadInfo.getIdAgent());
-			new BaseAgent().sendMessageToAgentsByServiceType(this.myAgent, 
-					this.myAgent.getAID(shortName), "result", loadAction);
+					GeneralData.round(loadPowerRequested, 2), msgData.getCostKwh());
+			sendMessage(loadAction, i);
 		}
 	}
 	
@@ -130,12 +127,15 @@ public class DisaggregateLoadBehaviour extends OneShotBehaviour{
 		for(int i=0; i < loadsChoice.size(); i++)
 		{
 			ResultPowerPrice loadAction = new ResultPowerPrice(msgData.getDatetime(), 0, msgData.getCostKwh());
-
-			LoadInfo loadInfo = new DbLoadInfo().getLoadInfoByIdLoad(loadsChoice.get(i).getIdentificator(), msgData.getDatetime());
-			String shortName = new BaseAgent().getShortName(loadInfo.getIdAgent());
-			new BaseAgent().sendMessageToAgentsByServiceType(this.myAgent, 
-					this.myAgent.getAID(shortName), "result", loadAction);
+			sendMessage(loadAction, i);
 		}
 	}
 	
+	private void sendMessage(ResultPowerPrice loadAction, int counter)
+	{
+		LoadInfo loadInfo = new DbLoadInfo().getLoadInfoByIdLoad(loadsChoice.get(counter).getIdentificator(), msgData.getDatetime());
+		String shortName = new BaseAgent().getShortName(loadInfo.getIdAgent());
+		new BaseAgent().sendMessageToAgentsByServiceType(this.myAgent, 
+				this.myAgent.getAID(shortName), "result", loadAction);
+	}
 }

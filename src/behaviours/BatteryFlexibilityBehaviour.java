@@ -59,19 +59,16 @@ public class BatteryFlexibilityBehaviour extends OneShotBehaviour {
 		 * use getSocObjective, or anyway another function
 		 */
 		double socObjectiveDesideredChoice = calculateSocObjectiveDesideredChoice(batteryData.getSoc(), 
-				batteryInfo.getSocMax(), batteryInfo.getCapacity(), batteryInfo.getBatteryInputMax(), 
+				batteryInfo.getSocMax(), batteryInfo.getSocMin(), batteryInfo.getCapacity(), batteryInfo.getBatteryInputMax(), 
 				batteryInfo.getBatteryOutputMax(), newSocObjective);
 		double desideredChoice = socObjectiveDesideredChoice;
-		
-		/*Calendar cal = Calendar.getInstance();
-		cal.setTime(msgData.get(0).getDateTime());
-		*/
-		FlexibilityData result = new FlexibilityData(msgData.get(0).getDateTime(), maxInput,
-    			maxOutput, batteryData.getCostKwh(), desideredChoice, "battery");
 		
 		maxInput = GeneralData.round(maxInput, 2);
 		maxOutput = GeneralData.round(maxOutput, 2);
 		desideredChoice = GeneralData.round(desideredChoice, 2);
+
+		FlexibilityData result = new FlexibilityData(msgData.get(0).getDateTime(), maxInput,
+    			maxOutput, batteryData.getCostKwh(), desideredChoice, "battery");
 		
 		BatteryData data = new BatteryData(batteryInfo.getIdBattery(), msgData.get(0).getDateTime(), 
 				batteryData.getSocObjective(), batteryData.getSoc(), batteryData.getCostKwh(), 
@@ -82,16 +79,16 @@ public class BatteryFlexibilityBehaviour extends OneShotBehaviour {
 				"proposal", result);
 	}
 	
-	private double calculateSocObjectiveDesideredChoice (double soc, double socMax, double capacity,
+	private double calculateSocObjectiveDesideredChoice (double soc, double socMax, double socMin, double capacity,
 			double maxInputBattery, double maxOutputBattery, double nextSocObjective)
 	{
 		if(soc < nextSocObjective)
 		{
-			return getMaxInput(soc, socMax, capacity, maxInputBattery);
+			return getMaxInput(soc, nextSocObjective, capacity, maxInputBattery);
 		}
 		else
 		{
-			return getMaxOutput(soc, socMax, capacity, maxOutputBattery);
+			return getMaxOutput(soc, nextSocObjective, capacity, maxOutputBattery);
 		}
 	}
 	

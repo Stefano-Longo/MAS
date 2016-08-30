@@ -14,17 +14,17 @@ public class DbLoadData extends DbConnection {
 	
 	public Boolean addLoadData(LoadData load)
 	{
-		System.out.println("\nQuery con: "+load.getIdLoad()+" "+load.getToDatetime());
-		String datetime = load.getToDatetime()==null ? null : format.format(load.getToDatetime().getTime());
+		String datetime = load.getToDatetime()==null ? null : "'"+format.format(load.getToDatetime().getTime())+"'";
 		String query = "INSERT INTO LoadDataHistory (IdLoad, DateTime, CostKwh, CriticalConsumption, NonCriticalConsumption,"
 				+ " ConsumptionMin, ConsumptionMax, PowerRequested, DesideredChoice, ConsumptionShifted,"
 				+ " ToDateTime, Confirmed)"
 				+ " VALUES ("+load.getIdLoad()+",'"+format.format(load.getDatetime().getTime())+"',"
 						+load.getCostKwh()+","+load.getCriticalConsumption()+","
 						+load.getNonCriticalConsumption()+","+load.getConsumptionMin()+","+load.getConsumptionMax()+","
-						+load.getPowerRequested()+","+load.getDesideredChoice()+","+load.getConsumptionShifted()+",";
-		query += datetime == null ? datetime : "'"+datetime+"'";
-		query += ", 'false')";
+						+load.getPowerRequested()+","+load.getDesideredChoice()+","+load.getConsumptionShifted()+","
+						+datetime+", 'false')";
+		//query += datetime == null ? datetime : "'"+datetime+"'";
+		//query += ", 'false')";
 		try {
 			return stmt.execute(query);
 		} catch (SQLException e) {

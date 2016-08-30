@@ -74,10 +74,11 @@ public class ControlBehaviour extends OneShotBehaviour {
 			derData = new DbControlArrivalData().getLastControlArrivalData(this.myAgent.getName(), "der");
 			loadData = new DbControlArrivalData().getLastControlArrivalData(this.myAgent.getName(), "load");
 			
-			double meanPrice = calculateMeanPrice(prices);
-			System.out.println("meanPrice :"+meanPrice);
+			System.out.println("\n\nbatt - min: "+batteryData.getLowerLimit()+" max: "+batteryData.getUpperLimit()+" desidered: "+batteryData.getDesideredChoice());
+			System.out.println("der - min: "+derData.getLowerLimit()+" max: "+derData.getUpperLimit()+" desidered: "+derData.getDesideredChoice());
+			System.out.println("load - min: "+loadData.getLowerLimit()+" max: "+loadData.getUpperLimit()+" desidered: "+loadData.getDesideredChoice()+"\n\n");
 			
-			if(meanPrice > prices.get(0).getEnergyPrice() + 0.2*meanPrice)
+			if(checkPercentile(prices.get(0).getEnergyPrice()) < 0.3) //energy cost low
 			{
 				System.out.println("Now buy energy from the grid - no use battery, maybe charge it");
 				/**
@@ -85,28 +86,28 @@ public class ControlBehaviour extends OneShotBehaviour {
 				 */
 				derEnergyRequest = derData.getDesideredChoice();
 				loadEnergyRequest = loadData.getUpperLimit();			
-				System.out.println("\n1 - gridEnergyRequest: "+gridEnergyRequest);
-				System.out.println("\n1 - derEnergyRequest: "+derEnergyRequest);
-				System.out.println("\n1 - batteryEnergyRequest: "+batteryEnergyRequest);
-				System.out.println("\n1 - loadEnergyRequest: "+loadEnergyRequest);
+				
+				if(derData.getCostKwh() < prices.get(0).getEnergyPrice()) //se conviene produco a palla però
+				{
+					derEnergyRequest = derData.getUpperLimit();
+				}
+				
 				//se la produzione è maggiore del carico, carico le batterie
 				if (derEnergyRequest > loadEnergyRequest)
 				{
 					System.out.println("1La produzione in eccedenza la metto in batteria finché possibile");
-					batteryEnergyRequest = (derEnergyRequest - loadEnergyRequest) > batteryData.getUpperLimit()
-							? batteryData.getUpperLimit() : (derEnergyRequest - loadEnergyRequest);
+					batteryEnergyRequest = (derEnergyRequest - loadEnergyRequest) > batteryData.getLowerLimit()
+							? batteryData.getLowerLimit() : (derEnergyRequest - loadEnergyRequest);
 				}
 				
-				//se sono molto scariche e se conviene assai, carico le batterie, altrimenti no
-				if(batteryData.getDesideredChoice() > 0 &&
-						meanPrice > prices.get(0).getEnergyPrice() + 0.5*meanPrice)
+				//TO-DO se sono molto scariche e ->se conviene assai<-, carico le batterie, altrimenti no
+				if(batteryData.getDesideredChoice() > 0)
 				{
-					System.out.println("I charge batteries as much as they want to");
 					batteryEnergyRequest = batteryData.getDesideredChoice() > 0 ? 
 							batteryData.getDesideredChoice() : batteryEnergyRequest;
 				}
 			}
-			else if(meanPrice < prices.get(0).getEnergyPrice() - 0.2*meanPrice)
+			else if(checkPercentile(prices.get(0).getEnergyPrice()) > 0.7) //energy cost high
 			{
 				System.out.println("Now I buy less energy and use batteries and DER");
 				/**
@@ -114,40 +115,45 @@ public class ControlBehaviour extends OneShotBehaviour {
 				 */
 				derEnergyRequest = derData.getUpperLimit();
 				loadEnergyRequest = loadData.getLowerLimit();
-				if(batteryData.getCostKwh() > prices.get(0).getEnergyPrice() && 
+				/*if(batteryData.getCostKwh() > prices.get(0).getEnergyPrice() &&
 						derData.getCostKwh() > prices.get(0).getEnergyPrice())
 				{
-					System.out.println("I will not use battery or der");
-					derEnergyRequest = -derData.getDesideredChoice();
+					//I will not use battery or der
+					derEnergyRequest = derData.getDesideredChoice();
 					batteryEnergyRequest = 0;
-				}
+				}*/
 				//se la produzione è maggiore del carico, carico le batterie
 				if (derEnergyRequest > loadEnergyRequest)
 				{
 					System.out.println("2La produzione in eccedenza la metto in batteria finché possibile");
-					batteryEnergyRequest = (derEnergyRequest - loadEnergyRequest) > batteryData.getUpperLimit()
-							? batteryData.getUpperLimit() : (derEnergyRequest - loadEnergyRequest);
+					batteryEnergyRequest = (derEnergyRequest - loadEnergyRequest) > batteryData.getLowerLimit()
+							? batteryData.getLowerLimit() : (derEnergyRequest - loadEnergyRequest);
+				}
+				//uso la batteria
+				else if(derEnergyRequest < loadEnergyRequest)
+				{
+					System.out.println("CONTROLLA: loadEnergyRequest - derEnergyRequest = "+(loadEnergyRequest-derEnergyRequest));
+					batteryEnergyRequest = (loadEnergyRequest - derEnergyRequest) > -batteryData.getUpperLimit()
+							? batteryData.getUpperLimit() : -(loadEnergyRequest - derEnergyRequest);
+					System.out.println(batteryEnergyRequest);		
 				}
 			}
-			else
+			else //energy cost in the mean
 			{
 				/**
 				 * Now the price is near the mean value, 
 				 * I try to use batteries and more DER energy if it's more convenient
 				 * I try to shift loads if it's convenient
 				 */
+				System.out.println("else!!");
 				derEnergyRequest = derData.getDesideredChoice();
 				loadEnergyRequest = loadData.getDesideredChoice();
 				
-				if(loadData.getCostKwh() < prices.get(0).getEnergyPrice())
+				/*if(loadData.getCostKwh() < prices.get(0).getEnergyPrice())
 				{
 					loadEnergyRequest = loadData.getUpperLimit();
-				}
-				if(batteryData.getCostKwh() < prices.get(0).getEnergyPrice())
-				{
-					batteryEnergyRequest = batteryData.getDesideredChoice() < 0 
-							? batteryData.getDesideredChoice() : 0;
-				}
+				}*/
+				
 				if(derData.getCostKwh() < prices.get(0).getEnergyPrice())
 				{
 					derEnergyRequest = derData.getUpperLimit();
@@ -156,23 +162,32 @@ public class ControlBehaviour extends OneShotBehaviour {
 				//se la produzione è maggiore del carico, carico le batterie
 				if (derEnergyRequest > loadEnergyRequest)
 				{
-					System.out.println("3La produzione in eccedenza la metto in batteria finché possibile");
 					batteryEnergyRequest = (derEnergyRequest - loadEnergyRequest) > batteryData.getLowerLimit()
 							? batteryData.getLowerLimit() : (derEnergyRequest - loadEnergyRequest);
-					batteryEnergyRequest = GeneralData.round(batteryEnergyRequest, 2);
+				}
+				else if(batteryData.getCostKwh() < prices.get(0).getEnergyPrice() 
+						&& batteryData.getDesideredChoice() < 0) //se conviene, uso le batterie ma non al massimo
+				{
+					batteryEnergyRequest = (loadEnergyRequest - derEnergyRequest) > -batteryData.getDesideredChoice()
+							? batteryData.getDesideredChoice() : -(loadEnergyRequest - derEnergyRequest);
 				}
 			}
 			
-			gridEnergyRequest = GeneralData.round(loadEnergyRequest+batteryEnergyRequest-derEnergyRequest, 2);
-
+			System.out.println("STOP IT! percentile: "+checkPercentile(prices.get(0).getEnergyPrice()));
 			peakShaving();
 			
+			derEnergyRequest = GeneralData.round(derEnergyRequest, 2);
+			loadEnergyRequest = GeneralData.round(loadEnergyRequest, 2);
+			batteryEnergyRequest = GeneralData.round(batteryEnergyRequest, 2);
+			gridEnergyRequest = GeneralData.round(loadEnergyRequest+batteryEnergyRequest-derEnergyRequest, 2);
+
 			System.out.println("\ngridEnergyRequest: "+gridEnergyRequest);
-			System.out.println("\n derEnergyRequest: "+-derEnergyRequest);
+			System.out.println("\n derEnergyRequest: -"+derEnergyRequest);
 			System.out.println("\n batteryEnergyRequest: "+batteryEnergyRequest);
 			System.out.println("\n loadEnergyRequest: "+loadEnergyRequest);
 			
-			costKwh = prices.get(0).getEnergyPrice();
+			costKwh = derEnergyRequest > loadEnergyRequest ? GeneralData.getSellEnergyPrice()+derData.getCostKwh()
+					: prices.get(0).getEnergyPrice();
 
 			ResultPowerPrice derResult = new ResultPowerPrice(msgData.getDatetime(), derEnergyRequest, costKwh);
 			ResultPowerPrice batteryResult = new ResultPowerPrice(msgData.getDatetime(), batteryEnergyRequest, costKwh);
@@ -186,7 +201,6 @@ public class ControlBehaviour extends OneShotBehaviour {
 			new BaseAgent().sendMessageToAgentsByServiceType(this.myAgent, "LoadAggregatorAgent",
 					"result", loadResult);
 			
-			System.out.println("batteryEnergyRequest 1: "+batteryEnergyRequest);
 			
 			ControlData newControlData = new ControlData(this.myAgent.getName(), this.myAgent.getHap(),
 					msgData.getDatetime(), -derEnergyRequest, batteryEnergyRequest, loadEnergyRequest, 
@@ -204,51 +218,33 @@ public class ControlBehaviour extends OneShotBehaviour {
 		if(gridEnergyRequest > prices.get(0).getThreshold())
 		{
 			derEnergyRequest = derData.getUpperLimit();
-			gridEnergyRequest = GeneralData.round(batteryEnergyRequest+loadEnergyRequest-derEnergyRequest, 2);
-			if(gridEnergyRequest > prices.get(0).getThreshold())
+			gridEnergyRequest = batteryEnergyRequest+loadEnergyRequest-derEnergyRequest;
+			if(gridEnergyRequest > prices.get(0).getThreshold()) //if is still over the threshold
 			{
-				batteryEnergyRequest = batteryData.getUpperLimit();
+				batteryEnergyRequest = -batteryData.getUpperLimit() > (gridEnergyRequest - prices.get(0).getThreshold()) 
+						? -(gridEnergyRequest - prices.get(0).getThreshold()) : batteryData.getUpperLimit();
 			}
-			gridEnergyRequest = GeneralData.round(batteryEnergyRequest+loadEnergyRequest-derEnergyRequest, 2);
+			gridEnergyRequest = batteryEnergyRequest+loadEnergyRequest-derEnergyRequest;
 			if(gridEnergyRequest > prices.get(0).getThreshold())
 			{
 				loadEnergyRequest = loadData.getLowerLimit();
 			}
 		}
 	}
-	
-	private double calculateMeanPrice (ArrayList<TimePowerPrice> prices)
-	{
-		float sum=0;
-		for(int i=0; i<prices.size(); i++)
-		{
-			sum += prices.get(i).getEnergyPrice();
-		}
-		return GeneralData.round(sum/prices.size(), 4);
-	}
-	
-	/**
-	 * 
-	 * @return 1 if currentEnergyPrice is in the 30% higher price
-	 * @return -1 if currentEnergyPrice is in the 30% lower price
-	 * @return 0 otherwise
-	 */
-	private int checkPercentile(double currentEnergyPrice)
+
+	private double checkPercentile(double currentEnergyPrice)
 	{
 		int counter = 0;
-		ArrayList<TimePowerPrice> lastWeekPrices = 
-		for(int i=0; i < prices.size(); i++)
+		ArrayList<TimePowerPrice> lastWeekPrices = new DbTimePowerPrice().getLastWeekPowerPrice(prices.get(0).getDateTime());
+		
+		for(int i=0; i < lastWeekPrices.size(); i++)
 		{
-			if(currentEnergyPrice > prices.get(i).getEnergyPrice())
+			if(currentEnergyPrice > lastWeekPrices.get(i).getEnergyPrice())
 				counter++;
 		}
-		double percentile = counter/prices.size();
-		if(percentile > 0.7) 
-			return 1;
-		else if(percentile < 0.3)
-			return -1;
-		else 
-			return 0;
+		double percentile = (double)counter/lastWeekPrices.size();
+
+		return percentile;
 	}
 
 }

@@ -18,12 +18,14 @@ public class DbLoadInfo extends DbConnection {
 	{
 		ArrayList<LoadInfoPrice> list = new ArrayList<LoadInfoPrice>();
 		String query = "SELECT *" 
-					+ " FROM (Load as A JOIN LoadInfo as B ON A.IdLoad = B.IdLoad)"
-						+ " JOIN LoadManagement as C ON B.Id = C.IdLoadDateTime"
+					+ " FROM ((Load as A JOIN LoadInfo as B ON A.IdLoad = B.IdLoad)"
+						+ " JOIN LoadManagement as C ON B.Id = C.IdLoadDateTime)"
+						+ " JOIN Price P on C.ToDateTime = P.DateTime"
 					+ " WHERE RTRIM(IdAgent) = '"+idAgent+"'"
-					+ " AND DateTime = '"+format.format(datetime.getTime())+"'"
+					+ " AND B.DateTime = '"+format.format(datetime.getTime())+"'"
 					+ " AND NonCriticalConsumption > 0"
-					+ " ORDER BY DateTime";
+					+ " ORDER BY P.EnergyPrice";
+		System.out.println(query);
 		try {
 			ResultSet rs = stmt.executeQuery(query);
 			while(rs.next())
@@ -33,7 +35,7 @@ public class DbLoadInfo extends DbConnection {
 				LoadInfoPrice data = new LoadInfoPrice(rs.getInt("IdLoad"), rs.getString("IdAgent"), rs.getString("IdPlatform"),
 						cal1, rs.getDouble("CriticalConsumption"), rs.getDouble("NonCriticalConsumption"), 
 						rs.getDouble("ConsumptionAdded"));
-				
+				data.setPrice(rs.getDouble("EnergyPrice"));
 				Calendar cal2 = Calendar.getInstance();
 				cal2.setTime(rs.getTimestamp("ToDateTime"));
 				data.setToDatetime(cal2);
@@ -52,6 +54,7 @@ public class DbLoadInfo extends DbConnection {
 					+ " FROM LoadInfo A JOIN Load B ON A.IdLoad = B.IdLoad "
 					+ " WHERE RTRIM(IdAgent) = '"+idAgent+"'"
 					+ " AND DateTime = '"+format.format(datetime.getTime())+"'";
+		System.out.println(query);
 		try {
 			ResultSet rs = stmt.executeQuery(query);
 			while(rs.next())
@@ -92,7 +95,7 @@ public class DbLoadInfo extends DbConnection {
 		String datetime = loadInfo.getDatetime() == null ? null : format.format(loadInfo.getDatetime().getTime());
 
 		String query = "UPDATE LoadInfo"
-				+ " SET  ConsumptionAdded="+loadInfo.getConsumptionAdded()
+				+ " SET  ConsumptionAdded += "+loadInfo.getConsumptionAdded()
 				+ " WHERE IdLoad = '"+loadInfo.getIdLoad()+"'";
 		if(datetime == null)
 			query += " AND DateTime = null";

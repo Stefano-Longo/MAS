@@ -1,6 +1,8 @@
 package behaviours;
 
 import java.util.ArrayList;
+import java.util.concurrent.TimeUnit;
+
 import agents.BaseAgent;
 import basicData.AggregatorFlexibilityData;
 import basicData.BatteryInfo;
@@ -72,23 +74,13 @@ public class DisaggregateBatteryBehaviour extends OneShotBehaviour {
 
 		for(int i=0; i < batteryChoices.size(); i++)
 		{
-			//ControlAgent sends this: datetime, power, CostKwh
-			if(totalPowerRequested > batteryChoices.get(i).getUpperLimit())
-			{
-				batteryPowerRequested = batteryChoices.get(i).getUpperLimit();
-				totalPowerRequested -= batteryChoices.get(i).getUpperLimit();
-			}
-			else 
-			{
-				batteryPowerRequested = totalPowerRequested;
-				totalPowerRequested = 0;
-			} 
+			batteryPowerRequested = totalPowerRequested < batteryChoices.get(i).getUpperLimit() ?
+					batteryChoices.get(i).getUpperLimit() : totalPowerRequested;
+
+			totalPowerRequested -= batteryPowerRequested; 
+			 
 			ResultPowerPrice batteryAction = new ResultPowerPrice(msgData.getDatetime(), batteryPowerRequested, msgData.getCostKwh());
-			
-			BatteryInfo batteryInfo = new DbBatteryInfo().getBatteryInfoByIdBattery(batteryChoices.get(i).getIdentificator());
-			String shortName = new BaseAgent().getShortName(batteryInfo.getIdAgent());
-			new BaseAgent().sendMessageToAgentsByServiceType(this.myAgent, 
-					this.myAgent.getAID(shortName), "result", batteryAction);
+			sendMessage(batteryAction, i);
 		}
 	}
 
@@ -108,11 +100,8 @@ public class DisaggregateBatteryBehaviour extends OneShotBehaviour {
 		// percentuale da aggiungere (o togliere, in base al segno) ad ogni scelta delle batterie
 		//ATTENZIONE: passo i valori da negativi a positivi, alla fine li passo negativi di nuovo
 
-		System.out.println("batteryEnergyRequest 2: "+msgData.getPowerRequested());
-
 		ArrayList<AggregatorFlexibilityData> batteriesPositiveChoice = new DbAggregatorBattery()
-				.getBatteriesChoiceByValue(this.myAgent.getName(), "positive");
-		double aggregateChoice = batteriesPositiveChoice.get(0).getDesideredChoice();
+				.getBatteriesChoiceByValue(this.myAgent.getName(), "positive", msgData.getDatetime());
 		double powerRequested = msgData.getPowerRequested();
 		double batteryPowerGiven = 0;
 		
@@ -121,16 +110,17 @@ public class DisaggregateBatteryBehaviour extends OneShotBehaviour {
 
 		for(int i=0; i < batteryChoices.size(); i++)
 		{
-			if(!batteriesPositiveChoice.contains(batteryChoices.get(i)))
+			batteryPowerGiven = 0;
+			
+			if(batteriesPositiveChoice.contains(batteryChoices.get(i)))
 			{ 	
-				System.out.println("YES!!");
 				/**
 				 * le batterie che si vogliono scaricare sono alla fine della lista (diff maggiore), 
 				 * quindi divido la parte rimanente tra loro
 				 */
 				if(powerRequested > 0)
 				{
-					if(powerRequested/batteriesDesiderCharge > batteryChoices.get(i).getLowerLimit())
+					if(powerRequested/batteriesDesiderCharge < batteryChoices.get(i).getLowerLimit())
 					{
 						batteryPowerGiven = powerRequested/batteriesDesiderCharge;
 					}
@@ -142,35 +132,17 @@ public class DisaggregateBatteryBehaviour extends OneShotBehaviour {
 					{
 						batteryPowerGiven = powerRequested;
 					}
-					powerRequested -= batteryPowerGiven;
 				}
 			}
 			else if(powerRequested > 0)
 			{
-				double percentage = (powerRequested-aggregateChoice)/aggregateChoice;
-				batteryPowerGiven = batteryChoices.get(i).getDesideredChoice(); 
-				if((batteryPowerGiven + batteryPowerGiven*percentage) < batteryChoices.get(i).getLowerLimit())
-				{
-					batteryPowerGiven += batteryPowerGiven*percentage; //aggiungo o tolgo la percentuale
-				}
-				else
-				{
-					batteryPowerGiven = batteryChoices.get(i).getLowerLimit();
-				}
-				if(batteryPowerGiven > powerRequested)
-				{
-					batteryPowerGiven = powerRequested;
-				}
-				aggregateChoice -= batteryPowerGiven; //TO-DO vedi che può essere negativa!! perché tolgo sempre
-				powerRequested -= batteryPowerGiven;
+				batteryPowerGiven = powerRequested > batteryChoices.get(i).getLowerLimit() ? 
+						batteryChoices.get(i).getLowerLimit() : powerRequested;
 			}
+			powerRequested -= batteryPowerGiven;
 			
 			ResultPowerPrice batteryAction = new ResultPowerPrice(msgData.getDatetime(), batteryPowerGiven, msgData.getCostKwh());
-
-			BatteryInfo batteryInfo = new DbBatteryInfo().getBatteryInfoByIdBattery(batteryChoices.get(i).getIdentificator());
-			String shortName = new BaseAgent().getShortName(batteryInfo.getIdAgent());
-			new BaseAgent().sendMessageToAgentsByServiceType(this.myAgent, 
-					this.myAgent.getAID(shortName), "result", batteryAction);
+			sendMessage(batteryAction, i);
 		}
 	}
 	
@@ -188,5 +160,13 @@ public class DisaggregateBatteryBehaviour extends OneShotBehaviour {
 			new BaseAgent().sendMessageToAgentsByServiceType(this.myAgent, 
 					this.myAgent.getAID(shortName), "result", batteryAction);
 		}
+	}
+	
+	private void sendMessage(ResultPowerPrice batteryAction, int counter)
+	{
+		BatteryInfo batteryInfo = new DbBatteryInfo().getBatteryInfoByIdBattery(batteryChoices.get(counter).getIdentificator());
+		String shortName = new BaseAgent().getShortName(batteryInfo.getIdAgent());
+		new BaseAgent().sendMessageToAgentsByServiceType(this.myAgent, 
+				this.myAgent.getAID(shortName), "result", batteryAction);
 	}
 }

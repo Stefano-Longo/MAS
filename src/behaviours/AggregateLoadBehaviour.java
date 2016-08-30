@@ -36,7 +36,7 @@ public class AggregateLoadBehaviour extends OneShotBehaviour {
 		int messagesReceived = new DbAggregatorLoad().countMessagesReceived(this.myAgent.getName());
 		int loadAgents = new BaseAgent().getAgentsbyServiceType(this.myAgent, "LoadAgent").length;
 		
-		System.out.println("DER messagesReceived: "+messagesReceived+" derAgents: "+loadAgents);
+		System.out.println("LOAD messagesReceived: "+messagesReceived+" derAgents: "+loadAgents);
 
 		if (messagesReceived == loadAgents)
 		{

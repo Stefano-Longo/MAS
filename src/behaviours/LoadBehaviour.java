@@ -28,12 +28,11 @@ public class LoadBehaviour extends OneShotBehaviour {
 		LoadInfo loadInfo = new DbLoadInfo().getLoadInfoByIdAgent(this.myAgent.getName(), msgData.getDatetime());
 		LoadData loadData = new DbLoadData().getLastLoadData(loadInfo.getIdLoad());
 			
-		
 		if(msgData.getPowerRequested() < loadData.getConsumptionMin() || 
 				msgData.getPowerRequested() > loadData.getConsumptionMax())
 		{
-			OkData ko = new OkData(msgData.getDatetime(), "der", false);
-			new BaseAgent().sendMessageToAgentsByServiceType(this.myAgent, "DerAggregatorAgent",
+			OkData ko = new OkData(msgData.getDatetime(), "load", false);
+			new BaseAgent().sendMessageToAgentsByServiceType(this.myAgent, "LoadAggregatorAgent",
 					"ok", ko);
 			return;
 		}
@@ -42,7 +41,6 @@ public class LoadBehaviour extends OneShotBehaviour {
 		
 		LoadData newLoadData = new LoadData(loadInfo.getIdLoad(), msgData.getDatetime(),
 				msgData.getPowerRequested(), consumptionShifted);
-		
 		new DbLoadData().updateLoadData(newLoadData);
 		
 		if(msgData.getPowerRequested() < loadData.getConsumptionMax())

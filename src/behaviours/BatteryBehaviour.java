@@ -45,8 +45,6 @@ public class BatteryBehaviour  extends OneShotBehaviour {
 		 *  - OutputPowerMax: I should have it also
 		 */
 		
-		System.out.println("batteryEnergyRequest 3: "+msgData.getPowerRequested());
-
 		BatteryInfo batteryInfo = new DbBatteryInfo().getBatteryInfoByIdAgent(this.myAgent.getName());
 		//get the data to update
 		BatteryData lastBatteryData = new DbBatteryData().getLastBatteryData(batteryInfo.getIdBattery());
@@ -83,10 +81,7 @@ public class BatteryBehaviour  extends OneShotBehaviour {
 
 	private double calculateSoc(double soc, double capacity, double powerRequested)
 	{
-		System.out.println("\nNeed to calculate the next soc");
-		System.out.println("powerRequested: "+powerRequested+" timeSlot: "+timeSlot+" capacity: "+capacity);
 		double newSoc = soc + ((powerRequested / (3600 / timeSlot))*100 / capacity);
-		System.out.println("newSoc: "+newSoc);
 		return GeneralData.round(newSoc, 2);
 	}
 	

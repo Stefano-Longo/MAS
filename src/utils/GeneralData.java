@@ -10,6 +10,7 @@ public class GeneralData {
 	private double dieselKwhPrice = 1; //expressed in €
 	private double priceKwhSold = 0.15; //expressed in €
 	private double meanKwhPrice = 0.4;
+	static private double sellEnergyPrice = 0.05; //expressed in €
 	
 	public int getTimeSlot() {
 		return timeSlot;
@@ -33,6 +34,10 @@ public class GeneralData {
 
 	public double getPriceKwhSold() {
 		return priceKwhSold;
+	}
+	
+	static public double getSellEnergyPrice() {
+		return sellEnergyPrice;
 	}
 
 	public void setPriceKwhSold(double priceKwhSold) {
