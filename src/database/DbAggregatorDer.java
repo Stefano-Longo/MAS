@@ -22,6 +22,7 @@ public class DbAggregatorDer extends DbConnection {
 				+ " VALUES ('"+data.getIdAgent()+"',"+data.getIdentificator()+",'"
 				+ format.format(data.getDatetime().getTime())+"',"+data.getLowerLimit()+","+data.getUpperLimit()+","
 				+ data.getCostKwh()+","+data.getDesideredChoice()+")";
+		System.out.println(query);
 		try {
 			return stmt.execute(query);
 		} catch (SQLException e) {

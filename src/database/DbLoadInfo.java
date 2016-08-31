@@ -26,6 +26,7 @@ public class DbLoadInfo extends DbConnection {
 						+ " AND B.DateTime = '"+format.format(datetime.getTime())+"'"
 						+ " AND NonCriticalConsumption > 0"
 					+ " ORDER BY P.EnergyPrice";
+		System.out.println(query);
 		try {
 			ResultSet rs = stmt.executeQuery(query);
 			while(rs.next())

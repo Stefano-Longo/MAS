@@ -55,7 +55,7 @@ public class LoadFlexibilityBehaviour extends OneShotBehaviour {
 			toDatetime = (Calendar)loadInfoPrice.get(0).getToDatetime().clone();
 			//TO-DO need to integrate a comfort cost do take the desidered choice
 			desideredChoice = costKwh >= 0 ? upperLimit : lowerLimit;
-			System.out.println("hi, I'm the load "+loadInfo.getIdLoad()+" and my todatetime is: "+loadInfoPrice.get(0).getToDatetime().getTime());
+			System.out.println("hi, I'm the load "+loadInfo.getIdLoad()+" and my toDatetime is: "+loadInfoPrice.get(0).getToDatetime().getTime());
 			if(loadInfoPrice.get(0).getDatetime() == loadInfoPrice.get(0).getToDatetime()){
 				System.out.println("\nALEEERT \nALEEEERT \nALEEEERT");
 			}
@@ -71,10 +71,23 @@ public class LoadFlexibilityBehaviour extends OneShotBehaviour {
 		upperLimit = GeneralData.round(upperLimit, 2);
 		desideredChoice = GeneralData.round(desideredChoice, 2);
 
+		//To-Do correggere datetime ogni tanto è uguale a toDateTime. Per prevenire shifting in questi casi 
+		// metto il costo alle stelle (basterebbe metterlo positivo o nullo).
 		LoadData loadData = new LoadData(loadInfo.getIdLoad(), msgData.get(0).getDatetime(), costKwh, 
 				loadInfo.getCriticalConsumption(), loadInfo.getNonCriticalConsumption(),
 				lowerLimit, upperLimit, 0, desideredChoice, 0, toDatetime);
-		
+		if(loadData.getToDatetime() != null)
+		{
+			System.out.println("msgData.get(0).getDatetime(): "+msgData.get(0).getDatetime().getTime()+" toDatetime: "+toDatetime);
+			System.out.println("loadData.getDatetime(): "+loadData.getDatetime().getTime()+" toDatetime: "+loadData.getToDatetime().getTime());
+			while(loadData.getDatetime().getTime().compareTo(loadData.getToDatetime().getTime()) == 0)
+			{
+				System.out.println("\n\n CORREGGO COSTKWH \n\n");
+				loadData.setCostKwh(1);
+				loadData.setToDatetime((Calendar)loadInfoPrice.get(0).getToDatetime().clone());
+			}
+		}
+			
 		FlexibilityData result = new FlexibilityData(msgData.get(0).getDatetime(), lowerLimit, upperLimit, 
 				costKwh, desideredChoice, "load");
 		new DbLoadData().addLoadData(loadData);

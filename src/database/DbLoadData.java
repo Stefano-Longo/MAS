@@ -14,7 +14,11 @@ public class DbLoadData extends DbConnection {
 	
 	public Boolean addLoadData(LoadData load)
 	{
+		if(load.getDatetime() == load.getToDatetime()){
+			load.setCostKwh(1);
+		}
 		String toDatetime = load.getToDatetime()==null ? null : "'"+format.format(load.getToDatetime().getTime())+"'";
+		System.out.println("Datetime: "+load.getDatetime()+" toDatetime: "+toDatetime);
 		String query = "INSERT INTO LoadDataHistory (IdLoad, DateTime, CostKwh, CriticalConsumption, NonCriticalConsumption,"
 				+ " ConsumptionMin, ConsumptionMax, PowerRequested, DesideredChoice, ConsumptionShifted,"
 				+ " ToDateTime, Confirmed)"

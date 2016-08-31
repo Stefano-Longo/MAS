@@ -30,9 +30,11 @@ public class TsoBehaviour extends OneShotBehaviour {
 	public void action() {
 
 		TimePowerPrice data = new DbTimePowerPrice().getNewTimePowerPrice(msgData.getDatetime());
-		
-		new BaseAgent().sendMessageToAgentsByServiceType(this.myAgent, 
-				"GridAgent", "input", data);
+		if(data != null)
+		{
+			new BaseAgent().sendMessageToAgentsByServiceType(this.myAgent, 
+					"GridAgent", "input", data);
+		}
 	}
 
 }
