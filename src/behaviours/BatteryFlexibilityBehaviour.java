@@ -67,10 +67,10 @@ public class BatteryFlexibilityBehaviour extends OneShotBehaviour {
 		maxOutput = GeneralData.round(maxOutput, 2);
 		desideredChoice = GeneralData.round(desideredChoice, 2);
 
-		FlexibilityData result = new FlexibilityData(msgData.get(0).getDateTime(), maxInput,
+		FlexibilityData result = new FlexibilityData(msgData.get(0).getDatetime(), maxInput,
     			maxOutput, batteryData.getCostKwh(), desideredChoice, "battery");
 		
-		BatteryData data = new BatteryData(batteryInfo.getIdBattery(), msgData.get(0).getDateTime(), 
+		BatteryData data = new BatteryData(batteryInfo.getIdBattery(), msgData.get(0).getDatetime(), 
 				batteryData.getSocObjective(), batteryData.getSoc(), batteryData.getCostKwh(), 
 				maxInput, maxOutput, 0, desideredChoice);
 		

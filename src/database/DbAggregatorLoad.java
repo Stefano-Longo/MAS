@@ -47,7 +47,7 @@ public class DbAggregatorLoad extends DbConnection {
 				cal2.setTime(rs.getTimestamp("DateTime"));
 
 				data = new FlexibilityData(cal2, rs.getDouble("LowerLimit"), 
-						rs.getDouble("UpperLimit"), rs.getDouble("CostKwh"), 
+						rs.getDouble("UpperLimit"), GeneralData.round(rs.getDouble("CostKwh"),5), 
 						rs.getDouble("DesideredChoice"), "load");
 				return data;
 			}

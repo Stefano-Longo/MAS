@@ -21,6 +21,13 @@ public class ReceiveMessages extends TickerBehaviour {
 			MessageTemplate template = MessageTemplate.MatchPerformative(ACLMessage.INFORM);
 			ACLMessage msg = this.myAgent.receive(template); 
 			if (msg!=null){
+				if(this.myAgent instanceof TsoAgent)
+				{
+					if(msg.getConversationId().equals("finish"))
+					{
+						this.myAgent.addBehaviour(new TsoBehaviour(msg));
+					}
+				}
 				if(this.myAgent instanceof GridAgent)
 				{
 					if(msg.getConversationId().equals("input"))

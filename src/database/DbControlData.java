@@ -40,7 +40,7 @@ public class DbControlData extends DbConnection {
 			while(rs.next())
 			{
 				Calendar cal = Calendar.getInstance();
-				cal.setTime(rs.getDate("DateTime"));
+				cal.setTime(rs.getTimestamp("DateTime"));
 				controlData = new ControlData(idAgent, rs.getString("IdPlatform"), cal,
 						rs.getDouble("DerPower"), rs.getDouble("BatteryPower"), rs.getDouble("LoadPower"),
 						 rs.getDouble("GridPower"),  rs.getDouble("CostKwh"), rs.getInt("Confirmed"));

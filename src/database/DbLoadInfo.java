@@ -17,28 +17,26 @@ public class DbLoadInfo extends DbConnection {
 	public ArrayList<LoadInfoPrice> getLoadInfoPricebyIdAgent (String idAgent, Calendar datetime)
 	{
 		ArrayList<LoadInfoPrice> list = new ArrayList<LoadInfoPrice>();
-		String query = "SELECT *" 
+		String query = "SELECT A.IdLoad, IdAgent, IdPlatform, B.DateTime, CriticalConsumption,"
+						+ " NonCriticalConsumption, ConsumptionAdded, EnergyPrice, ToDateTime" 
 					+ " FROM ((Load as A JOIN LoadInfo as B ON A.IdLoad = B.IdLoad)"
 						+ " JOIN LoadManagement as C ON B.Id = C.IdLoadDateTime)"
 						+ " JOIN Price P on C.ToDateTime = P.DateTime"
 					+ " WHERE RTRIM(IdAgent) = '"+idAgent+"'"
-					+ " AND B.DateTime = '"+format.format(datetime.getTime())+"'"
-					+ " AND NonCriticalConsumption > 0"
+						+ " AND B.DateTime = '"+format.format(datetime.getTime())+"'"
+						+ " AND NonCriticalConsumption > 0"
 					+ " ORDER BY P.EnergyPrice";
-		System.out.println(query);
 		try {
 			ResultSet rs = stmt.executeQuery(query);
 			while(rs.next())
 			{
 				Calendar cal1 = Calendar.getInstance();
 				cal1.setTime(rs.getTimestamp("DateTime"));
-				LoadInfoPrice data = new LoadInfoPrice(rs.getInt("IdLoad"), rs.getString("IdAgent"), rs.getString("IdPlatform"),
-						cal1, rs.getDouble("CriticalConsumption"), rs.getDouble("NonCriticalConsumption"), 
-						rs.getDouble("ConsumptionAdded"));
-				data.setPrice(rs.getDouble("EnergyPrice"));
 				Calendar cal2 = Calendar.getInstance();
 				cal2.setTime(rs.getTimestamp("ToDateTime"));
-				data.setToDatetime(cal2);
+				LoadInfoPrice data = new LoadInfoPrice(rs.getInt("IdLoad"), rs.getString("IdAgent"), rs.getString("IdPlatform"),
+						cal1, rs.getDouble("CriticalConsumption"), rs.getDouble("NonCriticalConsumption"), 
+						rs.getDouble("ConsumptionAdded"), rs.getDouble("EnergyPrice"), cal2);
 				list.add(data);
 			}
 		} catch (SQLException e) {

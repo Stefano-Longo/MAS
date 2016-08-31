@@ -10,31 +10,31 @@ public class TimePowerPrice implements Serializable {
 	 * This class will be a type of data
 	 * It is the type of input message in the system
 	 */
-	private Calendar dateTime;
+	private Calendar datetime;
 	private double threshold; //range in which I have that price, KW_min = 0
 	private double energyPrice; // in € for each kw of change producing less or more
 	
 	/**
 	 * 
-	 * @param dateTime
+	 * @param datetime
 	 * @param maxEnergy
 	 * @param energyPrice
 	 */
-	public TimePowerPrice(Calendar dateTime, double threshold, double energyPrice) 
+	public TimePowerPrice(Calendar datetime, double threshold, double energyPrice) 
 	{
-		this.dateTime = dateTime;
+		this.datetime = datetime;
 		this.threshold = threshold;
 		this.energyPrice = energyPrice;
 	}
 	
 	public TimePowerPrice(){	}
 
-	public Calendar getDateTime() {
-		return dateTime;
+	public Calendar getDatetime() {
+		return datetime;
 	}
 
-	public void setDateTime(Calendar dateTime) {
-		this.dateTime = dateTime;
+	public void setDatetime(Calendar datetime) {
+		this.datetime = datetime;
 	}
 
 	public double getThreshold() {

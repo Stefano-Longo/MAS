@@ -58,6 +58,10 @@ public class DisaggregateLoadBehaviour extends OneShotBehaviour{
 			 * a chi mi garantisce un prezzo basso per ogni Kwh spostato
 			 */
 			double residualPower = msgData.getPowerRequested() - loadAggregatedData.getDesideredChoice();
+			System.out.println("\n\nDisaggrego!! \nLowerLimit: "+loadAggregatedData.getLowerLimit()+" "
+					+ "UpperLimit: "+loadAggregatedData.getUpperLimit()+" "
+					+ "PowRequested: "+msgData.getPowerRequested()+" "
+					+ "DesideredChoice: "+loadAggregatedData.getDesideredChoice()+" residual: "+residualPower+"\n");
 			giveDesideredChoicePlusResidual(residualPower);
 		}
 		else if(msgData.getPowerRequested() < loadAggregatedData.getDesideredChoice())
@@ -77,10 +81,10 @@ public class DisaggregateLoadBehaviour extends OneShotBehaviour{
 		double loadPowerRequested;
 		for(int i=0; i < loadsChoice.size(); i++)
 		{
-			if(residualPowerRequested + loadsChoice.get(i).getDesideredChoice() > loadsChoice.get(i).getUpperLimit())
+			if(residualPowerRequested + loadsChoice.get(i).getDesideredChoice() >= loadsChoice.get(i).getUpperLimit())
 			{
 				loadPowerRequested = loadsChoice.get(i).getUpperLimit();
-				residualPowerRequested -= loadsChoice.get(i).getUpperLimit();
+				residualPowerRequested -= loadsChoice.get(i).getUpperLimit() - loadsChoice.get(i).getDesideredChoice();
 			}
 			else if (residualPowerRequested > 0)
 			{
@@ -91,10 +95,14 @@ public class DisaggregateLoadBehaviour extends OneShotBehaviour{
 			{
 				loadPowerRequested = loadsChoice.get(i).getLowerLimit();
 			} 
+			System.out.println("Load-"+loadsChoice.get(0).getIdentificator()+" LL: "+loadsChoice.get(i).getLowerLimit()
+					+" UL: "+loadsChoice.get(i).getUpperLimit()+" DC: "+loadsChoice.get(i).getDesideredChoice()
+					+" loadPower Requested: "+loadPowerRequested);
 			ResultPowerPrice loadAction = new ResultPowerPrice(msgData.getDatetime(), 
 					GeneralData.round(loadPowerRequested, 2), msgData.getCostKwh());
 			sendMessage(loadAction, i);
 		}
+		System.out.println("\n\n");
 	}
 
 	private void giveMinimumPlusResidual(double residualPowerRequested)

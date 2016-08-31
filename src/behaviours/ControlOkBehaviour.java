@@ -28,11 +28,10 @@ public class ControlOkBehaviour extends OneShotBehaviour {
 	public void action() {
 		new DbControlArrivalData().updateControlArrivalData(this.myAgent.getName(), msgData.getType(), msgData.getOk());
 		int confirmedTrue = new DbControlArrivalData().getLastConfirmedByChoice(this.myAgent.getName(), true);
-		System.out.println("\nControlOkBehaviour: confirmedTrue: "+confirmedTrue);
 
 		if (confirmedTrue == 3)
 		{
-			System.out.println("entrato");
+			//System.out.println("entrato");
 			ControlData controlData = new DbControlData().getLastControlDatabyIdAgent(this.myAgent.getName());
 			ResultPowerPrice gridResult = new ResultPowerPrice(controlData.getDatetime(), 
 					controlData.getGridPower(), controlData.getCostKwh());

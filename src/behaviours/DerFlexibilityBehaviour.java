@@ -36,7 +36,7 @@ public class DerFlexibilityBehaviour extends OneShotBehaviour {
 		cal.setTime(msgData.get(0).getDateTime());
 		*/
 		DerInfo derInfo = new DbDerInfo().getDerInfoByIdAgent(this.myAgent.getName());
-		DerData derDataAvg = new DbDerData().getAverageLastMonthProduction(derInfo.getIdDer(), msgData.get(0).getDateTime());
+		DerData derDataAvg = new DbDerData().getAverageLastMonthProduction(derInfo.getIdDer(), msgData.get(0).getDatetime());
 		
 		double desideredChoice = derDataAvg.getProductionRequested();
 		double lowerLimit = getLowerLimit(derInfo);
@@ -48,15 +48,14 @@ public class DerFlexibilityBehaviour extends OneShotBehaviour {
 		}
 		
 		double costKwh = getCostKwh(derInfo);
-		System.out.println(costKwh+" derType: "+derInfo.getType());
 		
 		lowerLimit = GeneralData.round(lowerLimit, 2);
 		upperLimit = GeneralData.round(upperLimit, 2);
 		desideredChoice = GeneralData.round(desideredChoice, 2);
 
-		FlexibilityData result = new FlexibilityData(msgData.get(0).getDateTime(), 
+		FlexibilityData result = new FlexibilityData(msgData.get(0).getDatetime(), 
 				lowerLimit, upperLimit, costKwh, desideredChoice, "der");
-		DerData derData = new DerData(derInfo.getIdDer(), msgData.get(0).getDateTime(), costKwh, 
+		DerData derData = new DerData(derInfo.getIdDer(), msgData.get(0).getDatetime(), costKwh, 
 				lowerLimit, upperLimit, 0, desideredChoice);
 		new DbDerData().addDerData(derData);
 		
@@ -94,7 +93,7 @@ public class DerFlexibilityBehaviour extends OneShotBehaviour {
 	{
 		
 		double UpperLimit = ProductionMax;
-		int hour = msgData.get(0).getDateTime().get(Calendar.HOUR);
+		int hour = msgData.get(0).getDatetime().get(Calendar.HOUR);
 		
 		if(hour < 6 || hour > 19)
 		{

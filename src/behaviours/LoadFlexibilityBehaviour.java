@@ -1,6 +1,7 @@
 package behaviours;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 
 import agents.BaseAgent;
 import basicData.FlexibilityData;
@@ -36,49 +37,45 @@ public class LoadFlexibilityBehaviour extends OneShotBehaviour {
 		 * CostKwh: For each Kwh shifted, the load agent will earn or lose CostKwh €
 		 * Because it is defined like -> CostKwh = CostKwh_now - CostKwh_toDatetime
 		 */
-		LoadInfo loadInfo = new DbLoadInfo().getLoadInfoByIdAgent(this.myAgent.getName(), msgData.get(0).getDateTime());
+		LoadInfo loadInfo = new DbLoadInfo().getLoadInfoByIdAgent(this.myAgent.getName(), msgData.get(0).getDatetime());
 		ArrayList<LoadInfoPrice> loadInfoPrice = new DbLoadInfo().
-				getLoadInfoPricebyIdAgent(this.myAgent.getName(), msgData.get(0).getDateTime());
+				getLoadInfoPricebyIdAgent(this.myAgent.getName(), msgData.get(0).getDatetime());
 		
-		// I take always the first element because is the one which has the lower Price
+		// I take always the first element because is the one which has the lowest Price
 		double lowerLimit = loadInfo.getCriticalConsumption() + loadInfo.getConsumptionAdded();
 		double upperLimit = lowerLimit + loadInfo.getNonCriticalConsumption();
-		double costKwh = msgData.get(0).getEnergyPrice(); //prezzo attuale meno prezzo futuro stimato
+		double costKwh = 0; 
 		double desideredChoice;
 		
-		LoadData loadData = new LoadData();
+		Calendar toDatetime = Calendar.getInstance();
 		//If I can shift some part of the load to another slotTime
 		if (loadInfoPrice.size() > 0)
 		{
-			/**
-			 * Add the price to every object of the list, then order the list on the price value ASC 
-			 */
-			/*for(int i=0; i < loadInfoPrice.size(); i++)
-			{
-				double energyPrice = getPriceByDatetime(loadInfoPrice.get(i).getToDatetime());
-				loadInfoPrice.get(i).setPrice(energyPrice);
+			costKwh =  loadInfoPrice.get(0).getPrice() - msgData.get(0).getEnergyPrice();
+			toDatetime = (Calendar)loadInfoPrice.get(0).getToDatetime().clone();
+			//TO-DO need to integrate a comfort cost do take the desidered choice
+			desideredChoice = costKwh >= 0 ? upperLimit : lowerLimit;
+			System.out.println("hi, I'm the load "+loadInfo.getIdLoad()+" and my todatetime is: "+loadInfoPrice.get(0).getToDatetime().getTime());
+			if(loadInfoPrice.get(0).getDatetime() == loadInfoPrice.get(0).getToDatetime()){
+				System.out.println("\nALEEERT \nALEEEERT \nALEEEERT");
 			}
-			loadInfoPrice.sort((o1, o2) -> Double.compare(o1.getPrice(),o2.getPrice()));*/
-			costKwh = msgData.get(0).getEnergyPrice() - loadInfoPrice.get(0).getPrice();
-			costKwh = GeneralData.round(costKwh, 5);
-			desideredChoice = costKwh < 0 ? lowerLimit : upperLimit;
-			loadData = new LoadData(loadInfo.getIdLoad(), msgData.get(0).getDateTime(), costKwh, 
-					loadInfo.getCriticalConsumption(), loadInfo.getNonCriticalConsumption(),
-					lowerLimit, upperLimit, 0, desideredChoice, 0, loadInfoPrice.get(0).getToDatetime());
 		}
 		else
 		{
 			desideredChoice = upperLimit;
-			loadData = new LoadData(loadInfo.getIdLoad(), msgData.get(0).getDateTime(), costKwh, 
-					loadInfo.getCriticalConsumption(), loadInfo.getNonCriticalConsumption(),
-					lowerLimit, upperLimit, 0, desideredChoice, 0, null);
+			toDatetime = null;
 		}
-				
+
+		costKwh = GeneralData.round(costKwh, 5);
 		lowerLimit = GeneralData.round(lowerLimit, 2);
 		upperLimit = GeneralData.round(upperLimit, 2);
 		desideredChoice = GeneralData.round(desideredChoice, 2);
+
+		LoadData loadData = new LoadData(loadInfo.getIdLoad(), msgData.get(0).getDatetime(), costKwh, 
+				loadInfo.getCriticalConsumption(), loadInfo.getNonCriticalConsumption(),
+				lowerLimit, upperLimit, 0, desideredChoice, 0, toDatetime);
 		
-		FlexibilityData result = new FlexibilityData(msgData.get(0).getDateTime(), lowerLimit, upperLimit, 
+		FlexibilityData result = new FlexibilityData(msgData.get(0).getDatetime(), lowerLimit, upperLimit, 
 				costKwh, desideredChoice, "load");
 		new DbLoadData().addLoadData(loadData);
 		

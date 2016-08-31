@@ -35,7 +35,7 @@ public class CalculatePricesBehaviour extends OneShotBehaviour {
 		 * Elaborate and calculate the prices for all the hours of the day and put it in a list
 		 * Then add the list to the message's content
 		 */
-		ArrayList<TimePowerPrice> priceData = new DbTimePowerPrice().getDailyTimePowerPrice(msgData.getDateTime()) ;
+		ArrayList<TimePowerPrice> priceData = new DbTimePowerPrice().getDailyTimePowerPrice(msgData.getDatetime()) ;
 		
 		/* Calendar cal = Calendar.getInstance(); // creates calendar
 		DateFormat format = new GeneralData().getFormat();
@@ -66,16 +66,15 @@ public class CalculatePricesBehaviour extends OneShotBehaviour {
 			priceData.add(e);
 		}*/
 
-		//print list
-		for(int i=0; i<priceData.size(); i++)
-		{
-			System.out.println(priceData.get(i).getDateTime().getTime()+" "+priceData.get(i).getThreshold()+
-					" "+priceData.get(i).getEnergyPrice()+" ");
-		}
-		//end print list
-		
 		//new DbGridData().addPriceData(priceData);
 		new BaseAgent().sendMessageToAgentsByServiceType(this.myAgent, "ControlAgent", "input", priceData);
 			
+		//print list
+		for(int i=0; i<priceData.size(); i++)
+		{
+			System.out.println(priceData.get(i).getDatetime().getTime()+" "+priceData.get(i).getThreshold()+
+					" "+priceData.get(i).getEnergyPrice()+" ");
+		}
+		//end print list
 	}
 }

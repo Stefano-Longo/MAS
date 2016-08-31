@@ -1,5 +1,6 @@
 package behaviours;
 
+import agents.BaseAgent;
 import basicData.ResultPowerPrice;
 import jade.core.behaviours.OneShotBehaviour;
 import jade.lang.acl.ACLMessage;
@@ -25,6 +26,8 @@ public class GiveOutput extends OneShotBehaviour {
 		System.out.println("\n Hi! I am the Grid Agent: "+this.myAgent.getName());
 		System.out.println("The energy requested to the grid for the next "+slotTime/60+" minutes is: "+msgData.getPowerRequested()+" Kw");
 		
+		new BaseAgent().sendMessageToAgentsByServiceType(this.myAgent, "TsoAgent",
+				"finish", msgData);
 	}
 
 }

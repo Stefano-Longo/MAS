@@ -13,11 +13,33 @@ public class DbTimePowerPrice extends DbConnection {
 
 	DateFormat format = GeneralData.getFormat();
 
-	public TimePowerPrice getTimePowerPrice (Calendar datetime)
+	public TimePowerPrice getNewTimePowerPrice (Calendar oldDatetime)
 	{
-		 String query = "SELECT TOP 1 *" 
+		String query = "SELECT TOP 1 *" 
 				+ " FROM Price"
-				+ " WHERE DateTime > '"+format.format(datetime.getTime())+"'"
+				+ " WHERE DateTime > '"+format.format(oldDatetime.getTime())+"'"
+				+ " ORDER BY DateTime";
+		try {
+			ResultSet rs = stmt.executeQuery(query);
+			while(rs.next())
+			{
+				Calendar cal = Calendar.getInstance();
+				cal.setTime(rs.getTimestamp("DateTime"));
+				TimePowerPrice data = new TimePowerPrice(cal, 
+						rs.getDouble("Threshold"), rs.getDouble("EnergyPrice"));
+				return data;
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
+	public TimePowerPrice getTimePowerPriceByDateTime (Calendar datetime)
+	{
+		String query = "SELECT TOP 1 *" 
+				+ " FROM Price"
+				+ " WHERE DateTime = '"+format.format(datetime.getTime())+"'"
 				+ " ORDER BY DateTime";
 		try {
 			ResultSet rs = stmt.executeQuery(query);
@@ -44,7 +66,6 @@ public class DbTimePowerPrice extends DbConnection {
 				+ " WHERE DateTime >= '"+format.format(datetime.getTime())+"'"
 				+ " AND DATEPART(DAY, DateTime) = "+datetime.get(Calendar.DAY_OF_MONTH)
 				+ " ORDER BY DateTime";
-		
 		try {
 			ResultSet rs = stmt.executeQuery(query);
 			while(rs.next())

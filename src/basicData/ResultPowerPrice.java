@@ -10,6 +10,8 @@ public class ResultPowerPrice implements Serializable {
 	private double powerRequested; // positive if output from batteries, input otherwise
 	private double costKwh; //in € per kw of energy in input or output
 	
+	public ResultPowerPrice(){}
+	
 	public ResultPowerPrice(Calendar datetime, double powerRequested, double costKwh) {
 		this.datetime = datetime;
 		this.powerRequested = powerRequested;

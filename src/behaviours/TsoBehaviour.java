@@ -1,52 +1,38 @@
 package behaviours;
 
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.util.Calendar;
-import java.util.Date;
-
 import agents.BaseAgent;
+import basicData.ResultPowerPrice;
 import basicData.TimePowerPrice;
 import database.DbTimePowerPrice;
-import jade.core.behaviours.Behaviour;
-import utils.GeneralData;
-
-import java.util.concurrent.TimeUnit;
+import jade.core.behaviours.OneShotBehaviour;
+import jade.lang.acl.ACLMessage;
+import jade.lang.acl.UnreadableException;
 
 @SuppressWarnings("serial")
-public class TsoBehaviour extends Behaviour {
+public class TsoBehaviour extends OneShotBehaviour {
 
-	Calendar datetime = Calendar.getInstance();
-
+	ResultPowerPrice msgData = new ResultPowerPrice(); 
+	
+	public TsoBehaviour(ACLMessage msg){
+		try {
+			this.msgData = (ResultPowerPrice)msg.getContentObject();
+		} catch (UnreadableException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public TsoBehaviour(TimePowerPrice data)
+	{
+		this.msgData.setDatetime(data.getDatetime());
+	}
+	
 	@Override
 	public void action() {
-		DateFormat format = GeneralData.getFormat();
-		try {
-			datetime.setTime(format.parse("2016-06-30 23:00"));
-		} catch (ParseException e1) {
-			e1.printStackTrace();
-		}
-		TimePowerPrice data = new DbTimePowerPrice().getTimePowerPrice(datetime);
+
+		TimePowerPrice data = new DbTimePowerPrice().getNewTimePowerPrice(msgData.getDatetime());
 		
-		while(data != null){
-			new BaseAgent().sendMessageToAgentsByServiceType(this.myAgent, 
-					"GridAgent", "input", data);
-			data = new DbTimePowerPrice().getTimePowerPrice(data.getDateTime());
-			try {
-				TimeUnit.SECONDS.sleep(25);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
-		}
-
+		new BaseAgent().sendMessageToAgentsByServiceType(this.myAgent, 
+				"GridAgent", "input", data);
 	}
 
-	@Override
-	public boolean done() {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	
-	
 }
