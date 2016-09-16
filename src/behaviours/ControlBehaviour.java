@@ -54,14 +54,13 @@ public class ControlBehaviour extends OneShotBehaviour {
 		 */
 		
 		
-		// DEVO RICEVERE TUTTI E 3 I MESSAGGI, SE NON LI RICEVO ALLORA DEVO FARE QUALCOSA PER RECUPERARLI
+		// To-do DEVO RICEVERE TUTTI E 3 I MESSAGGI, SE NON LI RICEVO ALLORA DEVO FARE QUALCOSA PER RECUPERARLI
 		// SI MA POI SI VEDE, I won't ignore :)
-		
+		System.out.println("sono nel Control Agent, messaggio da: "+msgData.getType());
 		ControlFlexibilityData controlArrivalData = new ControlFlexibilityData(this.myAgent.getName(), msgData);
-		controlArrivalData.setIdAgent(this.myAgent.getName());
 		new DbControlArrivalData().addControlArrivalData(controlArrivalData);
 
-		int messagesReceived = new DbControlArrivalData().countMessagesReceived(this.myAgent.getName());
+		int messagesReceived = new DbControlArrivalData().countMessagesReceived(this.myAgent.getName(), msgData.getDatetime());
 		//System.out.println("ControlAgent messagesReceived: "+messagesReceived);
 		if (messagesReceived == 3)
 		{
@@ -70,9 +69,9 @@ public class ControlBehaviour extends OneShotBehaviour {
 			 * think and tell them what to do 
 			 */
 			prices = new DbTimePowerPrice().getDailyTimePowerPrice(controlArrivalData.getDatetime());
-			batteryData = new DbControlArrivalData().getLastControlArrivalData(this.myAgent.getName(), "battery");
-			derData = new DbControlArrivalData().getLastControlArrivalData(this.myAgent.getName(), "der");
-			loadData = new DbControlArrivalData().getLastControlArrivalData(this.myAgent.getName(), "load");
+			batteryData = new DbControlArrivalData().getLastControlArrivalData(this.myAgent.getName(), "battery", msgData.getDatetime());
+			derData = new DbControlArrivalData().getLastControlArrivalData(this.myAgent.getName(), "der", msgData.getDatetime());
+			loadData = new DbControlArrivalData().getLastControlArrivalData(this.myAgent.getName(), "load", msgData.getDatetime());
 			
 			System.out.println("\n\nbatt - min: "+batteryData.getLowerLimit()+" max: "+batteryData.getUpperLimit()+" desidered: "+batteryData.getDesideredChoice());
 			System.out.println("der - min: "+derData.getLowerLimit()+" max: "+derData.getUpperLimit()+" desidered: "+derData.getDesideredChoice());

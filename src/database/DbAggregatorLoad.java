@@ -29,24 +29,23 @@ public class DbAggregatorLoad extends DbConnection {
 		return false;
 	}
 	
-	public FlexibilityData aggregateMessageReceived (String idAggregatorAgent)
+	public FlexibilityData aggregateMessagesReceived (String idAggregatorAgent, Calendar datetime)
 	{
 		FlexibilityData data = null;
 		String query = "SELECT DateTime, SUM(LowerLimit) as LowerLimit, SUM(UpperLimit) as UpperLimit,"
 				+ " AVG(CostKwh) as CostKwh, SUM(DesideredChoice) as DesideredChoice"
 				+ " FROM LoadAggregatorData"
 				+ " WHERE IdAggregatorAgent = '"+idAggregatorAgent+"'"
-				+ " AND Datetime in (SELECT Max(Datetime)" 
-									+"FROM LoadAggregatorData)"
+				+ " AND Datetime = '"+format.format(datetime.getTime())+"'"
 				+ " GROUP BY DateTime";
 		try {
 			ResultSet rs = stmt.executeQuery(query);
 			while(rs.next())
 			{	
-				Calendar cal2 = Calendar.getInstance();
-				cal2.setTime(rs.getTimestamp("DateTime"));
+				Calendar cal = Calendar.getInstance();
+				cal.setTime(rs.getTimestamp("DateTime"));
 
-				data = new FlexibilityData(cal2, rs.getDouble("LowerLimit"), 
+				data = new FlexibilityData(cal, rs.getDouble("LowerLimit"), 
 						rs.getDouble("UpperLimit"), GeneralData.round(rs.getDouble("CostKwh"),5), 
 						rs.getDouble("DesideredChoice"), "load");
 				return data;
@@ -57,13 +56,12 @@ public class DbAggregatorLoad extends DbConnection {
 		return null;
 	}
 	
-	public int countMessagesReceived (String idAgent)
+	public int countMessagesReceived (String idAgent, Calendar datetime)
 	{
 		String query = "SELECT COUNT(*) as Count"
     			+ " FROM LoadAggregatorData"
     			+ " WHERE IdAggregatorAgent = '"+idAgent+"'"
-    			+ " AND DateTime in (SELECT Max(DateTime)" 
-									+"FROM LoadAggregatorData)";
+    			+ " AND DateTime = '"+format.format(datetime.getTime())+"'";
 		try{
 			ResultSet rs = stmt.executeQuery(query);
 			while(rs.next())
@@ -76,14 +74,13 @@ public class DbAggregatorLoad extends DbConnection {
 		return 0;
 	}
 	
-	public ArrayList<AggregatorFlexibilityData> getLoadsChoice(String idAggregatorAgent)
+	public ArrayList<AggregatorFlexibilityData> getLoadsChoice(String idAggregatorAgent, Calendar datetime)
 	{
 		ArrayList<AggregatorFlexibilityData> list = new ArrayList<AggregatorFlexibilityData>();
 		String query = "SELECT *"
 				+ " FROM LoadAggregatorData"
 				+ " WHERE IdAggregatorAgent='"+idAggregatorAgent+"'"
-				+ " AND DateTime in (SELECT MAX(DateTime)"
-								+" FROM LoadAggregatorData)"
+				+ " AND DateTime = '"+format.format(datetime.getTime())+"'"
 				+ " ORDER BY CostKwh";
 		try {
 			ResultSet rs = stmt.executeQuery(query);
@@ -104,14 +101,13 @@ public class DbAggregatorLoad extends DbConnection {
 		return list;
 	}
 	
-	public Boolean updateLastLoadConfirmedChoice(String idAggregatorAgent, int idLoad, boolean confirmed)
+	public Boolean updateLastLoadConfirmedChoice(String idAggregatorAgent, int idLoad, boolean confirmed, Calendar datetime)
 	{
 		String query = "UPDATE LoadAggregatorData"
 				+ " SET Confirmed = '"+confirmed+"'"
 				+ " WHERE IdAggregatorAgent = '"+idAggregatorAgent+"'"
 				+ " AND IdLoad = "+idLoad
-				+ " AND DateTime IN (SELECT MAX(DateTime)"
-									+ "	FROM ControlData)";
+				+ " AND DateTime = '"+format.format(datetime.getTime())+"'";
 		try {
 			return stmt.execute(query);
 		} catch (SQLException e) {
@@ -120,14 +116,13 @@ public class DbAggregatorLoad extends DbConnection {
 		return false;
 	}
 	
-	public int getLastConfirmedByChoice (String idAggregatorAgent, boolean confirmed)
+	public int getLastConfirmedByChoice (String idAggregatorAgent, boolean confirmed, Calendar datetime)
 	{
 		String query = "SELECT COUNT(*) as Count"
 				+ " FROM LoadAggregatorData"
 				+ " WHERE IdAggregatorAgent = '"+idAggregatorAgent+"'"
 				+ " AND Confirmed = '"+confirmed+"'"
-				+ " AND DateTime in (SELECT MAX(DateTime)"
-								+" FROM LoadAggregatorData)";;
+				+ " AND DateTime = '"+format.format(datetime.getTime())+"'";
 		try {
 			ResultSet rs = stmt.executeQuery(query);
 			while(rs.next())

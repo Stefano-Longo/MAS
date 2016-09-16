@@ -19,6 +19,7 @@ public class DbDerData extends DbConnection {
 				+ " VALUES ('"+der.getIdDer()+"','"+format.format(der.getDatetime().getTime())+"',"
 						+der.getCostKwh()+","+der.getProductionMin()+","+der.getProductionMax()+","
 						+der.getProductionRequested()+","+der.getDesideredChoice()+", 'false')";
+		System.out.println(query);
 		try {
 			return stmt.execute(query);
 		} catch (SQLException e) {
@@ -58,13 +59,13 @@ public class DbDerData extends DbConnection {
 		return data;
 	}
 	
-	public DerData getLastDerData (int idDer)
+	public DerData getLastDerData (int idDer, Calendar datetime)
 	{
 		DerData data = new DerData();
-		String query = "SELECT TOP 1 *"
+		String query = "SELECT *"
 				+ " FROM DerDataHistory"
 				+ " WHERE IdDer = "+idDer
-				+ " ORDER BY DateTime DESC";
+				+ " AND DateTime = '"+format.format(datetime.getTime())+"'";
 		try {
 			ResultSet rs = stmt.executeQuery(query);
 			while(rs.next())

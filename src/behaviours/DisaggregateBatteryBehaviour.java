@@ -44,7 +44,7 @@ public class DisaggregateBatteryBehaviour extends OneShotBehaviour {
 		//BatteryOutput -> powerRequested negative value
 		//BatteryInput -> powerRequested positive value
 		
-		batteryChoices = new DbAggregatorBattery().getBatteriesChoice(this.myAgent.getName());
+		batteryChoices = new DbAggregatorBattery().getBatteriesChoice(this.myAgent.getName(), msgData.getDatetime());
 		DFAgentDescription[] batteryAgents = new BaseAgent().getAgentsbyServiceType(myAgent, "BatteryAgent");
 		
 		if(batteryChoices.size() == batteryAgents.length)

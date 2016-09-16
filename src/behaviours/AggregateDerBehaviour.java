@@ -33,7 +33,7 @@ public class AggregateDerBehaviour extends OneShotBehaviour {
 				derInfo.getIdDer(), msgData);
 		new DbAggregatorDer().addFlexibilityDerMessage(data);
 		
-		int messagesReceived = new DbAggregatorDer().countMessagesReceived(this.myAgent.getName());
+		int messagesReceived = new DbAggregatorDer().countMessagesReceived(this.myAgent.getName(), msgData.getDatetime());
 		int derAgents = new BaseAgent().getAgentsbyServiceType(this.myAgent, "DerAgent").length;
 		
 		System.out.println("DER messagesReceived: "+messagesReceived+" derAgents: "+derAgents);
@@ -46,7 +46,7 @@ public class AggregateDerBehaviour extends OneShotBehaviour {
 			 */
 			
 			FlexibilityData result = new DbAggregatorDer().
-					aggregateMessageReceived(this.myAgent.getName());
+					aggregateMessagesReceived(this.myAgent.getName(), msgData.getDatetime());
 
 			new BaseAgent().sendMessageToAgentsByServiceType(this.myAgent, "ControlAgent",
 					"proposal", result);

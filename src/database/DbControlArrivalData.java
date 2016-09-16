@@ -19,6 +19,7 @@ public class DbControlArrivalData extends DbConnection {
 				+ " VALUES ('"+data.getIdAgent()+"','"+format.format(data.getDatetime().getTime())+"',"
 				+data.getLowerLimit()+","+ data.getUpperLimit()+","+data.getCostKwh()+","
 				+data.getDesideredChoice()+",'"+data.getType()+"')";
+		System.out.println(query);
 		try {
 			return stmt.execute(query);
 		} catch (SQLException e) {
@@ -27,15 +28,14 @@ public class DbControlArrivalData extends DbConnection {
 		return null;
 	}
 	
-	public ControlFlexibilityData getLastControlArrivalData (String idControlAgent, String type)
+	public ControlFlexibilityData getLastControlArrivalData (String idControlAgent, String type, Calendar datetime)
 	{
 		String query = "SELECT SUM(LowerLimit) as LowerLimit, SUM(UpperLimit) as UpperLimit, AVG(CostKwh) as CostKwh,"
 				+ " SUM(DesideredChoice) as DesideredChoice, DateTime"
 				+ " FROM ControlArrivalData"
 				+ " WHERE IdControlAgent = '"+idControlAgent+"'"
 				+ " AND Type = '"+type+"'"
-				+ " AND DateTime in (SELECT MAX(DateTime)"
-											+" FROM ControlArrivalData)"
+				+ " AND DateTime = '"+format.format(datetime.getTime())+"'"
 				+ " GROUP BY DateTime";
 		try {
 			ResultSet rs = stmt.executeQuery(query);
@@ -55,13 +55,12 @@ public class DbControlArrivalData extends DbConnection {
 		return null;
 	}
 	
-	public int countMessagesReceived (String idControlAgent)
+	public int countMessagesReceived (String idControlAgent, Calendar datetime)
 	{
 		String query = "SELECT COUNT(*) as Count"
     			+ " FROM ControlArrivalData"
     			+ " WHERE IdControlAgent = '"+idControlAgent+"'"
-    			+ " AND DateTime in (SELECT Max(DateTime)" 
-											+"FROM ControlArrivalData)";
+    			+ " AND DateTime = '"+format.format(datetime.getTime())+"'";
 		try{
 			ResultSet rs = stmt.executeQuery(query);
 			while(rs.next())
@@ -74,14 +73,13 @@ public class DbControlArrivalData extends DbConnection {
 		return 0;
 	}
 	
-	public Boolean updateControlArrivalData (String idControlAgent, String type, boolean confirmed)
+	public Boolean updateControlArrivalData (String idControlAgent, String type, boolean confirmed, Calendar datetime)
 	{
 		String query = "UPDATE ControlArrivalData"
 				+ " SET Confirmed = '"+confirmed+"'"
 				+ " WHERE IdControlAgent = '"+idControlAgent+"'"
 				+ " AND Type = '"+type+"'"
-				+ " AND DateTime IN (SELECT MAX(DateTime)"
-									+ "	FROM ControlData)";
+				+ " AND DateTime = '"+format.format(datetime.getTime())+"'";
 		try {
 			return stmt.execute(query);
 		} catch (SQLException e) {
@@ -90,14 +88,13 @@ public class DbControlArrivalData extends DbConnection {
 		return false;
 	}
 	
-	public int getLastConfirmedByChoice (String idAgent, boolean confirmed)
+	public int getLastConfirmedByChoice (String idAgent, boolean confirmed, Calendar datetime)
 	{
 		String query = "SELECT COUNT(*) as Count"
 				+ " FROM ControlArrivalData"
 				+ " WHERE IdControlAgent = '"+idAgent+"'"
 				+ " AND Confirmed = '"+confirmed+"'"
-				+ " AND DateTime in (SELECT MAX(DateTime)"
-								+" FROM LoadAggregatorData)";;
+				+ " AND DateTime = '"+format.format(datetime.getTime())+"'";
 		try {
 			ResultSet rs = stmt.executeQuery(query);
 			while(rs.next())

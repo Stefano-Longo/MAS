@@ -27,14 +27,13 @@ public class DbControlData extends DbConnection {
 		return false;
 	}
 	
-	public ControlData getLastControlDatabyIdAgent(String idAgent)
+	public ControlData getLastControlDatabyIdAgent(String idAgent, Calendar datetime)
 	{
 		ControlData controlData = null;
 		String query = "SELECT *"
 				+ " FROM ControlData"
 				+ " WHERE IdAgent = '"+idAgent+"'"
-				+ " AND DateTime IN (SELECT MAX(DateTime)"
-									+ "	FROM ControlData)";
+				+ " AND DateTime = '"+format.format(datetime.getTime())+"'";
 		try {
 			ResultSet rs = stmt.executeQuery(query);
 			while(rs.next())
@@ -51,13 +50,12 @@ public class DbControlData extends DbConnection {
 		return controlData;
 	}
 	
-	public Boolean setConfirmed (String idAgent)
+	public Boolean setConfirmed (String idAgent, Calendar datetime)
 	{
 		String query = "UPDATE ControlData"
 				+ " SET Confirmed = 'true'"
 				+ " WHERE IdAgent = '"+idAgent+"'"
-				+ " AND DateTime IN (SELECT MAX(DateTime)"
-									+ "	FROM ControlData)";
+				+ " AND DateTime = '"+format.format(datetime.getTime())+"'";
 		try {
 			return stmt.execute(query);
 		} catch (SQLException e) {

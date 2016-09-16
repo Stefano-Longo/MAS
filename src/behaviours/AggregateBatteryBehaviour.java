@@ -41,7 +41,7 @@ public class AggregateBatteryBehaviour extends OneShotBehaviour {
 					batteryInfo.getIdBattery(), msgData);
 		new DbAggregatorBattery().addFlexibilityBatteryMessage(data);
 		
-		int messagesReceived = new DbAggregatorBattery().countMessagesReceived(this.myAgent.getName());
+		int messagesReceived = new DbAggregatorBattery().countMessagesReceived(this.myAgent.getName(), msgData.getDatetime());
 		int batteryAgents = new BaseAgent().getAgentsbyServiceType(this.myAgent, "BatteryAgent").length;
 		
 		System.out.println("BATTERY messagesReceived: "+messagesReceived+", batteryAgents: "+batteryAgents);
@@ -53,7 +53,7 @@ public class AggregateBatteryBehaviour extends OneShotBehaviour {
 			 */
 			
 			FlexibilityData result = new DbAggregatorBattery().
-					aggregateMessageReceived(this.myAgent.getName());
+					aggregateMessagesReceived(this.myAgent.getName(), msgData.getDatetime());
 
 			new BaseAgent().sendMessageToAgentsByServiceType(this.myAgent, "ControlAgent",
 					"proposal", result);

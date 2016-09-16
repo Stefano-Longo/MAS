@@ -35,7 +35,7 @@ public class DisaggregateDerBehaviour extends OneShotBehaviour{
 		/**
 		 * I ask first the maximum from solar, wind and hydro. Then I ask to generator if needed
 		 */
-		derChoices = new DbAggregatorDer().getDersChoice(this.myAgent.getName());
+		derChoices = new DbAggregatorDer().getDersChoice(this.myAgent.getName(), msgData.getDatetime());
 		DFAgentDescription[] derAgents = new BaseAgent().getAgentsbyServiceType(myAgent, "DerAgent");
 		if(derChoices.size() == derAgents.length)
 		{

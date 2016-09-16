@@ -33,11 +33,10 @@ public class AggregateLoadBehaviour extends OneShotBehaviour {
 				loadInfo.getIdLoad(), msgData);
 		new DbAggregatorLoad().addFlexibilityLoadMessage(data);
 		
-		int messagesReceived = new DbAggregatorLoad().countMessagesReceived(this.myAgent.getName());
+		int messagesReceived = new DbAggregatorLoad().countMessagesReceived(this.myAgent.getName(), msgData.getDatetime());
 		int loadAgents = new BaseAgent().getAgentsbyServiceType(this.myAgent, "LoadAgent").length;
 		
 		System.out.println("LOAD messagesReceived: "+messagesReceived+" loadAgents: "+loadAgents);
-
 		if (messagesReceived == loadAgents)
 		{
 			/**
@@ -46,7 +45,7 @@ public class AggregateLoadBehaviour extends OneShotBehaviour {
 			 */
 			
 			FlexibilityData result = new DbAggregatorLoad().
-					aggregateMessageReceived(this.myAgent.getName());
+					aggregateMessagesReceived(this.myAgent.getName(), msgData.getDatetime());
 
 			new BaseAgent().sendMessageToAgentsByServiceType(this.myAgent, "ControlAgent",
 					"proposal", result);

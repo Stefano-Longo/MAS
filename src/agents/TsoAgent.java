@@ -20,7 +20,7 @@ public class TsoAgent extends BaseAgent {
 		DateFormat format = GeneralData.getFormat();
 		
 		try {
-			datetime.setTime(format.parse("2016-06-30 23:00"));
+			datetime.setTime(format.parse("2016-07-27 23:00"));
 		} catch (ParseException e1) {
 			e1.printStackTrace();
 		}

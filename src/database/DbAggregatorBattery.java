@@ -43,15 +43,14 @@ public class DbAggregatorBattery extends DbConnection {
 	 * @param dateTime
 	 * @return
 	 */
-	public FlexibilityData aggregateMessageReceived (String idAggregatorAgent)
+	public FlexibilityData aggregateMessagesReceived (String idAggregatorAgent, Calendar datetime)
 	{
 		FlexibilityData data = null;
 		String query = "SELECT DateTime, SUM(InputPowerMax) as InputPowerMax, SUM(OutputPowerMax) as OutputPowerMax,"
 				+ " AVG(CostKwh) as CostKwh, SUM(DesideredChoice) as DesideredChoice"
 				+ " FROM BatteryAggregatorData"
 				+ " WHERE IdAggregatorAgent = '"+idAggregatorAgent+"'"
-				+ " AND Datetime in (SELECT Max(Datetime)" 
-									+"FROM BatteryAggregatorData)"
+				+ " AND Datetime = '"+format.format(datetime.getTime())+"'"
 				+ " GROUP BY DateTime";
 		try {
 			ResultSet rs = stmt.executeQuery(query);
@@ -77,13 +76,12 @@ public class DbAggregatorBattery extends DbConnection {
 	 * @param dateTime
 	 * @return 
 	 */
-	public int countMessagesReceived (String idAgent)
+	public int countMessagesReceived (String idAgent, Calendar datetime)
 	{
 		String query = "SELECT COUNT(*) as Count"
     			+ " FROM BatteryAggregatorData"
     			+ " WHERE IdAggregatorAgent = '"+idAgent+"'"
-    			+ " AND DateTime in (SELECT Max(DateTime)" 
-									+"FROM BatteryAggregatorData)";
+    			+ " AND DateTime = '"+format.format(datetime.getTime())+"'";
 		try{
 			ResultSet rs = stmt.executeQuery(query);
 			while(rs.next())
@@ -101,14 +99,13 @@ public class DbAggregatorBattery extends DbConnection {
 	 * @param myAgent
 	 * @return
 	 */
-	public ArrayList<AggregatorFlexibilityData> getBatteriesChoice(String idAggregatorAgent)
+	public ArrayList<AggregatorFlexibilityData> getBatteriesChoice(String idAggregatorAgent, Calendar datetime)
 	{
 		ArrayList<AggregatorFlexibilityData> list = new ArrayList<AggregatorFlexibilityData>();
 		String query = "SELECT *, InputPowerMax-DesideredChoice as Diff"
 				+ " FROM BatteryAggregatorData"
 				+ " WHERE IdAggregatorAgent='"+idAggregatorAgent+"'"
-				+ " AND DateTime in (SELECT MAX(DateTime)"
-								+" FROM BatteryAggregatorData)"
+				+ " AND DateTime = '"+format.format(datetime.getTime())+"'"
 				+ " ORDER BY Diff, IdBattery";
 		try {
 			ResultSet rs = stmt.executeQuery(query);
@@ -168,14 +165,13 @@ public class DbAggregatorBattery extends DbConnection {
 		return list;
 	}
 	
-	public Boolean updateLastBatteryConfirmedChoice(String idAggregatorAgent, int idBattery, boolean confirmed)
+	public Boolean updateLastBatteryConfirmedChoice(String idAggregatorAgent, int idBattery, boolean confirmed, Calendar datetime)
 	{
 		String query = "UPDATE BatteryAggregatorData"
 				+ " SET Confirmed = '"+confirmed+"'"
 				+ " WHERE IdAggregatorAgent = '"+idAggregatorAgent+"'"
 				+ " AND IdBattery = "+idBattery
-				+ " AND DateTime IN (SELECT MAX(DateTime)"
-									+ "	FROM ControlData)";
+				+ " AND DateTime = '"+format.format(datetime.getTime())+"'";
 		try {
 			return stmt.execute(query);
 		} catch (SQLException e) {
@@ -184,14 +180,13 @@ public class DbAggregatorBattery extends DbConnection {
 		return false;
 	}
 	
-	public int getLastConfirmedByChoice (String idAggregatorAgent, boolean confirmed)
+	public int getLastConfirmedByChoice (String idAggregatorAgent, boolean confirmed, Calendar datetime)
 	{
 		String query = "SELECT COUNT(*) as Count"
 				+ " FROM BatteryAggregatorData"
 				+ " WHERE IdAggregatorAgent = '"+idAggregatorAgent+"'"
 				+ " AND Confirmed = '"+confirmed+"'"
-				+ " AND DateTime in (SELECT MAX(DateTime)"
-								+" FROM LoadAggregatorData)";;
+				+ " AND DateTime = '"+format.format(datetime.getTime())+"'";
 		try {
 			ResultSet rs = stmt.executeQuery(query);
 			while(rs.next())

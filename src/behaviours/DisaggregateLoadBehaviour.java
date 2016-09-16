@@ -35,11 +35,10 @@ public class DisaggregateLoadBehaviour extends OneShotBehaviour{
 	@Override
 	public void action() 
 	{
-		System.out.println("Ciao, controllami. Power request: "+msgData.getPowerRequested());
-		loadsChoice = new DbAggregatorLoad().getLoadsChoice(this.myAgent.getName());
+		loadsChoice = new DbAggregatorLoad().getLoadsChoice(this.myAgent.getName(), msgData.getDatetime());
 		DFAgentDescription[] loadAgents = new BaseAgent().getAgentsbyServiceType(myAgent, "LoadAgent");
 		
-		FlexibilityData loadAggregatedData = new DbAggregatorLoad().aggregateMessageReceived(this.myAgent.getName());
+		FlexibilityData loadAggregatedData = new DbAggregatorLoad().aggregateMessagesReceived(this.myAgent.getName(), msgData.getDatetime());
 		
 		if(loadsChoice.size() != loadAgents.length)
 		{

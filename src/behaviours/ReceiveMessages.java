@@ -149,6 +149,10 @@ public class ReceiveMessages extends TickerBehaviour {
 					}
 				}
 			}
+			/*else
+			{
+				this.block();
+			}*/
 		} catch (UnreadableException e) {
 			e.printStackTrace();
 		}	

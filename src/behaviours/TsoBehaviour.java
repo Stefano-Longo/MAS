@@ -1,5 +1,8 @@
 package behaviours;
 
+import java.text.ParseException;
+import java.util.Date;
+
 import agents.BaseAgent;
 import basicData.ResultPowerPrice;
 import basicData.TimePowerPrice;
@@ -7,6 +10,7 @@ import database.DbTimePowerPrice;
 import jade.core.behaviours.OneShotBehaviour;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.UnreadableException;
+import utils.GeneralData;
 
 @SuppressWarnings("serial")
 public class TsoBehaviour extends OneShotBehaviour {
@@ -30,10 +34,14 @@ public class TsoBehaviour extends OneShotBehaviour {
 	public void action() {
 
 		TimePowerPrice data = new DbTimePowerPrice().getNewTimePowerPrice(msgData.getDatetime());
-		if(data != null)
-		{
-			new BaseAgent().sendMessageToAgentsByServiceType(this.myAgent, 
-					"GridAgent", "input", data);
+		try {
+			if(data != null && data.getDatetime().getTime().compareTo(GeneralData.getFormat().parse("2016-08-17 00:00")) != 0)
+			{
+				new BaseAgent().sendMessageToAgentsByServiceType(this.myAgent, 
+						"GridAgent", "input", data);
+			}
+		} catch (ParseException e) {
+			e.printStackTrace();
 		}
 	}
 

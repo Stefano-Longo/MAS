@@ -37,7 +37,7 @@ public class DbTimePowerPrice extends DbConnection {
 	
 	public TimePowerPrice getTimePowerPriceByDateTime (Calendar datetime)
 	{
-		String query = "SELECT TOP 1 *" 
+		String query = "SELECT *" 
 				+ " FROM Price"
 				+ " WHERE DateTime = '"+format.format(datetime.getTime())+"'"
 				+ " ORDER BY DateTime";

@@ -32,26 +32,15 @@ public class DerFlexibilityBehaviour extends OneShotBehaviour {
 	
 	@Override
 	public void action() {
-		/*Calendar cal = Calendar.getInstance();
-		cal.setTime(msgData.get(0).getDateTime());
-		*/
+
 		DerInfo derInfo = new DbDerInfo().getDerInfoByIdAgent(this.myAgent.getName());
 		DerData derDataAvg = new DbDerData().getAverageLastMonthProduction(derInfo.getIdDer(), msgData.get(0).getDatetime());
 		
-		double desideredChoice = derDataAvg.getProductionRequested();
-		double lowerLimit = getLowerLimit(derInfo);
-		double upperLimit = getUpperLimit(derInfo);
-			
-		if(desideredChoice < lowerLimit || desideredChoice > upperLimit)
-		{
-			desideredChoice = (lowerLimit + upperLimit) / 2;
-		}
+		double desideredChoice = GeneralData.round(derDataAvg.getProductionRequested(),2);
+		double lowerLimit = GeneralData.round(getLowerLimit(derInfo),2);
+		double upperLimit = GeneralData.round(getUpperLimit(derInfo),2);
 		
 		double costKwh = getCostKwh(derInfo);
-		
-		lowerLimit = GeneralData.round(lowerLimit, 2);
-		upperLimit = GeneralData.round(upperLimit, 2);
-		desideredChoice = GeneralData.round(desideredChoice, 2);
 
 		FlexibilityData result = new FlexibilityData(msgData.get(0).getDatetime(), 
 				lowerLimit, upperLimit, costKwh, desideredChoice, "der");
@@ -97,7 +86,7 @@ public class DerFlexibilityBehaviour extends OneShotBehaviour {
 		
 		if(hour < 6 || hour > 19)
 		{
-			return UpperLimit - (UpperLimit*1);
+			return 0;
 		}
 		else if(hour < 10 || hour > 15)
 		{
@@ -117,6 +106,6 @@ public class DerFlexibilityBehaviour extends OneShotBehaviour {
 			costKwh += new GeneralData().getDieselKwhPrice();
 		}
 		
-		return GeneralData.round(costKwh, 4);
+		return GeneralData.round(costKwh, 5);
 	}
 }

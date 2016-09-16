@@ -28,7 +28,7 @@ public class DerBehaviour extends OneShotBehaviour {
 	public void action() {
 		
 		DerInfo derInfo = new DbDerInfo().getDerInfoByIdAgent(this.myAgent.getName());
-		DerData derData = new DbDerData().getLastDerData(derInfo.getIdDer());
+		DerData derData = new DbDerData().getLastDerData(derInfo.getIdDer(), msgData.getDatetime());
 		
 		DerData newDerData = new DerData(derInfo.getIdDer(), msgData.getDatetime(),
 					msgData.getPowerRequested());	

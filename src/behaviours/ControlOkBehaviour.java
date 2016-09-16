@@ -26,16 +26,16 @@ public class ControlOkBehaviour extends OneShotBehaviour {
 	
 	@Override
 	public void action() {
-		new DbControlArrivalData().updateControlArrivalData(this.myAgent.getName(), msgData.getType(), msgData.getOk());
-		int confirmedTrue = new DbControlArrivalData().getLastConfirmedByChoice(this.myAgent.getName(), true);
+		new DbControlArrivalData().updateControlArrivalData(this.myAgent.getName(), msgData.getType(), msgData.getOk(), msgData.getDatetime());
+		int confirmedTrue = new DbControlArrivalData().getLastConfirmedByChoice(this.myAgent.getName(), true, msgData.getDatetime());
 
 		if (confirmedTrue == 3)
 		{
 			//System.out.println("entrato");
-			ControlData controlData = new DbControlData().getLastControlDatabyIdAgent(this.myAgent.getName());
+			ControlData controlData = new DbControlData().getLastControlDatabyIdAgent(this.myAgent.getName(), msgData.getDatetime());
 			ResultPowerPrice gridResult = new ResultPowerPrice(controlData.getDatetime(), 
 					controlData.getGridPower(), controlData.getCostKwh());
-			new DbControlData().setConfirmed(this.myAgent.getName());
+			new DbControlData().setConfirmed(this.myAgent.getName(), msgData.getDatetime());
 			
 			new BaseAgent().sendMessageToAgentsByServiceType(this.myAgent, "GridAgent",
 					"result", gridResult);
