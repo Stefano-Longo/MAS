@@ -26,11 +26,16 @@ public class LoadBehaviour extends OneShotBehaviour {
 	@Override
 	public void action() {
 		LoadInfo loadInfo = new DbLoadInfo().getLoadInfoByIdAgent(this.myAgent.getName(), msgData.getDatetime());
+		System.out.println("\nloadBeh id: "+loadInfo.getIdLoad()+" prima: "+msgData.getDatetime().getTime());
 		LoadData loadData = new DbLoadData().getLastLoadData(loadInfo.getIdLoad(), msgData.getDatetime());
-			
+		System.out.println("\nloadBeh id: "+loadInfo.getIdLoad()+" dopo: "+msgData.getDatetime().getTime());
+		
 		if(msgData.getPowerRequested() < loadData.getConsumptionMin() || 
 				msgData.getPowerRequested() > loadData.getConsumptionMax())
 		{
+			System.out.println("\nI'm "+this.myAgent.getName()+" and Control Agent requested "+msgData.getPowerRequested()+" Kw from me"
+				+ "\nMy limits are: loadData.getConsumptionMin(): "+loadData.getConsumptionMin()+" loadData.getConsumptionMax():"+loadData.getConsumptionMax()
+				+ "\nfor datetime: "+msgData.getDatetime().getTime());
 			OkData ko = new OkData(msgData.getDatetime(), "load", false);
 			new BaseAgent().sendMessageToAgentsByServiceType(this.myAgent, "LoadAggregatorAgent",
 					"ok", ko);

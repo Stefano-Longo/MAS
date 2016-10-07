@@ -22,7 +22,7 @@ public class TimePowerPrice implements Serializable {
 	 */
 	public TimePowerPrice(Calendar datetime, double threshold, double energyPrice) 
 	{
-		this.datetime = datetime;
+		this.datetime = (Calendar)datetime.clone();
 		this.threshold = threshold;
 		this.energyPrice = energyPrice;
 	}
@@ -34,7 +34,7 @@ public class TimePowerPrice implements Serializable {
 	}
 
 	public void setDatetime(Calendar datetime) {
-		this.datetime = datetime;
+		this.datetime = (Calendar)datetime.clone();
 	}
 
 	public double getThreshold() {

@@ -25,7 +25,7 @@ public class DbLoadInfo extends DbConnection {
 						+ " AND B.DateTime = '"+format.format(datetime.getTime())+"'"
 						+ " AND NonCriticalConsumption > 0"
 					+ " ORDER BY P.EnergyPrice";
-		System.out.println(query);
+		//System.out.println(query);
 		try {
 			ResultSet rs = stmt.executeQuery(query);
 			while(rs.next())
@@ -47,12 +47,12 @@ public class DbLoadInfo extends DbConnection {
 	
 	public LoadInfo getLoadInfoByIdAgent (String idAgent, Calendar datetime)
 	{
-		LoadInfo data = null;
+		LoadInfo data = new LoadInfo();
 		String query = "SELECT *"
 					+ " FROM LoadInfo A JOIN Load B ON A.IdLoad = B.IdLoad "
 					+ " WHERE RTRIM(IdAgent) = '"+idAgent+"'"
 					+ " AND DateTime = '"+format.format(datetime.getTime())+"'";
-		System.out.println(query);
+		//System.out.println(query);
 		try {
 			ResultSet rs = stmt.executeQuery(query);
 			while(rs.next())
@@ -69,7 +69,7 @@ public class DbLoadInfo extends DbConnection {
 	
 	public LoadInfo getLoadInfoByIdLoad (int idLoad, Calendar datetime)
 	{
-		LoadInfo data = null;
+		LoadInfo data = new LoadInfo();
 		String query = "SELECT *"
 					+ " FROM LoadInfo as A JOIN Load as B ON A.IdLoad = B.IdLoad"
 					+ " WHERE A.IdLoad = "+idLoad
@@ -90,16 +90,10 @@ public class DbLoadInfo extends DbConnection {
 	
 	public Boolean updateLoadInfo(LoadInfo loadInfo)
 	{
-		String datetime = loadInfo.getDatetime() == null ? null : format.format(loadInfo.getDatetime().getTime());
-
 		String query = "UPDATE LoadInfo"
 				+ " SET  ConsumptionAdded += "+loadInfo.getConsumptionAdded()
-				+ " WHERE IdLoad = '"+loadInfo.getIdLoad()+"'";
-		if(datetime == null)
-			query += " AND DateTime = null";
-		else 
-			query += " AND DateTime = '"+format.format(loadInfo.getDatetime().getTime())+"'";
-
+				+ " WHERE IdLoad = "+loadInfo.getIdLoad()
+				+ " AND DateTime = '"+format.format(loadInfo.getDatetime().getTime())+"'";
 		try {
 			return stmt.execute(query);
 		} catch (SQLException e) {

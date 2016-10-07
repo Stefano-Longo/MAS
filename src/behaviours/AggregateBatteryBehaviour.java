@@ -36,6 +36,8 @@ public class AggregateBatteryBehaviour extends OneShotBehaviour {
 
 	public void action() 
 	{
+		System.out.println("AggregateBatteryBeh START - msgData.getDatetime() = "+msgData.getDatetime().getTime());
+
 		BatteryInfo batteryInfo = new DbBatteryInfo().getBatteryInfoByIdAgent(msg.getSender().getName());
 		AggregatorFlexibilityData data = new AggregatorFlexibilityData(this.myAgent.getName(), 
 					batteryInfo.getIdBattery(), msgData);
@@ -44,6 +46,8 @@ public class AggregateBatteryBehaviour extends OneShotBehaviour {
 		int messagesReceived = new DbAggregatorBattery().countMessagesReceived(this.myAgent.getName(), msgData.getDatetime());
 		int batteryAgents = new BaseAgent().getAgentsbyServiceType(this.myAgent, "BatteryAgent").length;
 		
+		System.out.println("AggregateBatteryBeh END - msgData.getDatetime() = "+msgData.getDatetime().getTime());
+
 		System.out.println("BATTERY messagesReceived: "+messagesReceived+", batteryAgents: "+batteryAgents);
 		if (messagesReceived == batteryAgents)
 		{

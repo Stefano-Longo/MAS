@@ -35,7 +35,7 @@ public class BatteryData {
 			double inputPowerMax, double outputPowerMax, double powerRequested, double desideredChoice)
 	{
 		this.idBattery = idBattery;
-		this.datetime = datetime;
+		this.datetime = (Calendar)datetime.clone();
 		this.socObjective = socObjective;
 		this.soc = soc;
 		this.costKwh = costKwh;
@@ -58,12 +58,14 @@ public class BatteryData {
 			double powerRequested)
 	{
 		this.idBattery = idBattery;
-		this.datetime = datetime;
+		this.datetime = (Calendar)datetime.clone();
 		this.socObjective = socObjective;
 		this.soc = soc;
 		this.costKwh = costKwh;
 		this.powerRequested = powerRequested;
 	}
+	
+	public BatteryData() { }
 	
 	public double getCapacity() {
 		return capacity;
@@ -74,7 +76,7 @@ public class BatteryData {
 	}
 
 	public void setAnalisysDatetime(Calendar analisysDatetime) {
-		this.analisysDatetime = analisysDatetime;
+		this.analisysDatetime = (Calendar)analisysDatetime.clone();
 	}
 
 	public void setCapacity(double capacity) {
@@ -130,7 +132,7 @@ public class BatteryData {
 	}
 
 	public void setDatetime(Calendar datetime) {
-		this.datetime = datetime;
+		this.datetime = (Calendar)datetime.clone();
 	}
 
 	public double getSocObjective() {

@@ -35,26 +35,17 @@ public class BatteryBehaviour  extends OneShotBehaviour {
 	@Override
 	public void action() {
 		
-		/**
-		 * Create BatteryData which has:
-		 * 	- DateTime incremented by timeSlot (writing the future state, after the timeSlot)
-		 * 	- Soc: the old one reduced/incresed depending on the msgData value 
-		 *  - SocObjective: a medium between the old one and the values for the same hours of the last week value
-		 *  - CostKwh: Calculate it 
-		 *  - InputPowerMax: I should have it
-		 *  - OutputPowerMax: I should have it also
-		 */
-		
 		BatteryInfo batteryInfo = new DbBatteryInfo().getBatteryInfoByIdAgent(this.myAgent.getName());
-		//get the data to update
-		BatteryData lastBatteryData = new DbBatteryData().getLastBatteryData(batteryInfo.getIdBattery());
-		
+		BatteryData lastBatteryData = new DbBatteryData().getBatteryDataByDatetime(batteryInfo.getIdBattery(), msgData.getDatetime());
 
 		//BatteryOutput -> powerRequested negative value
 		//BatteryInput -> powerRequested positive value
 		if((msgData.getPowerRequested() > 0 && msgData.getPowerRequested() > lastBatteryData.getInputPowerMax()) || 
 				(msgData.getPowerRequested() < 0 && msgData.getPowerRequested() < lastBatteryData.getOutputPowerMax()))
 		{
+			System.out.println("I'm the battery "+batteryInfo.getIdBattery()+" and I don't accept this power requested: "
+				+ msgData.getPowerRequested()+ " because my limist are: "+lastBatteryData.getInputPowerMax()+" "+lastBatteryData.getOutputPowerMax()
+				+ "\nfor datetime: "+msgData.getDatetime().getTime());
 			OkData ko = new OkData(msgData.getDatetime(), "battery", false);
 			new BaseAgent().sendMessageToAgentsByServiceType(this.myAgent, "BatteryAggregatorAgent",
 					"ok", ko);
@@ -67,11 +58,10 @@ public class BatteryBehaviour  extends OneShotBehaviour {
 		//TO-DO per ora newSocObjective sempre uguale. Poi vediamo se è meglio che si aggiorni per ogni ora
 		
 		double newCostKwh = calculateNewCostKwh(lastBatteryData.getSoc(), lastBatteryData.getCapacity(), lastBatteryData.getCostKwh());
-		newCostKwh = GeneralData.round(newCostKwh, 4);
+		newCostKwh = GeneralData.round(newCostKwh, 5);
 		
 		BatteryData batteryData = new BatteryData(batteryInfo.getIdBattery(), lastBatteryData.getDatetime(), 
 				newSocObjective, newSoc, newCostKwh, msgData.getPowerRequested());
-		System.out.println("battery newCostKwh: "+newCostKwh);
 		new DbBatteryData().updateBatteryData(batteryData); //salvo nello storico
 		
 		OkData ok = new OkData(msgData.getDatetime(), "battery", true);
@@ -94,7 +84,6 @@ public class BatteryBehaviour  extends OneShotBehaviour {
 		BatteryInfo bInfo = new DbBatteryInfo().getBatteryInfoByIdAgent(this.myAgent.getName());
 		double cycleCost = (bInfo.getCapitalCost() + bInfo.getMaintenanceCost())/bInfo.getCyclesNumber();
 		double costNewKwh = (cycleCost/(2*bInfo.getCapacity()))+((1-bInfo.getRoundTripEfficiency())*msgData.getCostKwh());
-		//TO-DO control Agent sends the price expressed in costKwh!!
 		double newKwh = msgData.getPowerRequested()/(3600/timeSlot);
 		double oldKwh = soc*capacity;
 		double newCostKwh = (oldCostKwh*(oldKwh) + costNewKwh*(newKwh))/(oldKwh+newKwh);

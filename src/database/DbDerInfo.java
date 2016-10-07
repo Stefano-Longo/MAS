@@ -13,7 +13,7 @@ public class DbDerInfo extends DbConnection {
 
 	public DerInfo getDerInfoByIdAgent (String idAgent)
 	{
-		DerInfo data = null;
+		DerInfo data = new DerInfo();
 		String query = "SELECT *"
 					+ " FROM Der"
 					+ " WHERE RTRIM(IdAgent) = '"+idAgent+"'";
@@ -34,8 +34,8 @@ public class DbDerInfo extends DbConnection {
 
 	public DerInfo getDerByIdDer(int identificator) 
 	{
-		DerInfo data = null;
-		String query = "SELECT TOP 1 *"
+		DerInfo data = new DerInfo();
+		String query = "SELECT *"
 					+ " FROM Der"
 					+ " WHERE IdDer = "+identificator;
 		try {

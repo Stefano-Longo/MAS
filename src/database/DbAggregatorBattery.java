@@ -45,7 +45,7 @@ public class DbAggregatorBattery extends DbConnection {
 	 */
 	public FlexibilityData aggregateMessagesReceived (String idAggregatorAgent, Calendar datetime)
 	{
-		FlexibilityData data = null;
+		FlexibilityData data = new FlexibilityData();
 		String query = "SELECT DateTime, SUM(InputPowerMax) as InputPowerMax, SUM(OutputPowerMax) as OutputPowerMax,"
 				+ " AVG(CostKwh) as CostKwh, SUM(DesideredChoice) as DesideredChoice"
 				+ " FROM BatteryAggregatorData"
@@ -82,6 +82,7 @@ public class DbAggregatorBattery extends DbConnection {
     			+ " FROM BatteryAggregatorData"
     			+ " WHERE IdAggregatorAgent = '"+idAgent+"'"
     			+ " AND DateTime = '"+format.format(datetime.getTime())+"'";
+		//System.out.println(query);
 		try{
 			ResultSet rs = stmt.executeQuery(query);
 			while(rs.next())
@@ -172,6 +173,7 @@ public class DbAggregatorBattery extends DbConnection {
 				+ " WHERE IdAggregatorAgent = '"+idAggregatorAgent+"'"
 				+ " AND IdBattery = "+idBattery
 				+ " AND DateTime = '"+format.format(datetime.getTime())+"'";
+		//System.out.println(query);
 		try {
 			return stmt.execute(query);
 		} catch (SQLException e) {

@@ -30,7 +30,7 @@ public class ControlData {
 			double loadPower, double gridPower, double costKwh, int confirmed) {
 		this.idAgent = idAgent;
 		this.idPlatform = idPlatform;
-		this.datetime = datetime;
+		this.datetime = (Calendar)datetime.clone();
 		this.derPower = derPower;
 		this.batteryPower = batteryPower;
 		this.loadPower = loadPower;
@@ -39,6 +39,8 @@ public class ControlData {
 		this.confirmed = confirmed;
 	}
 
+	public ControlData() { }
+	
 	public String getIdAgent() {
 		return idAgent;
 	}
@@ -60,7 +62,7 @@ public class ControlData {
 	}
 
 	public void setDatetime(Calendar datetime) {
-		this.datetime = datetime;
+		this.datetime = (Calendar)datetime.clone();
 	}
 
 	public double getDerPower() {

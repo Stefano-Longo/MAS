@@ -19,7 +19,7 @@ public class DbControlArrivalData extends DbConnection {
 				+ " VALUES ('"+data.getIdAgent()+"','"+format.format(data.getDatetime().getTime())+"',"
 				+data.getLowerLimit()+","+ data.getUpperLimit()+","+data.getCostKwh()+","
 				+data.getDesideredChoice()+",'"+data.getType()+"')";
-		System.out.println(query);
+		//System.out.println(query);
 		try {
 			return stmt.execute(query);
 		} catch (SQLException e) {

@@ -11,7 +11,7 @@ public class OkData implements Serializable {
 	private Boolean ok;
 	
 	public OkData(Calendar datetime, String type, Boolean ok) {
-		this.datetime = datetime;
+		this.datetime = (Calendar)datetime.clone();
 		this.type = type;
 		this.ok = ok;
 	}
@@ -21,7 +21,7 @@ public class OkData implements Serializable {
 	}
 
 	public void setDatetime(Calendar datetime) {
-		this.datetime = datetime;
+		this.datetime = (Calendar)datetime.clone();
 	}
 
 	public String getType() {

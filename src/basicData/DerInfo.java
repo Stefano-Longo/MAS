@@ -27,6 +27,8 @@ public class DerInfo {
 		this.maintenanceCost = maintenanceCost;
 		this.totalKwh = totalKwh;
 	}
+	
+	public DerInfo() { }
 
 	public int getIdDer() {
 		return idDer;

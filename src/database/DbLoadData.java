@@ -15,14 +15,8 @@ public class DbLoadData extends DbConnection {
 	
 	public Boolean addLoadData(LoadData load)
 	{
-		if(load.getToDatetime() != null && load.getDatetime().getTime().compareTo(load.getToDatetime().getTime()) == 0){
-			load.setCostKwh(1);
-			Toolkit.getDefaultToolkit().beep();
-			System.out.println("CIAO \n CIAO\n\n\n\nCIAO\nCIAO\n\n");
-			System.out.println("\nDatetime: "+load.getDatetime().getTime()+" toDatetime: "+load.getToDatetime().getTime()+"\n");
-		}
 		String toDatetime = load.getToDatetime()==null ? null : "'"+format.format(load.getToDatetime().getTime())+"'";
-		System.out.println("\nDatetime: "+load.getDatetime().getTime()+" toDatetime: "+toDatetime+"\n");
+		System.out.println("\nDatetimeLoad"+load.getIdLoad()+": "+load.getDatetime().getTime()+" toDatetime: "+toDatetime+"\n");
 		String query = "INSERT INTO LoadDataHistory (IdLoad, DateTime, CostKwh, CriticalConsumption, NonCriticalConsumption,"
 				+ " ConsumptionMin, ConsumptionMax, PowerRequested, DesideredChoice, ConsumptionShifted,"
 				+ " ToDateTime, Confirmed)"
@@ -31,6 +25,7 @@ public class DbLoadData extends DbConnection {
 						+load.getNonCriticalConsumption()+","+load.getConsumptionMin()+","+load.getConsumptionMax()+","
 						+load.getPowerRequested()+","+load.getDesideredChoice()+","+load.getConsumptionShifted()+","
 						+toDatetime+", 'false')";
+		//System.out.println(query);
 		try {
 			return stmt.execute(query);
 		} catch (SQLException e) {
@@ -58,10 +53,12 @@ public class DbLoadData extends DbConnection {
 	public LoadData getLastLoadData (int idLoad, Calendar datetime)
 	{
 		LoadData data = new LoadData();
+		System.out.println("In query: datetime:"+datetime.getTime());
 		String query = "SELECT *"
 				+ " FROM LoadDataHistory"
 				+ " WHERE IdLoad = "+idLoad
 				+ " AND DateTime = '"+format.format(datetime.getTime())+"'";
+		//System.out.println(query);
 		try {
 			ResultSet rs = stmt.executeQuery(query);
 			while(rs.next())

@@ -94,7 +94,7 @@ public class DisaggregateLoadBehaviour extends OneShotBehaviour{
 			{
 				loadPowerRequested = loadsChoice.get(i).getLowerLimit();
 			} 
-			System.out.println("Load-"+loadsChoice.get(0).getIdentificator()+" LL: "+loadsChoice.get(i).getLowerLimit()
+			System.out.println("Load-"+loadsChoice.get(i).getIdentificator()+" LL: "+loadsChoice.get(i).getLowerLimit()
 					+" UL: "+loadsChoice.get(i).getUpperLimit()+" DC: "+loadsChoice.get(i).getDesideredChoice()
 					+" loadPower Requested: "+loadPowerRequested);
 			ResultPowerPrice loadAction = new ResultPowerPrice(msgData.getDatetime(), 

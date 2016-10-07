@@ -13,18 +13,17 @@ public class ResultPowerPrice implements Serializable {
 	public ResultPowerPrice(){}
 	
 	public ResultPowerPrice(Calendar datetime, double powerRequested, double costKwh) {
-		this.datetime = datetime;
+		this.datetime = (Calendar)datetime.clone();
 		this.powerRequested = powerRequested;
 		this.costKwh = costKwh;
 	}
-	
 	
 	public Calendar getDatetime() {
 		return datetime;
 	}
 
 	public void setDatetime(Calendar datetime) {
-		this.datetime = datetime;
+		this.datetime = (Calendar)datetime.clone();
 	}
 
 	public double residualPower() {

@@ -21,6 +21,7 @@ public class DbAggregatorLoad extends DbConnection {
 				+ " VALUES ('"+data.getIdAgent()+"',"+data.getIdentificator()+",'"
 				+ format.format(data.getDatetime().getTime())+"',"+data.getLowerLimit()+","+data.getUpperLimit()+","
 				+ data.getCostKwh()+","+data.getDesideredChoice()+")";
+		//System.out.println(query);
 		try {
 			return stmt.execute(query);
 		} catch (SQLException e) {
@@ -31,7 +32,7 @@ public class DbAggregatorLoad extends DbConnection {
 	
 	public FlexibilityData aggregateMessagesReceived (String idAggregatorAgent, Calendar datetime)
 	{
-		FlexibilityData data = null;
+		FlexibilityData data = new FlexibilityData();
 		String query = "SELECT DateTime, SUM(LowerLimit) as LowerLimit, SUM(UpperLimit) as UpperLimit,"
 				+ " AVG(CostKwh) as CostKwh, SUM(DesideredChoice) as DesideredChoice"
 				+ " FROM LoadAggregatorData"
@@ -46,7 +47,7 @@ public class DbAggregatorLoad extends DbConnection {
 				cal.setTime(rs.getTimestamp("DateTime"));
 
 				data = new FlexibilityData(cal, rs.getDouble("LowerLimit"), 
-						rs.getDouble("UpperLimit"), GeneralData.round(rs.getDouble("CostKwh"),5), 
+						rs.getDouble("UpperLimit"), rs.getDouble("CostKwh"), 
 						rs.getDouble("DesideredChoice"), "load");
 				return data;
 			}
@@ -108,6 +109,7 @@ public class DbAggregatorLoad extends DbConnection {
 				+ " WHERE IdAggregatorAgent = '"+idAggregatorAgent+"'"
 				+ " AND IdLoad = "+idLoad
 				+ " AND DateTime = '"+format.format(datetime.getTime())+"'";
+		//System.out.println(query);
 		try {
 			return stmt.execute(query);
 		} catch (SQLException e) {

@@ -25,7 +25,7 @@ public class FlexibilityData implements Serializable {
 	 */
 	public FlexibilityData(Calendar datetime, double lowerLimit, double upperLimit, 
 			double costKwh, double desideredChoice, String type) {
-		this.datetime = datetime;
+		this.datetime = (Calendar)datetime.clone();
 		this.lowerLimit = lowerLimit;
 		this.upperLimit = upperLimit;
 		this.costKwh = costKwh;
@@ -48,7 +48,7 @@ public class FlexibilityData implements Serializable {
 	}
 
 	public void setDatetime(Calendar datetime) {
-		this.datetime = datetime;
+		this.datetime = (Calendar)datetime.clone();
 	}
 
 	public double getLowerLimit() {

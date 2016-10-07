@@ -19,7 +19,7 @@ public class LoadInfo implements Serializable {
 		this.idLoad = idLoad;
 		this.idAgent = idAgent;
 		this.idPlatform = idPlatform;
-		this.datetime = datetime;
+		this.datetime = (Calendar)datetime.clone();
 		this.criticalConsumption = criticalConsumption;
 		this.nonCriticalConsumption = nonCriticalConsumption;
 		this.consumptionAdded = consumptionAdded;
@@ -28,9 +28,11 @@ public class LoadInfo implements Serializable {
 	public LoadInfo(int idLoad, Calendar datetime, double consumptionAdded)
 	{
 		this.idLoad = idLoad;
-		this.datetime = datetime;
+		this.datetime = (Calendar)datetime.clone();
 		this.consumptionAdded = consumptionAdded;
 	}
+	
+	public LoadInfo() { }
 	
 	public int getIdLoad() {
 		return idLoad;
@@ -61,7 +63,7 @@ public class LoadInfo implements Serializable {
 	}
 
 	public void setDatetime(Calendar datetime) {
-		this.datetime = datetime;
+		this.datetime = (Calendar)datetime.clone();
 	}
 
 	public double getCriticalConsumption() {

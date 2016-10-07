@@ -45,7 +45,7 @@ public class BatteryFlexibilityBehaviour extends OneShotBehaviour {
 		 * 
 		 */
 		BatteryInfo batteryInfo = new DbBatteryInfo().getBatteryInfoByIdAgent(this.myAgent.getName());
-		BatteryData batteryData = new DbBatteryData().getLastBatteryData(batteryInfo.getIdBattery());
+		BatteryData batteryData = new DbBatteryData().getLastBatteryData(batteryInfo.getIdBattery(), msgData.get(0).getDatetime());
 		
 		double newSocObjective = batteryData.getSocObjective(); //always 60% for now
 		

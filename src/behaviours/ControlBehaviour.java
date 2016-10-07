@@ -100,15 +100,14 @@ public class ControlBehaviour extends OneShotBehaviour {
 				}
 				
 				//TO-DO se sono molto scariche e ->se conviene assai<-, carico le batterie, altrimenti no
-				if(batteryData.getDesideredChoice() > 0)
+				/*if(batteryData.getDesideredChoice() > 0)
 				{
 					batteryEnergyRequest = batteryData.getDesideredChoice() > 0 ? 
 							batteryData.getDesideredChoice() : batteryEnergyRequest;
-				}
+				}*/
 			}
 			else if(checkPercentile(prices.get(0).getEnergyPrice()) > 0.7) //energy cost high
 			{
-				System.out.println("Now I buy less energy and use batteries and DER");
 				/**
 				 * Now use battery
 				 */
@@ -216,7 +215,7 @@ public class ControlBehaviour extends OneShotBehaviour {
 		derEnergyRequest = gridEnergyRequest > prices.get(0).getThreshold() ? derData.getUpperLimit() : derEnergyRequest;
 		gridEnergyRequest = batteryEnergyRequest+loadEnergyRequest-derEnergyRequest;
 		
-		if(gridEnergyRequest > prices.get(0).getThreshold()) //if is still over the threshold
+		if(gridEnergyRequest > prices.get(0).getThreshold()) 
 		{
 			batteryEnergyRequest = -batteryData.getUpperLimit() > (gridEnergyRequest - prices.get(0).getThreshold()) 
 					? -(gridEnergyRequest - prices.get(0).getThreshold()) : batteryData.getUpperLimit();

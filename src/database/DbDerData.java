@@ -19,7 +19,7 @@ public class DbDerData extends DbConnection {
 				+ " VALUES ('"+der.getIdDer()+"','"+format.format(der.getDatetime().getTime())+"',"
 						+der.getCostKwh()+","+der.getProductionMin()+","+der.getProductionMax()+","
 						+der.getProductionRequested()+","+der.getDesideredChoice()+", 'false')";
-		System.out.println(query);
+		//System.out.println(query);
 		try {
 			return stmt.execute(query);
 		} catch (SQLException e) {
@@ -66,6 +66,7 @@ public class DbDerData extends DbConnection {
 				+ " FROM DerDataHistory"
 				+ " WHERE IdDer = "+idDer
 				+ " AND DateTime = '"+format.format(datetime.getTime())+"'";
+		//System.out.println(query);
 		try {
 			ResultSet rs = stmt.executeQuery(query);
 			while(rs.next())

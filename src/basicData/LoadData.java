@@ -37,7 +37,7 @@ public class LoadData implements Serializable {
 			double powerRequested, double desideredChoice, double consumptionShifted, Calendar toDatetime) 
 	{
 		this.idLoad = idLoad;
-		this.datetime = datetime;
+		this.datetime = (Calendar)datetime.clone();
 		this.costKwh = costKwh;
 		this.criticalConsumption = criticalConsumption;
 		this.nonCriticalConsumption = nonCriticalConsumption;
@@ -46,13 +46,13 @@ public class LoadData implements Serializable {
 		this.powerRequested = powerRequested;
 		this.desideredChoice = desideredChoice;
 		this.consumptionShifted = consumptionShifted;
-		this.toDatetime = toDatetime;
+		this.toDatetime = toDatetime == null ? null : (Calendar)toDatetime.clone();
 	}
 	
 	public LoadData(int idLoad, Calendar datetime, double powerRequested, double consumptionShifted) 
 	{
 		this.idLoad = idLoad;
-		this.datetime = datetime;
+		this.datetime = (Calendar)datetime.clone();
 		this.powerRequested = powerRequested;
 		this.consumptionShifted = consumptionShifted;
 	}
@@ -72,7 +72,7 @@ public class LoadData implements Serializable {
 	}
 
 	public void setDatetime(Calendar datetime) {
-		this.datetime = datetime;
+		this.datetime = (Calendar)datetime.clone();
 	}
 
 	public double getCostKwh() {
@@ -144,6 +144,6 @@ public class LoadData implements Serializable {
 	}
 
 	public void setToDatetime(Calendar toDatetime) {
-		this.toDatetime = toDatetime;
+		this.toDatetime = (Calendar)toDatetime.clone();
 	}
 }

@@ -35,7 +35,7 @@ public class TsoBehaviour extends OneShotBehaviour {
 
 		TimePowerPrice data = new DbTimePowerPrice().getNewTimePowerPrice(msgData.getDatetime());
 		try {
-			if(data != null && data.getDatetime().getTime().compareTo(GeneralData.getFormat().parse("2016-08-17 00:00")) != 0)
+			if(data != null && data.getDatetime().getTime().compareTo(GeneralData.getFormat().parse("2016-06-05 00:00")) != 0)
 			{
 				new BaseAgent().sendMessageToAgentsByServiceType(this.myAgent, 
 						"GridAgent", "input", data);

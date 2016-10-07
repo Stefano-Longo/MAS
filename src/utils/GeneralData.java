@@ -2,11 +2,12 @@ package utils;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.Locale;
 
 public class GeneralData {
 
 	private int timeSlot = 3600; //seconds 
-	static private DateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+	static private SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.ITALIAN);
 	private double dieselKwhPrice = 1; //expressed in €
 	private double priceKwhSold = 0.15; //expressed in €
 	private double meanKwhPrice = 0.4;

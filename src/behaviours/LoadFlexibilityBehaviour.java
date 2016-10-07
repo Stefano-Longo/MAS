@@ -56,10 +56,6 @@ public class LoadFlexibilityBehaviour extends OneShotBehaviour {
 			toDatetime = (Calendar)loadInfoPrice.getToDatetime().clone();
 			//TO-DO need to integrate a comfort cost do take the desidered choice
 			desideredChoice = costKwh >= 0 ? upperLimit : lowerLimit;
-			if(loadInfoPrice.getDatetime().getTime().compareTo(loadInfoPrice.getToDatetime().getTime()) == 0){
-				System.out.println("\nALEEERT \nALEEEERT \nALEEEERT");
-				return;
-			}
 		}
 		else
 		{
@@ -72,12 +68,16 @@ public class LoadFlexibilityBehaviour extends OneShotBehaviour {
 		upperLimit = GeneralData.round(upperLimit, 2);
 		desideredChoice = GeneralData.round(desideredChoice, 2);
 
-		//To-Do correggere datetime ogni tanto è uguale a toDateTime.
 		LoadData loadData = new LoadData(loadInfo.getIdLoad(), msgData.get(0).getDatetime(), costKwh, 
 				loadInfo.getCriticalConsumption(), loadInfo.getNonCriticalConsumption(),
 				lowerLimit, upperLimit, 0, desideredChoice, 0, toDatetime);
 
+		if(loadData.getToDatetime() != null)
+			System.out.println("LoadFlexib"+loadData.getIdLoad()+" PRIMA: datetime:"+loadData.getDatetime().getTime()+" todatetime:"+loadData.getToDatetime().getTime());
 		new DbLoadData().addLoadData(loadData);
+		if(loadData.getToDatetime() != null)
+			System.out.println("LoadFlexib"+loadData.getIdLoad()+" DOPO: datetime:"+loadData.getDatetime().getTime()+" todatetime:"+loadData.getToDatetime().getTime());
+
 		FlexibilityData result = new FlexibilityData(msgData.get(0).getDatetime(), lowerLimit, upperLimit, 
 				costKwh, desideredChoice, "load");
 		

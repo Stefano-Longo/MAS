@@ -26,7 +26,7 @@ public class DerData {
 			double productionRequested, double desideredChoice) 
 	{
 		this.idDer = idDer;
-		this.datetime = datetime;
+		this.datetime = (Calendar)datetime.clone();
 		this.costKwh = costKwh;
 		this.productionMin = productionMin;
 		this.productionMax = productionMax;
@@ -37,7 +37,7 @@ public class DerData {
 	public DerData(int idDer, Calendar datetime, double productionRequested) 
 	{
 		this.idDer = idDer;
-		this.datetime = datetime;
+		this.datetime = (Calendar)datetime.clone();
 		this.productionRequested = productionRequested;
 	}
 	
@@ -56,7 +56,7 @@ public class DerData {
 	}
 
 	public void setDatetime(Calendar datetime) {
-		this.datetime = datetime;
+		this.datetime = (Calendar)datetime.clone();
 	}
 
 	public double getCostKwh() {

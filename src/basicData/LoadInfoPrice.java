@@ -17,7 +17,7 @@ public class LoadInfoPrice extends LoadInfo {
 			double nonCriticalConsumption, double consumptionAdded, double price, Calendar toDatetime) {
 		super(idLoad, idAgent, platform, datetime, criticalConsumption, nonCriticalConsumption, consumptionAdded);
 		this.price = price;
-		this.toDatetime = toDatetime;
+		this.toDatetime = (Calendar)toDatetime.clone();
 	}
 
 	public double getPrice() {
@@ -33,6 +33,6 @@ public class LoadInfoPrice extends LoadInfo {
 	}
 
 	public void setToDatetime(Calendar toDatetime) {
-		this.toDatetime = toDatetime;
+		this.toDatetime = (Calendar)toDatetime.clone();
 	}
 }

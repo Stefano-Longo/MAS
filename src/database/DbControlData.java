@@ -29,7 +29,7 @@ public class DbControlData extends DbConnection {
 	
 	public ControlData getLastControlDatabyIdAgent(String idAgent, Calendar datetime)
 	{
-		ControlData controlData = null;
+		ControlData controlData = new ControlData();
 		String query = "SELECT *"
 				+ " FROM ControlData"
 				+ " WHERE IdAgent = '"+idAgent+"'"

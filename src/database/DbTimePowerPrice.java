@@ -15,7 +15,7 @@ public class DbTimePowerPrice extends DbConnection {
 
 	public TimePowerPrice getNewTimePowerPrice (Calendar oldDatetime)
 	{
-		String query = "SELECT TOP 1 *" 
+		String query = "SELECT *" 
 				+ " FROM Price"
 				+ " WHERE DateTime > '"+format.format(oldDatetime.getTime())+"'"
 				+ " ORDER BY DateTime";
