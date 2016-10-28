@@ -26,9 +26,9 @@ public class LoadBehaviour extends OneShotBehaviour {
 	@Override
 	public void action() {
 		LoadInfo loadInfo = new DbLoadInfo().getLoadInfoByIdAgent(this.myAgent.getName(), msgData.getDatetime());
-		System.out.println("\nloadBeh id: "+loadInfo.getIdLoad()+" prima: "+msgData.getDatetime().getTime());
+		//System.out.println("\nloadBeh id: "+loadInfo.getIdLoad()+" prima: "+msgData.getDatetime().getTime());
 		LoadData loadData = new DbLoadData().getLastLoadData(loadInfo.getIdLoad(), msgData.getDatetime());
-		System.out.println("\nloadBeh id: "+loadInfo.getIdLoad()+" dopo: "+msgData.getDatetime().getTime());
+		//System.out.println("\nloadBeh id: "+loadInfo.getIdLoad()+" dopo: "+msgData.getDatetime().getTime());
 		
 		if(msgData.getPowerRequested() < loadData.getConsumptionMin() || 
 				msgData.getPowerRequested() > loadData.getConsumptionMax())
@@ -46,7 +46,7 @@ public class LoadBehaviour extends OneShotBehaviour {
 		
 		LoadData newLoadData = new LoadData(loadInfo.getIdLoad(), msgData.getDatetime(),
 				msgData.getPowerRequested(), consumptionShifted);
-		new DbLoadData().updateLoadData(newLoadData);
+		new DbLoadData().updateLoadDataPower(newLoadData);
 		
 		if(msgData.getPowerRequested() < loadData.getConsumptionMax())
 		{

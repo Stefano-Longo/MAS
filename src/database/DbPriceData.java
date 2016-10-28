@@ -9,7 +9,7 @@ import java.util.Calendar;
 import basicData.TimePowerPrice;
 import utils.GeneralData;
 
-public class DbTimePowerPrice extends DbConnection {
+public class DbPriceData extends DbConnection {
 
 	DateFormat format = GeneralData.getFormat();
 

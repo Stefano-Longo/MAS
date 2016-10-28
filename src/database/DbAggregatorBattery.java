@@ -6,7 +6,6 @@ import java.text.DateFormat;
 import java.util.Calendar;
 import java.util.ArrayList;
 
-import basicData.AggregatorFlexibilityData;
 import basicData.FlexibilityData;
 import utils.GeneralData;
 
@@ -20,11 +19,11 @@ public class DbAggregatorBattery extends DbConnection {
 	 */
 	DateFormat format = GeneralData.getFormat();
 
-	public Boolean addFlexibilityBatteryMessage (AggregatorFlexibilityData data)
+	public Boolean addFlexibilityBatteryMessage (String idAggregatorAgent, FlexibilityData data)
 	{
 		String query = "INSERT INTO BatteryAggregatorData (IdAggregatorAgent, IdBattery,"
 				+ " DateTime, InputPowerMax, OutputPowerMax, CostKwh, DesideredChoice)"
-				+ " VALUES ('"+data.getIdAgent()+"',"+data.getIdentificator()+",'"
+				+ " VALUES ('"+idAggregatorAgent+"',"+data.getIdAgent()+",'"
 				+ format.format(data.getDatetime().getTime())+"',"+data.getLowerLimit()+","+data.getUpperLimit()+","
 				+ data.getCostKwh()+","+data.getDesideredChoice()+")";
 		try {
@@ -59,7 +58,7 @@ public class DbAggregatorBattery extends DbConnection {
 				Calendar cal2 = Calendar.getInstance();
 				cal2.setTime(rs.getTimestamp("DateTime"));
 
-				data = new FlexibilityData(cal2, rs.getDouble("InputPowerMax"), 
+				data = new FlexibilityData(idAggregatorAgent, cal2, rs.getDouble("InputPowerMax"), 
 						rs.getDouble("OutputPowerMax"), rs.getDouble("CostKwh"), 
 						rs.getDouble("DesideredChoice"), "battery");
 				return data;
@@ -100,9 +99,9 @@ public class DbAggregatorBattery extends DbConnection {
 	 * @param myAgent
 	 * @return
 	 */
-	public ArrayList<AggregatorFlexibilityData> getBatteriesChoice(String idAggregatorAgent, Calendar datetime)
+	public ArrayList<FlexibilityData> getBatteriesChoice(String idAggregatorAgent, Calendar datetime)
 	{
-		ArrayList<AggregatorFlexibilityData> list = new ArrayList<AggregatorFlexibilityData>();
+		ArrayList<FlexibilityData> list = new ArrayList<FlexibilityData>();
 		String query = "SELECT *, InputPowerMax-DesideredChoice as Diff"
 				+ " FROM BatteryAggregatorData"
 				+ " WHERE IdAggregatorAgent='"+idAggregatorAgent+"'"
@@ -115,8 +114,7 @@ public class DbAggregatorBattery extends DbConnection {
 				Calendar cal = Calendar.getInstance();
 				cal.setTime(rs.getTimestamp("DateTime"));
 				
-				AggregatorFlexibilityData data = new AggregatorFlexibilityData(
-						rs.getString("IdAggregatorAgent"),rs.getInt("IdBattery"),cal,
+				FlexibilityData data = new FlexibilityData(rs.getString("IdBattery"),cal,
 						rs.getDouble("InputPowerMax"), rs.getDouble("OutputPowerMax"), 
 						rs.getDouble("CostKwh"), rs.getDouble("DesideredChoice"), "battery");
 				list.add(data);
@@ -128,10 +126,10 @@ public class DbAggregatorBattery extends DbConnection {
 		return list;
 	}
 	
-	public ArrayList<AggregatorFlexibilityData> getBatteriesChoiceByValue(String idAggregatorAgent, 
+	public ArrayList<FlexibilityData> getBatteriesChoiceByValue(String idAggregatorAgent, 
 			String choice, Calendar datetime)
 	{
-		ArrayList<AggregatorFlexibilityData> list = new ArrayList<AggregatorFlexibilityData>();
+		ArrayList<FlexibilityData> list = new ArrayList<FlexibilityData>();
 		String query = "SELECT *, InputPowerMax-DesideredChoice as Diff"
 				+ " FROM BatteryAggregatorData A JOIN Battery B ON A.IdBattery = B.IdBattery"
 				+ " WHERE";
@@ -153,10 +151,10 @@ public class DbAggregatorBattery extends DbConnection {
 				Calendar cal = Calendar.getInstance();
 				cal.setTime(rs.getTimestamp("DateTime"));
 				
-				AggregatorFlexibilityData data = new AggregatorFlexibilityData(
-						rs.getString("IdAggregatorAgent"),rs.getInt("IdBattery"),cal,
-						rs.getDouble("InputPowerMax"), rs.getDouble("OutputPowerMax"), 
-						rs.getDouble("CostKwh"), rs.getDouble("DesideredChoice"), "battery");
+				FlexibilityData data = new FlexibilityData(
+						rs.getString("IdBattery"),cal, rs.getDouble("InputPowerMax"),
+						rs.getDouble("OutputPowerMax"), rs.getDouble("CostKwh"), 
+						rs.getDouble("DesideredChoice"), "battery");
 				list.add(data);
 			}
 		} catch (SQLException e) {

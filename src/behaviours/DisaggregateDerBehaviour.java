@@ -3,7 +3,7 @@ package behaviours;
 import java.util.ArrayList;
 
 import agents.BaseAgent;
-import basicData.AggregatorFlexibilityData;
+import basicData.FlexibilityData;
 import basicData.DerInfo;
 import basicData.ResultPowerPrice;
 import database.DbAggregatorDer;
@@ -18,7 +18,7 @@ public class DisaggregateDerBehaviour extends OneShotBehaviour{
 
 	ACLMessage msg;
 	ResultPowerPrice msgData;
-	ArrayList<AggregatorFlexibilityData> derChoices = new ArrayList<AggregatorFlexibilityData>();
+	ArrayList<FlexibilityData> derChoices = new ArrayList<FlexibilityData>();
 	
 	public DisaggregateDerBehaviour(ACLMessage msg) 
 	{
@@ -66,7 +66,7 @@ public class DisaggregateDerBehaviour extends OneShotBehaviour{
 			} 
 			ResultPowerPrice derAction = new ResultPowerPrice(msgData.getDatetime(), derPowerRequested, msgData.getCostKwh());
 			
-			DerInfo derInfo = new DbDerInfo().getDerByIdDer(derChoices.get(i).getIdentificator());
+			DerInfo derInfo = new DbDerInfo().getDerByIdDer(derChoices.get(i).getIdAgent());
 			
 			String shortName = new BaseAgent().getShortName(derInfo.getIdAgent());
 			new BaseAgent().sendMessageToAgentsByServiceType(this.myAgent, 

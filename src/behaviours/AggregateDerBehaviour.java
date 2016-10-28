@@ -1,7 +1,6 @@
 package behaviours;
 
 import agents.BaseAgent;
-import basicData.AggregatorFlexibilityData;
 import basicData.DerInfo;
 import basicData.FlexibilityData;
 import database.DbAggregatorDer;
@@ -28,10 +27,7 @@ public class AggregateDerBehaviour extends OneShotBehaviour {
 	@Override
 	public void action() 
 	{
-		DerInfo derInfo = new DbDerInfo().getDerInfoByIdAgent(msg.getSender().getName());
-		AggregatorFlexibilityData data = new AggregatorFlexibilityData(this.myAgent.getName(), 
-				derInfo.getIdDer(), msgData);
-		new DbAggregatorDer().addFlexibilityDerMessage(data);
+		new DbAggregatorDer().addFlexibilityDerMessage(this.myAgent.getName(), msgData);
 		
 		int messagesReceived = new DbAggregatorDer().countMessagesReceived(this.myAgent.getName(), msgData.getDatetime());
 		int derAgents = new BaseAgent().getAgentsbyServiceType(this.myAgent, "DerAgent").length;

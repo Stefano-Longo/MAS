@@ -1,14 +1,11 @@
 package behaviours;
 
 import agents.BaseAgent;
-import basicData.AggregatorFlexibilityData;
-import basicData.BatteryInfo;
 import basicData.FlexibilityData;
 import jade.core.behaviours.OneShotBehaviour;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.UnreadableException;
 import database.DbAggregatorBattery;
-import database.DbBatteryInfo;
 
 @SuppressWarnings("serial")
 public class AggregateBatteryBehaviour extends OneShotBehaviour {
@@ -36,19 +33,16 @@ public class AggregateBatteryBehaviour extends OneShotBehaviour {
 
 	public void action() 
 	{
-		System.out.println("AggregateBatteryBeh START - msgData.getDatetime() = "+msgData.getDatetime().getTime());
+		//System.out.println("AggregateBatteryBeh START - msgData.getDatetime() = "+msgData.getDatetime().getTime());
 
-		BatteryInfo batteryInfo = new DbBatteryInfo().getBatteryInfoByIdAgent(msg.getSender().getName());
-		AggregatorFlexibilityData data = new AggregatorFlexibilityData(this.myAgent.getName(), 
-					batteryInfo.getIdBattery(), msgData);
-		new DbAggregatorBattery().addFlexibilityBatteryMessage(data);
+		new DbAggregatorBattery().addFlexibilityBatteryMessage(this.myAgent.getName(), msgData);
 		
 		int messagesReceived = new DbAggregatorBattery().countMessagesReceived(this.myAgent.getName(), msgData.getDatetime());
 		int batteryAgents = new BaseAgent().getAgentsbyServiceType(this.myAgent, "BatteryAgent").length;
 		
-		System.out.println("AggregateBatteryBeh END - msgData.getDatetime() = "+msgData.getDatetime().getTime());
+		//System.out.println("AggregateBatteryBeh END - msgData.getDatetime() = "+msgData.getDatetime().getTime());
 
-		System.out.println("BATTERY messagesReceived: "+messagesReceived+", batteryAgents: "+batteryAgents);
+		//System.out.println("BATTERY messagesReceived: "+messagesReceived+", batteryAgents: "+batteryAgents);
 		if (messagesReceived == batteryAgents)
 		{
 			/**

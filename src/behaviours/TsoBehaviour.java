@@ -6,7 +6,7 @@ import java.util.Date;
 import agents.BaseAgent;
 import basicData.ResultPowerPrice;
 import basicData.TimePowerPrice;
-import database.DbTimePowerPrice;
+import database.DbPriceData;
 import jade.core.behaviours.OneShotBehaviour;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.UnreadableException;
@@ -33,7 +33,7 @@ public class TsoBehaviour extends OneShotBehaviour {
 	@Override
 	public void action() {
 
-		TimePowerPrice data = new DbTimePowerPrice().getNewTimePowerPrice(msgData.getDatetime());
+		TimePowerPrice data = new DbPriceData().getNewTimePowerPrice(msgData.getDatetime());
 		try {
 			if(data != null && data.getDatetime().getTime().compareTo(GeneralData.getFormat().parse("2016-06-05 00:00")) != 0)
 			{

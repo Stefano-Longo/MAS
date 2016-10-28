@@ -1,11 +1,10 @@
 package behaviours;
 
 import java.util.ArrayList;
-import java.util.concurrent.TimeUnit;
 
 import agents.BaseAgent;
-import basicData.AggregatorFlexibilityData;
 import basicData.BatteryInfo;
+import basicData.FlexibilityData;
 import basicData.ResultPowerPrice;
 import database.DbAggregatorBattery;
 import database.DbBatteryInfo;
@@ -19,7 +18,7 @@ public class DisaggregateBatteryBehaviour extends OneShotBehaviour {
 
 	ACLMessage msg;
 	ResultPowerPrice msgData;
-	ArrayList<AggregatorFlexibilityData> batteryChoices = new ArrayList<AggregatorFlexibilityData>();
+	ArrayList<FlexibilityData> batteryChoices = new ArrayList<FlexibilityData>();
 
 	public DisaggregateBatteryBehaviour(ACLMessage msg) 
 	{
@@ -100,7 +99,7 @@ public class DisaggregateBatteryBehaviour extends OneShotBehaviour {
 		// percentuale da aggiungere (o togliere, in base al segno) ad ogni scelta delle batterie
 		//ATTENZIONE: passo i valori da negativi a positivi, alla fine li passo negativi di nuovo
 
-		ArrayList<AggregatorFlexibilityData> batteriesPositiveChoice = new DbAggregatorBattery()
+		ArrayList<FlexibilityData> batteriesPositiveChoice = new DbAggregatorBattery()
 				.getBatteriesChoiceByValue(this.myAgent.getName(), "positive", msgData.getDatetime());
 		double powerRequested = msgData.getPowerRequested();
 		double batteryPowerGiven = 0;
@@ -155,7 +154,7 @@ public class DisaggregateBatteryBehaviour extends OneShotBehaviour {
 		{
 			ResultPowerPrice batteryAction = new ResultPowerPrice(msgData.getDatetime(), 0, msgData.getCostKwh());
 
-			BatteryInfo batteryInfo = new DbBatteryInfo().getBatteryInfoByIdBattery(batteryChoices.get(i).getIdentificator());
+			BatteryInfo batteryInfo = new DbBatteryInfo().getBatteryInfoByIdBattery(batteryChoices.get(i).getIdAgent());
 			String shortName = new BaseAgent().getShortName(batteryInfo.getIdAgent());
 			new BaseAgent().sendMessageToAgentsByServiceType(this.myAgent, 
 					this.myAgent.getAID(shortName), "result", batteryAction);
@@ -164,7 +163,7 @@ public class DisaggregateBatteryBehaviour extends OneShotBehaviour {
 	
 	private void sendMessage(ResultPowerPrice batteryAction, int counter)
 	{
-		BatteryInfo batteryInfo = new DbBatteryInfo().getBatteryInfoByIdBattery(batteryChoices.get(counter).getIdentificator());
+		BatteryInfo batteryInfo = new DbBatteryInfo().getBatteryInfoByIdBattery(batteryChoices.get(counter).getIdAgent());
 		String shortName = new BaseAgent().getShortName(batteryInfo.getIdAgent());
 		new BaseAgent().sendMessageToAgentsByServiceType(this.myAgent, 
 				this.myAgent.getAID(shortName), "result", batteryAction);

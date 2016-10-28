@@ -5,18 +5,18 @@ import java.sql.SQLException;
 import java.text.DateFormat;
 import java.util.Calendar;
 
-import basicData.ControlFlexibilityData;
+import basicData.FlexibilityData;
 import utils.GeneralData;
 
 public class DbControlArrivalData extends DbConnection {
 
 	DateFormat format = GeneralData.getFormat();
 
-	public Boolean addControlArrivalData (ControlFlexibilityData data)
+	public Boolean addControlArrivalData (String idControlAgent, FlexibilityData data)
 	{
 		String query = "INSERT INTO ControlArrivalData (IdControlAgent, DateTime,"
 				+ " LowerLimit, UpperLimit, CostKwh, DesideredChoice, Type)"
-				+ " VALUES ('"+data.getIdAgent()+"','"+format.format(data.getDatetime().getTime())+"',"
+				+ " VALUES ('"+idControlAgent+"','"+format.format(data.getDatetime().getTime())+"',"
 				+data.getLowerLimit()+","+ data.getUpperLimit()+","+data.getCostKwh()+","
 				+data.getDesideredChoice()+",'"+data.getType()+"')";
 		//System.out.println(query);
@@ -28,7 +28,7 @@ public class DbControlArrivalData extends DbConnection {
 		return null;
 	}
 	
-	public ControlFlexibilityData getLastControlArrivalData (String idControlAgent, String type, Calendar datetime)
+	public FlexibilityData getLastControlArrivalData (String idControlAgent, String type, Calendar datetime)
 	{
 		String query = "SELECT SUM(LowerLimit) as LowerLimit, SUM(UpperLimit) as UpperLimit, AVG(CostKwh) as CostKwh,"
 				+ " SUM(DesideredChoice) as DesideredChoice, DateTime"
@@ -43,7 +43,7 @@ public class DbControlArrivalData extends DbConnection {
 			{
 				Calendar cal = Calendar.getInstance();
 				cal.setTime(rs.getTimestamp("DateTime"));
-				ControlFlexibilityData data =  new ControlFlexibilityData(
+				FlexibilityData data =  new FlexibilityData(
 						idControlAgent, cal, rs.getDouble("LowerLimit"), 
 						rs.getDouble("UpperLimit"), rs.getDouble("CostKwh"), 
 						rs.getDouble("DesideredChoice"), type);
@@ -95,6 +95,7 @@ public class DbControlArrivalData extends DbConnection {
 				+ " WHERE IdControlAgent = '"+idAgent+"'"
 				+ " AND Confirmed = '"+confirmed+"'"
 				+ " AND DateTime = '"+format.format(datetime.getTime())+"'";
+		System.out.println(query);
 		try {
 			ResultSet rs = stmt.executeQuery(query);
 			while(rs.next())

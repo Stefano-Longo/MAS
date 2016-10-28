@@ -1,6 +1,5 @@
 package behaviours;
 
-import java.awt.Toolkit;
 import java.util.ArrayList;
 import java.util.Calendar;
 
@@ -21,10 +20,12 @@ import utils.GeneralData;
 public class LoadFlexibilityBehaviour extends OneShotBehaviour {
 
 	ArrayList<TimePowerPrice> msgData = null; 
+	ACLMessage msg;
 
 	@SuppressWarnings("unchecked")
 	public LoadFlexibilityBehaviour(ACLMessage msg) {
 		try {
+			this.msg = msg;
 			this.msgData = (ArrayList<TimePowerPrice>)msg.getContentObject();
 		} catch (UnreadableException e) {
 			e.printStackTrace();
@@ -39,10 +40,21 @@ public class LoadFlexibilityBehaviour extends OneShotBehaviour {
 		 * Because it is defined like -> CostKwh = CostKwh_now - CostKwh_toDatetime
 		 */
 		LoadInfo loadInfo = new DbLoadInfo().getLoadInfoByIdAgent(this.myAgent.getName(), msgData.get(0).getDatetime());
-		LoadInfoPrice loadInfoPrice = new DbLoadInfo().
+		
+		//check solution number in history
+		int solutionNumber;
+		if(msg.getConversationId().equals("input")){
+			solutionNumber = 0;
+		}else{
+			System.out.println("ehy man, i'm again here");
+			LoadData loadDataHistory = new DbLoadData().getLastLoadData(loadInfo.getIdLoad(), msgData.get(0).getDatetime());
+			solutionNumber = loadDataHistory.getSolutionNumber()+1;
+		}
+			
+		ArrayList<LoadInfoPrice> loadInfoPrice = new DbLoadInfo().
 				getLoadInfoPricebyIdAgent(this.myAgent.getName(), msgData.get(0).getDatetime());
 		
-		// I take always the first element because is the one which has the lowest Price
+		// I take always the first element of loadInfoPrice because is the one which has the lowest Price
 		double lowerLimit = loadInfo.getCriticalConsumption() + loadInfo.getConsumptionAdded();
 		double upperLimit = lowerLimit + loadInfo.getNonCriticalConsumption();
 		double costKwh = 0; 
@@ -50,10 +62,10 @@ public class LoadFlexibilityBehaviour extends OneShotBehaviour {
 		
 		Calendar toDatetime = Calendar.getInstance();
 		//If I can shift some part of the load to another slotTime
-		if (loadInfoPrice != null)
+		if (loadInfoPrice.size() != 0 && solutionNumber <= loadInfoPrice.size()-1)
 		{
-			costKwh =  loadInfoPrice.getPrice() - msgData.get(0).getEnergyPrice();
-			toDatetime = (Calendar)loadInfoPrice.getToDatetime().clone();
+			costKwh =  loadInfoPrice.get(solutionNumber).getPrice() - msgData.get(0).getEnergyPrice();
+			toDatetime = (Calendar)loadInfoPrice.get(solutionNumber).getToDatetime().clone();
 			//TO-DO need to integrate a comfort cost do take the desidered choice
 			desideredChoice = costKwh >= 0 ? upperLimit : lowerLimit;
 		}
@@ -70,19 +82,35 @@ public class LoadFlexibilityBehaviour extends OneShotBehaviour {
 
 		LoadData loadData = new LoadData(loadInfo.getIdLoad(), msgData.get(0).getDatetime(), costKwh, 
 				loadInfo.getCriticalConsumption(), loadInfo.getNonCriticalConsumption(),
-				lowerLimit, upperLimit, 0, desideredChoice, 0, toDatetime);
+				lowerLimit, upperLimit, 0, desideredChoice, 0, toDatetime, solutionNumber);
 
-		if(loadData.getToDatetime() != null)
+		/*if(loadData.getToDatetime() != null)
 			System.out.println("LoadFlexib"+loadData.getIdLoad()+" PRIMA: datetime:"+loadData.getDatetime().getTime()+" todatetime:"+loadData.getToDatetime().getTime());
-		new DbLoadData().addLoadData(loadData);
-		if(loadData.getToDatetime() != null)
+		*/new DbLoadData().addLoadData(loadData);
+		/*if(loadData.getToDatetime() != null)
 			System.out.println("LoadFlexib"+loadData.getIdLoad()+" DOPO: datetime:"+loadData.getDatetime().getTime()+" todatetime:"+loadData.getToDatetime().getTime());
-
-		FlexibilityData result = new FlexibilityData(msgData.get(0).getDatetime(), lowerLimit, upperLimit, 
-				costKwh, desideredChoice, "load");
+*/
+		FlexibilityData result = new FlexibilityData(Integer.toString(loadInfo.getIdLoad()), 
+				msgData.get(0).getDatetime(), lowerLimit, upperLimit, costKwh, desideredChoice);
 		
+		ArrayList<FlexibilityData> list = new ArrayList<FlexibilityData>();
+		list.add(result);
+		ArrayList<FlexibilityData> futurelist = new DbLoadInfo().getFutureLoadInfoByIdAgent(loadInfo.getIdLoad(), msgData.get(0).getDatetime());
+		//modify the future list with the shifted power
+		Boolean done = false;
+		if(toDatetime!=null)System.out.println("todatetime = "+toDatetime.getTime());
+		for(int i=0; i<futurelist.size() && toDatetime!=null && done==false; i++)
+		{
+			if(futurelist.get(i).getDatetime().getTime().equals(toDatetime.getTime()))
+			{
+				double consumptionShifted = upperLimit-desideredChoice;
+				futurelist.get(i).setLowerLimit(futurelist.get(i).getLowerLimit() + consumptionShifted);
+				done = true;
+			}
+		}
+		list.addAll(futurelist);
 		new BaseAgent().sendMessageToAgentsByServiceType(this.myAgent, "LoadAggregatorAgent",
-				"proposal", result);
+				"proposal", list);
 	}
 	
 }

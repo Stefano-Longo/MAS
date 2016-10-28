@@ -34,16 +34,17 @@ public class DerFlexibilityBehaviour extends OneShotBehaviour {
 	public void action() {
 
 		DerInfo derInfo = new DbDerInfo().getDerInfoByIdAgent(this.myAgent.getName());
-		DerData derDataAvg = new DbDerData().getAverageLastMonthProduction(derInfo.getIdDer(), msgData.get(0).getDatetime());
+		DerData derDataAvg = new DbDerData().getAverageLastMonthProductionByIdDer(derInfo.getIdDer(), msgData.get(0).getDatetime());
 		
 		double desideredChoice = GeneralData.round(derDataAvg.getProductionRequested(),2);
 		double lowerLimit = GeneralData.round(getLowerLimit(derInfo),2);
-		double upperLimit = GeneralData.round(getUpperLimit(derInfo),2);
+		double upperLimit = GeneralData.round(derDataAvg.getProductionRequested(),2);
 		
+		//System.out.println("Der"+derInfo.getIdDer()+" lowerLimit:"+lowerLimit+" upperLimit:"+upperLimit);
 		double costKwh = getCostKwh(derInfo);
 
-		FlexibilityData result = new FlexibilityData(msgData.get(0).getDatetime(), 
-				lowerLimit, upperLimit, costKwh, desideredChoice, "der");
+		FlexibilityData result = new FlexibilityData(Integer.toString(derInfo.getIdDer()), msgData.get(0).getDatetime(), 
+				lowerLimit, upperLimit, costKwh, desideredChoice);
 		DerData derData = new DerData(derInfo.getIdDer(), msgData.get(0).getDatetime(), costKwh, 
 				lowerLimit, upperLimit, 0, desideredChoice);
 		new DbDerData().addDerData(derData);
@@ -57,47 +58,6 @@ public class DerFlexibilityBehaviour extends OneShotBehaviour {
 		return derInfo.getProductionMax()*derInfo.getUsageMin()/100;
 	}
 	
-	private double getUpperLimit(DerInfo derInfo)
-	{
-		if(derInfo.getType().contains("generator"))
-		{
-			return derInfo.getProductionMax()*derInfo.getUsageMax()/100;
-		}
-		else if(derInfo.getType().contains("photovoltaic"))
-		{
-			return calculatePvMaxProductionTime(derInfo.getProductionMax()); 
-		}
-		else if(derInfo.getType().contains("hydro")) //To-Do use hydro as a controllable der
-		{
-			return derInfo.getProductionMax()*derInfo.getUsageMax()/100;
-		}
-		else if(derInfo.getType().contains("wind"))
-		{
-			return derInfo.getProductionMax()*derInfo.getUsageMax()/100;
-		}
-		return 0;
-	}
-
-	private double calculatePvMaxProductionTime(double ProductionMax)
-	{
-		
-		double UpperLimit = ProductionMax;
-		int hour = msgData.get(0).getDatetime().get(Calendar.HOUR);
-		
-		if(hour < 6 || hour > 19)
-		{
-			return 0;
-		}
-		else if(hour < 10 || hour > 15)
-		{
-			return UpperLimit - (UpperLimit*0.4);
-		}
-		else
-		{
-			return UpperLimit;
-		}
-	}
-	
 	private double getCostKwh(DerInfo derInfo)
 	{
 		double costKwh = (derInfo.getCapitalCost()+derInfo.getMaintenanceCost())/derInfo.getTotalKwh();
@@ -105,7 +65,6 @@ public class DerFlexibilityBehaviour extends OneShotBehaviour {
 		{
 			costKwh += new GeneralData().getDieselKwhPrice();
 		}
-		
 		return GeneralData.round(costKwh, 5);
 	}
 }

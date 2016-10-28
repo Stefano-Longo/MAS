@@ -6,7 +6,6 @@ import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 
-import basicData.AggregatorFlexibilityData;
 import basicData.FlexibilityData;
 import utils.GeneralData;
 
@@ -15,11 +14,11 @@ public class DbAggregatorDer extends DbConnection {
 
 	DateFormat format = GeneralData.getFormat();
 	
-	public Boolean addFlexibilityDerMessage (AggregatorFlexibilityData data)
+	public Boolean addFlexibilityDerMessage (String idAggregatorAgent, FlexibilityData data)
 	{
 		String query = "INSERT INTO DerAggregatorData (IdAggregatorAgent, IdDer,"
 				+ " DateTime, LowerLimit, UpperLimit, CostKwh, DesideredChoice)"
-				+ " VALUES ('"+data.getIdAgent()+"',"+data.getIdentificator()+",'"
+				+ " VALUES ('"+idAggregatorAgent+"',"+data.getIdAgent()+",'"
 				+ format.format(data.getDatetime().getTime())+"',"+data.getLowerLimit()+","+data.getUpperLimit()+","
 				+ data.getCostKwh()+","+data.getDesideredChoice()+")";
 		//System.out.println(query);
@@ -34,12 +33,12 @@ public class DbAggregatorDer extends DbConnection {
 	public FlexibilityData aggregateMessagesReceived (String idAggregatorAgent, Calendar datetime)
 	{
 		FlexibilityData data = new FlexibilityData();
-		String query = "SELECT DateTime, SUM(LowerLimit) as LowerLimit, SUM(UpperLimit) as UpperLimit,"
+		String query = "SELECT IdAggregatorAgent, DateTime, SUM(LowerLimit) as LowerLimit, SUM(UpperLimit) as UpperLimit,"
 				+ " AVG(CostKwh) as CostKwh, SUM(DesideredChoice) as DesideredChoice"
 				+ " FROM DerAggregatorData"
 				+ " WHERE IdAggregatorAgent = '"+idAggregatorAgent+"'"
 				+ " AND Datetime = '"+format.format(datetime.getTime())+"'"
-				+ " GROUP BY DateTime";
+				+ " GROUP BY DateTime, IdAggregatorAgent";
 		//System.out.println(query);
 		try {
 			ResultSet rs = stmt.executeQuery(query);
@@ -48,7 +47,7 @@ public class DbAggregatorDer extends DbConnection {
 				Calendar cal = Calendar.getInstance();
 				cal.setTime(rs.getTimestamp("DateTime"));
 
-				data = new FlexibilityData(cal, rs.getDouble("LowerLimit"), 
+				data = new FlexibilityData(rs.getString("IdAggregatorAgent"), cal, rs.getDouble("LowerLimit"), 
 						rs.getDouble("UpperLimit"), rs.getDouble("CostKwh"), 
 						rs.getDouble("DesideredChoice"), "der");
 				return data;
@@ -77,9 +76,9 @@ public class DbAggregatorDer extends DbConnection {
 		return 0;
 	}
 	
-	public ArrayList<AggregatorFlexibilityData> getDersChoice(String idAggregatorAgent, Calendar datetime)
+	public ArrayList<FlexibilityData> getDersChoice(String idAggregatorAgent, Calendar datetime)
 	{
-		ArrayList<AggregatorFlexibilityData> list = new ArrayList<AggregatorFlexibilityData>();
+		ArrayList<FlexibilityData> list = new ArrayList<FlexibilityData>();
 		String query = "SELECT *"
 				+ " FROM DerAggregatorData"
 				+ " WHERE IdAggregatorAgent='"+idAggregatorAgent+"'"
@@ -92,8 +91,7 @@ public class DbAggregatorDer extends DbConnection {
 				Calendar cal = Calendar.getInstance();
 				cal.setTime(rs.getTimestamp("DateTime"));
 				
-				AggregatorFlexibilityData data = new AggregatorFlexibilityData(
-						rs.getString("IdAggregatorAgent"),rs.getInt("IdDer"),cal,
+				FlexibilityData data = new FlexibilityData(rs.getString("IdDer"),cal,
 						rs.getDouble("LowerLimit"), rs.getDouble("UpperLimit"), 
 						rs.getDouble("CostKwh"), rs.getDouble("DesideredChoice"), "der");
 				list.add(data);

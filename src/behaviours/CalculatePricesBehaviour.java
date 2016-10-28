@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 import agents.BaseAgent;
 import basicData.TimePowerPrice;
-import database.DbTimePowerPrice;
+import database.DbPriceData;
 import jade.core.behaviours.OneShotBehaviour;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.UnreadableException;
@@ -35,7 +35,7 @@ public class CalculatePricesBehaviour extends OneShotBehaviour {
 		 * Elaborate and calculate the prices for all the hours of the day and put it in a list
 		 * Then add the list to the message's content
 		 */
-		ArrayList<TimePowerPrice> priceData = new DbTimePowerPrice().getDailyTimePowerPrice(msgData.getDatetime()) ;
+		ArrayList<TimePowerPrice> priceData = new DbPriceData().getDailyTimePowerPrice(msgData.getDatetime()) ;
 		
 		new BaseAgent().sendMessageToAgentsByServiceType(this.myAgent, "ControlAgent", "input", priceData);
 			

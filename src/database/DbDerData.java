@@ -36,7 +36,7 @@ public class DbDerData extends DbConnection {
 	 * @param datetime
 	 * @return
 	 */
-	public DerData getAverageLastMonthProduction (int idDer, Calendar datetime)
+	public DerData getAverageLastMonthProductionByIdDer (int idDer, Calendar datetime)
 	{
 		DerData data = new DerData();
 		String query = "SELECT Avg(CostKwh) as CostKwh, Avg(ProductionMin) as ProdMin,"
@@ -45,7 +45,9 @@ public class DbDerData extends DbConnection {
 				+ " FROM DerDataHistory"
 				+ " WHERE IdDer = "+idDer
 				+ " AND DATEPART(HOUR, Datetime) = "+datetime.get(Calendar.HOUR_OF_DAY)
-				+ " AND DATEPART(MINUTE, Datetime) = "+datetime.get(Calendar.MINUTE);
+				+ " AND DATEPART(MINUTE, Datetime) = "+datetime.get(Calendar.MINUTE)
+				+ " AND DATEDIFF(day,DateTime,'"+format.format(datetime.getTime())+"') between 0 and 30";
+		//System.out.println(query);
 		try {
 			ResultSet rs = stmt.executeQuery(query);
 			while(rs.next())
@@ -57,6 +59,27 @@ public class DbDerData extends DbConnection {
 			e.printStackTrace();
 		}
 		return data;
+	}
+	
+	public double getAverageLastMonthProduction (Calendar datetime)
+	{
+		String query = "SELECT AVG(q.Production) as ProductionAvg"
+				+ " FROM (SELECT DateTime, Avg(DesideredChoice) as Production"
+				+ " FROM DerDataHistory"
+				+ " WHERE DATEPART(HOUR, Datetime) = "+datetime.get(Calendar.HOUR_OF_DAY)
+					+ " AND DATEPART(MINUTE, Datetime) = "+datetime.get(Calendar.MINUTE)
+					+ " AND DATEDIFF(day,DateTime,'"+format.format(datetime.getTime())+"') between 0 and 30"
+				+ " GROUP BY DateTime) as q";
+		try {
+			ResultSet rs = stmt.executeQuery(query);
+			while(rs.next())
+			{
+				return rs.getDouble("ProductionAvg");
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return 0;
 	}
 	
 	public DerData getLastDerData (int idDer, Calendar datetime)

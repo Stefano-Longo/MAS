@@ -7,11 +7,6 @@ public class LoadInfoPrice extends LoadInfo {
 
 	private double price;
 	private Calendar toDatetime;
-
-	public LoadInfoPrice(int idLoad, String idAgent, String platform, Calendar datetime, double criticalConsumption,
-			double nonCriticalConsumption, double consumptionAdded) {
-		super(idLoad, idAgent, platform, datetime, criticalConsumption, nonCriticalConsumption, consumptionAdded);
-	}
 	
 	public LoadInfoPrice(int idLoad, String idAgent, String platform, Calendar datetime, double criticalConsumption,
 			double nonCriticalConsumption, double consumptionAdded, double price, Calendar toDatetime) {

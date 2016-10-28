@@ -17,6 +17,7 @@ public class LoadData implements Serializable {
 	private double desideredChoice;
 	private double consumptionShifted;
 	private Calendar toDatetime;
+	private int solutionNumber;
 
 	/**
 	 * 
@@ -33,8 +34,8 @@ public class LoadData implements Serializable {
 	 * @param toDatetime
 	 */
 	public LoadData(int idLoad, Calendar datetime, double costKwh, double criticalConsumption, 
-			double nonCriticalConsumption, double consumptionMin, double consumptionMax,
-			double powerRequested, double desideredChoice, double consumptionShifted, Calendar toDatetime) 
+			double nonCriticalConsumption, double consumptionMin, double consumptionMax, double powerRequested,
+			double desideredChoice, double consumptionShifted, Calendar toDatetime, int solutionNumber) 
 	{
 		this.idLoad = idLoad;
 		this.datetime = (Calendar)datetime.clone();
@@ -47,6 +48,7 @@ public class LoadData implements Serializable {
 		this.desideredChoice = desideredChoice;
 		this.consumptionShifted = consumptionShifted;
 		this.toDatetime = toDatetime == null ? null : (Calendar)toDatetime.clone();
+		this.solutionNumber = solutionNumber;
 	}
 	
 	public LoadData(int idLoad, Calendar datetime, double powerRequested, double consumptionShifted) 
@@ -146,4 +148,13 @@ public class LoadData implements Serializable {
 	public void setToDatetime(Calendar toDatetime) {
 		this.toDatetime = (Calendar)toDatetime.clone();
 	}
+
+	public int getSolutionNumber() {
+		return solutionNumber;
+	}
+
+	public void setSolutionNumber(int solutionNumber) {
+		this.solutionNumber = solutionNumber;
+	}
+	
 }

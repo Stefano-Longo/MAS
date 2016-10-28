@@ -45,7 +45,7 @@ public class DbBatteryInfo extends DbConnection{
 		return null;
 	}
 	
-	public BatteryInfo getBatteryInfoByIdBattery (int idBattery)
+	public BatteryInfo getBatteryInfoByIdBattery (String idBattery)
 	{
 		String query = "SELECT *"
 				+ " FROM Battery"

@@ -35,7 +35,7 @@ public class ReceiveMessages extends TickerBehaviour {
 						this.myAgent.addBehaviour(new CalculatePricesBehaviour(msg));
 					}
 					else if(msg.getConversationId().equals("result"))
-					{//TO-DO sicuro?
+					{
 						this.myAgent.addBehaviour(new GiveOutput(msg));
 					}
 				}
@@ -43,8 +43,6 @@ public class ReceiveMessages extends TickerBehaviour {
 				{
 					if(msg.getConversationId().equals("input"))
 					{
-						//TO-DO save data into db and then send the message to all
-						//new DbControlData().addPrices(this.myAgent.getName(), msg.getContentObject());
 						new BaseAgent().sendMessageToAgentsByServiceType(this.myAgent, "AggregatorAgent", 
 									"input", msg.getContentObject());
 					}
@@ -71,6 +69,10 @@ public class ReceiveMessages extends TickerBehaviour {
 				else if(this.myAgent instanceof LoadAgent)
 				{
 					if(msg.getConversationId().equals("input"))
+					{
+						this.myAgent.addBehaviour(new LoadFlexibilityBehaviour(msg));
+					}
+					else if(msg.getConversationId().equals("permission"))
 					{
 						this.myAgent.addBehaviour(new LoadFlexibilityBehaviour(msg));
 					}

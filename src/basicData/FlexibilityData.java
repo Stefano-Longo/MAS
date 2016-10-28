@@ -5,26 +5,29 @@ import java.util.Calendar;
 
 @SuppressWarnings("serial")
 public class FlexibilityData implements Serializable {
-		
+
+	private String idAgent;
 	private Calendar datetime;
 	private double lowerLimit;
 	private double upperLimit;
 	private double costKwh; 
 	private double desideredChoice; // positive or negative value which represent the choice the single agent
 	private String type;
+
+
 	/**
 	 * 
-	 * @param idSenderAgent
-	 * @param analysisDatetime
+	 * @param idAgent
 	 * @param datetime
 	 * @param lowerLimit
 	 * @param upperLimit
 	 * @param costKwh
 	 * @param desideredChoice
-	 * @param maxGain
+	 * @param type
 	 */
-	public FlexibilityData(Calendar datetime, double lowerLimit, double upperLimit, 
+	public FlexibilityData(String idAgent, Calendar datetime, double lowerLimit, double upperLimit, 
 			double costKwh, double desideredChoice, String type) {
+		this.idAgent = idAgent;
 		this.datetime = (Calendar)datetime.clone();
 		this.lowerLimit = lowerLimit;
 		this.upperLimit = upperLimit;
@@ -33,8 +36,26 @@ public class FlexibilityData implements Serializable {
 		this.type = type;
 	}
 
+	public FlexibilityData(String idAgent, Calendar datetime, double lowerLimit, double upperLimit, 
+			double costKwh, double desideredChoice) {
+		this.idAgent = idAgent;
+		this.datetime = (Calendar)datetime.clone();
+		this.lowerLimit = lowerLimit;
+		this.upperLimit = upperLimit;
+		this.costKwh = costKwh;
+		this.desideredChoice = desideredChoice;
+	}
+	
 	public FlexibilityData() {}
 	
+	public String getIdAgent() {
+		return idAgent;
+	}
+
+	public void setIdAgent(String idAgent) {
+		this.idAgent = idAgent;
+	}
+
 	public double getCostKwh() {
 		return costKwh;
 	}

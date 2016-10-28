@@ -6,6 +6,7 @@ import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 
+import basicData.FlexibilityData;
 import basicData.LoadInfo;
 import basicData.LoadInfoPrice;
 import utils.GeneralData;
@@ -14,9 +15,10 @@ public class DbLoadInfo extends DbConnection {
 
 	DateFormat format = GeneralData.getFormat();
 
-	public LoadInfoPrice getLoadInfoPricebyIdAgent (String idAgent, Calendar datetime)
+	public ArrayList<LoadInfoPrice> getLoadInfoPricebyIdAgent (String idAgent, Calendar datetime)
 	{
-		String query = "SELECT TOP 1 A.IdLoad, IdAgent, IdPlatform, B.DateTime, CriticalConsumption,"
+		ArrayList<LoadInfoPrice> list = new ArrayList<LoadInfoPrice>();
+		String query = "SELECT A.IdLoad, IdAgent, IdPlatform, B.DateTime, CriticalConsumption,"
 						+ " NonCriticalConsumption, ConsumptionAdded, EnergyPrice, ToDateTime" 
 					+ " FROM ((Load as A JOIN LoadInfo as B ON A.IdLoad = B.IdLoad)"
 						+ " JOIN LoadManagement as C ON B.Id = C.IdLoadDateTime)"
@@ -37,8 +39,9 @@ public class DbLoadInfo extends DbConnection {
 				LoadInfoPrice data = new LoadInfoPrice(rs.getInt("IdLoad"), rs.getString("IdAgent"), rs.getString("IdPlatform"),
 						cal1, rs.getDouble("CriticalConsumption"), rs.getDouble("NonCriticalConsumption"), 
 						rs.getDouble("ConsumptionAdded"), rs.getDouble("EnergyPrice"), cal2);
-				return data;
+				list.add(data);
 			}
+			return list;
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -67,12 +70,12 @@ public class DbLoadInfo extends DbConnection {
 		return data;
 	}
 	
-	public LoadInfo getLoadInfoByIdLoad (int idLoad, Calendar datetime)
+	public LoadInfo getLoadInfoByIdLoad (String idLoad, Calendar datetime)
 	{
 		LoadInfo data = new LoadInfo();
 		String query = "SELECT *"
 					+ " FROM LoadInfo as A JOIN Load as B ON A.IdLoad = B.IdLoad"
-					+ " WHERE A.IdLoad = "+idLoad
+					+ " WHERE A.IdLoad = '"+idLoad+"'"
 					+ " AND DateTime = '"+format.format(datetime.getTime())+"'";
 		try {
 			ResultSet rs = stmt.executeQuery(query);
@@ -100,6 +103,36 @@ public class DbLoadInfo extends DbConnection {
 			e.printStackTrace();
 		}
 		return false;
+	}
+	
+	
+	public ArrayList<FlexibilityData> getFutureLoadInfoByIdAgent (int idLoad, Calendar datetime)
+	{
+		ArrayList<FlexibilityData> list = new ArrayList<FlexibilityData>();
+		String query = "SELECT *"
+				+ " FROM LoadInfo"
+				+ " WHERE IdLoad = "+idLoad
+				+ " AND DateTime > '"+format.format(datetime.getTime())+"'"
+				+ " AND DATEPART(DAY, DateTime) = "+datetime.get(Calendar.DAY_OF_MONTH);
+		//System.out.println("FUTURE LIST "+query);
+		try {
+			ResultSet rs = stmt.executeQuery(query);
+			while(rs.next())
+			{
+				Calendar cal = Calendar.getInstance();
+				cal.setTime(rs.getTimestamp("DateTime"));
+				
+				double lowerLimit = rs.getDouble("CriticalConsumption")+rs.getDouble("ConsumptionAdded");
+				double upperLimit = lowerLimit + rs.getDouble("NonCriticalConsumption");
+				
+				FlexibilityData data = new FlexibilityData(rs.getString("idLoad"), cal, lowerLimit,
+						upperLimit, 0, upperLimit);
+				list.add(data);
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return list;
 	}
 	
 }

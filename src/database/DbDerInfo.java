@@ -32,12 +32,12 @@ public class DbDerInfo extends DbConnection {
 		return data;
 	}
 
-	public DerInfo getDerByIdDer(int identificator) 
+	public DerInfo getDerByIdDer(String identificator) 
 	{
 		DerInfo data = new DerInfo();
 		String query = "SELECT *"
 					+ " FROM Der"
-					+ " WHERE IdDer = "+identificator;
+					+ " WHERE IdDer = '"+identificator+"'";
 		try {
 			ResultSet rs = stmt.executeQuery(query);
 			while(rs.next())

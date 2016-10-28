@@ -4,13 +4,12 @@ import java.util.ArrayList;
 
 import agents.BaseAgent;
 import basicData.ControlData;
-import basicData.ControlFlexibilityData;
 import basicData.FlexibilityData;
 import basicData.ResultPowerPrice;
 import basicData.TimePowerPrice;
 import database.DbControlArrivalData;
 import database.DbControlData;
-import database.DbTimePowerPrice;
+import database.DbPriceData;
 import jade.core.behaviours.OneShotBehaviour;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.UnreadableException;
@@ -20,9 +19,9 @@ import utils.GeneralData;
 public class ControlBehaviour extends OneShotBehaviour {
 
 	ArrayList<TimePowerPrice> prices;
-	ControlFlexibilityData batteryData;
-	ControlFlexibilityData derData;
-	ControlFlexibilityData loadData;
+	FlexibilityData batteryData;
+	FlexibilityData derData;
+	FlexibilityData loadData;
 	
 	double derEnergyRequest = 0;
 	double loadEnergyRequest = 0;
@@ -52,23 +51,19 @@ public class ControlBehaviour extends OneShotBehaviour {
 		 * Send the message with the result that is a single vector made by 3 values: 
 		 * PERIOD (sec) - POWER (kw) - COST (€) -> Result.java
 		 */
-		
-		
-		// To-do DEVO RICEVERE TUTTI E 3 I MESSAGGI, SE NON LI RICEVO ALLORA DEVO FARE QUALCOSA PER RECUPERARLI
-		// SI MA POI SI VEDE, I won't ignore :)
+
 		System.out.println("sono nel Control Agent, messaggio da: "+msgData.getType());
-		ControlFlexibilityData controlArrivalData = new ControlFlexibilityData(this.myAgent.getName(), msgData);
-		new DbControlArrivalData().addControlArrivalData(controlArrivalData);
+		new DbControlArrivalData().addControlArrivalData(this.myAgent.getName(), msgData);
 
 		int messagesReceived = new DbControlArrivalData().countMessagesReceived(this.myAgent.getName(), msgData.getDatetime());
-		//System.out.println("ControlAgent messagesReceived: "+messagesReceived);
+		System.out.println("ControlAgent messagesReceived: "+messagesReceived);
 		if (messagesReceived == 3)
 		{
 			/**
 			 * I have all the messages that I was waiting for so now I can
 			 * think and tell them what to do 
 			 */
-			prices = new DbTimePowerPrice().getDailyTimePowerPrice(controlArrivalData.getDatetime());
+			prices = new DbPriceData().getDailyTimePowerPrice(msgData.getDatetime());
 			batteryData = new DbControlArrivalData().getLastControlArrivalData(this.myAgent.getName(), "battery", msgData.getDatetime());
 			derData = new DbControlArrivalData().getLastControlArrivalData(this.myAgent.getName(), "der", msgData.getDatetime());
 			loadData = new DbControlArrivalData().getLastControlArrivalData(this.myAgent.getName(), "load", msgData.getDatetime());
@@ -98,13 +93,6 @@ public class ControlBehaviour extends OneShotBehaviour {
 					batteryEnergyRequest = (derEnergyRequest - loadEnergyRequest) > batteryData.getLowerLimit()
 							? batteryData.getLowerLimit() : (derEnergyRequest - loadEnergyRequest);
 				}
-				
-				//TO-DO se sono molto scariche e ->se conviene assai<-, carico le batterie, altrimenti no
-				/*if(batteryData.getDesideredChoice() > 0)
-				{
-					batteryEnergyRequest = batteryData.getDesideredChoice() > 0 ? 
-							batteryData.getDesideredChoice() : batteryEnergyRequest;
-				}*/
 			}
 			else if(checkPercentile(prices.get(0).getEnergyPrice()) > 0.7) //energy cost high
 			{
@@ -114,13 +102,6 @@ public class ControlBehaviour extends OneShotBehaviour {
 				derEnergyRequest = derData.getUpperLimit();
 				loadEnergyRequest = loadData.getDesideredChoice();
 				
-				/*if(batteryData.getCostKwh() > prices.get(0).getEnergyPrice() &&
-						derData.getCostKwh() > prices.get(0).getEnergyPrice())
-				{
-					//I will not use battery or der
-					derEnergyRequest = derData.getDesideredChoice();
-					batteryEnergyRequest = 0;
-				}*/
 				//se la produzione è maggiore del carico, carico le batterie
 				if (derEnergyRequest > loadEnergyRequest)
 				{
@@ -131,10 +112,8 @@ public class ControlBehaviour extends OneShotBehaviour {
 				//uso la batteria
 				else if(derEnergyRequest < loadEnergyRequest)
 				{
-					//System.out.println("CONTROLLA: loadEnergyRequest - derEnergyRequest = "+(loadEnergyRequest-derEnergyRequest));
 					batteryEnergyRequest = (loadEnergyRequest - derEnergyRequest) > -batteryData.getUpperLimit()
 							? batteryData.getUpperLimit() : -(loadEnergyRequest - derEnergyRequest);
-					//System.out.println(batteryEnergyRequest);		
 				}
 			}
 			else //energy cost in the mean
@@ -146,11 +125,6 @@ public class ControlBehaviour extends OneShotBehaviour {
 				 */
 				derEnergyRequest = derData.getDesideredChoice();
 				loadEnergyRequest = loadData.getDesideredChoice();
-				
-				/*if(loadData.getCostKwh() < prices.get(0).getEnergyPrice())
-				{
-					loadEnergyRequest = loadData.getUpperLimit();
-				}*/
 				
 				if(derData.getCostKwh() < prices.get(0).getEnergyPrice())
 				{
@@ -229,7 +203,7 @@ public class ControlBehaviour extends OneShotBehaviour {
 	private double checkPercentile(double currentEnergyPrice)
 	{
 		int counter = 0;
-		ArrayList<TimePowerPrice> lastWeekPrices = new DbTimePowerPrice().getLastWeekPowerPrice(prices.get(0).getDatetime());
+		ArrayList<TimePowerPrice> lastWeekPrices = new DbPriceData().getLastWeekPowerPrice(prices.get(0).getDatetime());
 		
 		for(int i=0; i < lastWeekPrices.size(); i++)
 		{

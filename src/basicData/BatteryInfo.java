@@ -2,7 +2,6 @@ package basicData;
 
 
 public class BatteryInfo {
-
 	/**
 	 * Class connected to AgentBattery
 	 */

@@ -7,7 +7,7 @@ import java.util.Calendar;
 import basicData.TimePowerPrice;
 import behaviours.ReceiveMessages;
 import behaviours.TsoBehaviour;
-import database.DbTimePowerPrice;
+import database.DbPriceData;
 import utils.GeneralData;
 
 @SuppressWarnings("serial")
@@ -25,7 +25,7 @@ public class TsoAgent extends BaseAgent {
 			e1.printStackTrace();
 		}
 		
-		TimePowerPrice data = new DbTimePowerPrice().getTimePowerPriceByDateTime(datetime);
+		TimePowerPrice data = new DbPriceData().getTimePowerPriceByDateTime(datetime);
 		this.addBehaviour(new TsoBehaviour(data));
 		this.addBehaviour(new ReceiveMessages(this));
 	}

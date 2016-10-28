@@ -1,5 +1,7 @@
 package behaviours;
 
+import java.security.KeyStore.LoadStoreParameter;
+
 import agents.BaseAgent;
 import basicData.LoadInfo;
 import basicData.OkData;
@@ -28,11 +30,10 @@ public class AggregateOkLoadBehaviour extends OneShotBehaviour {
 	public void action() {
 		
 		LoadInfo loadInfo = new DbLoadInfo().getLoadInfoByIdAgent(msg.getSender().getName(), msgData.getDatetime());
-		
-		System.out.println("\nLoadAggrOK prima: "+msgData.getDatetime().getTime());
+		//System.out.println("\nLoadAggrOK prima: "+msgData.getDatetime().getTime());
 		new DbAggregatorLoad().updateLastLoadConfirmedChoice(this.myAgent.getName(), 
 				loadInfo.getIdLoad(), msgData.getOk(), msgData.getDatetime());
-		System.out.println("\nLoadAggrOK dopo: "+msgData.getDatetime().getTime());
+		//System.out.println("\nLoadAggrOK dopo: "+msgData.getDatetime().getTime());
 		
 		int confirmedTrue = new DbAggregatorLoad().getLastConfirmedByChoice(this.myAgent.getName(), true, msgData.getDatetime());
 		int loadAgents = new BaseAgent().getAgentsbyServiceType(this.myAgent, "LoadAgent").length;

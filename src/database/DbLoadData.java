@@ -4,8 +4,10 @@ import java.awt.Toolkit;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.DateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 
+import basicData.FlexibilityData;
 import basicData.LoadData;
 import utils.GeneralData;
 
@@ -16,15 +18,15 @@ public class DbLoadData extends DbConnection {
 	public Boolean addLoadData(LoadData load)
 	{
 		String toDatetime = load.getToDatetime()==null ? null : "'"+format.format(load.getToDatetime().getTime())+"'";
-		System.out.println("\nDatetimeLoad"+load.getIdLoad()+": "+load.getDatetime().getTime()+" toDatetime: "+toDatetime+"\n");
+		//System.out.println("\nDatetimeLoad"+load.getIdLoad()+": "+load.getDatetime().getTime()+" toDatetime: "+toDatetime+"\n");
 		String query = "INSERT INTO LoadDataHistory (IdLoad, DateTime, CostKwh, CriticalConsumption, NonCriticalConsumption,"
 				+ " ConsumptionMin, ConsumptionMax, PowerRequested, DesideredChoice, ConsumptionShifted,"
-				+ " ToDateTime, Confirmed)"
+				+ " ToDateTime, Confirmed, SolutionNumber)"
 				+ " VALUES ("+load.getIdLoad()+",'"+format.format(load.getDatetime().getTime())+"',"
 						+load.getCostKwh()+","+load.getCriticalConsumption()+","
 						+load.getNonCriticalConsumption()+","+load.getConsumptionMin()+","+load.getConsumptionMax()+","
 						+load.getPowerRequested()+","+load.getDesideredChoice()+","+load.getConsumptionShifted()+","
-						+toDatetime+", 'false')";
+						+toDatetime+", 'false', "+load.getSolutionNumber()+")";
 		//System.out.println(query);
 		try {
 			return stmt.execute(query);
@@ -34,7 +36,7 @@ public class DbLoadData extends DbConnection {
 		return false;
 	}
 	
-	public Boolean updateLoadData(LoadData load)
+	public Boolean updateLoadDataPower(LoadData load)
 	{
 		String query = "UPDATE LoadDataHistory"
 				+ " SET  PowerRequested="+load.getPowerRequested()+","
@@ -58,7 +60,7 @@ public class DbLoadData extends DbConnection {
 				+ " FROM LoadDataHistory"
 				+ " WHERE IdLoad = "+idLoad
 				+ " AND DateTime = '"+format.format(datetime.getTime())+"'";
-		//System.out.println(query);
+		System.out.println(query);
 		try {
 			ResultSet rs = stmt.executeQuery(query);
 			while(rs.next())
@@ -76,11 +78,12 @@ public class DbLoadData extends DbConnection {
 						rs.getDouble("CriticalConsumption"), rs.getDouble("NonCriticalConsumption"), 
 						rs.getDouble("ConsumptionMin"), rs.getDouble("ConsumptionMax"), 
 						rs.getDouble("PowerRequested"), rs.getDouble("DesideredChoice"), 
-						rs.getDouble("ConsumptionShifted"), cal1);
+						rs.getDouble("ConsumptionShifted"), cal1, rs.getInt("SolutionNumber"));
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
 		return data;
 	}
+	
 }

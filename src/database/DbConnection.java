@@ -20,8 +20,37 @@ public class DbConnection {
 			conn = DriverManager.getConnection(connectionUrl);
 			stmt = conn.createStatement();
 			Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
-		
 		} catch (SQLException | ClassNotFoundException e) {
+			e.printStackTrace();
+		}
+    }
+    
+    public Connection getConnection()
+    {
+		return conn;
+    }
+    
+    public void openTransaction(Connection conn){
+    	try {
+			conn.setAutoCommit(false);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+    }
+    
+    public void rollback(Connection conn){
+    	try {
+			conn.rollback();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+    }
+    
+    public void commit(Connection conn){
+    	try {
+			conn.commit();
+			conn.setAutoCommit(true);
+		} catch (SQLException e) {
 			e.printStackTrace();
 		}
     }
