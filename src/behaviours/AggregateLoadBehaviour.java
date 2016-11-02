@@ -67,7 +67,9 @@ public class AggregateLoadBehaviour extends OneShotBehaviour {
 			new DbAggregatorLoad().deleteOldForecastDataByIdLoad(this.myAgent.getName(), msgData.get(0).getIdAgent(), stmt);
 			new DbAggregatorLoad().addFlexibilityLoadMessage(this.myAgent.getName(), msgData, stmt);
 			//check if UpperLimit of all agents in all hours < Threshold
-
+			System.out.println("peaks size: "+peaks.size());
+			for(int i=0; i<peaks.size(); i++) System.out.println("PEAK: "+peaks.get(i).getDatetime().getTime()+" - "+peaks.get(i).getPeakValue());
+			
 			if(checkThreshold(stmt)){
 				if(msgData.get(0).getDesideredChoice() == msgData.get(0).getUpperLimit())
 				{
@@ -122,22 +124,19 @@ public class AggregateLoadBehaviour extends OneShotBehaviour {
 
 		//prendo i picchi esistenti nel db, se trova solo questi picchi che non si possono eliminare allora return true
 		ArrayList<PeakData> existingPeaks = new DbPeakData().getTodayPeaks(this.myAgent.getName(), msgData.get(0).getDatetime(), stmt);
-		
+		Boolean found = true;
 		for(int i=0; i<list.size(); i++)
 		{
 			double productionAvg = new DbDerData().getAverageLastMonthProduction(list.get(i).getDatetime());
 			//EnergyPrice is the upperLimit, i'm sorry
 			if(list.get(i).getEnergyPrice() > list.get(i).getThreshold()+productionAvg && !existingPeaks.contains(list.get(i))){
+				System.out.println(list.get(i).getDatetime().getTime());
 				PeakData data = new PeakData(this.myAgent.getName(), list.get(i).getDatetime(), list.get(i).getEnergyPrice());
-				PeakData ciao = new PeakData("asd", list.get(i).getDatetime(), 10);
 				peaks.add(data);
-				peaks.add(ciao);
-				System.out.println("list.get(i).getEnergyPrice(): "+list.get(i).getEnergyPrice()+" > "+list.get(i).getThreshold()+" + "+productionAvg+"?? SI!! "+list.get(i).getDatetime().getTime());
-				return false;
+				//System.out.println("list.get(i).getEnergyPrice(): "+list.get(i).getEnergyPrice()+" > "+list.get(i).getThreshold()+" + "+productionAvg+"?? SI!! "+list.get(i).getDatetime().getTime());
+				found = true;
 			}
 		}
-		System.out.println("peaks size: "+peaks.size());
-		for(int i=0; i<peaks.size(); i++) System.out.println("PEAK: "+peaks.get(i).getDatetime().getTime()+" - "+peaks.get(i).getPeakValue());
-		return true;
+		return found;
 	}
 }

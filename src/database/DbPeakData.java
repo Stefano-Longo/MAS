@@ -20,7 +20,7 @@ public class DbPeakData extends DbConnection {
 		for(int i=0; i<peaks.size(); i++)
 		{
 			String query = "INSERT INTO Peak (IdAggregatorAgent, DateTime, PeakValue)"
-					+ " VALUES ('"+peaks.get(i).getIdAggregatorAgent()+"',"+format.format(peaks.get(i).getDatetime().getTime())+","
+					+ " VALUES ('"+peaks.get(i).getIdAggregatorAgent()+"','"+format.format(peaks.get(i).getDatetime().getTime())+"',"
 					+ peaks.get(i).getPeakValue()+")";
 			System.out.println(query);
 			try {
