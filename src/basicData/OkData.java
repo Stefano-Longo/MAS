@@ -8,9 +8,9 @@ public class OkData implements Serializable {
 
 	private Calendar datetime;
 	private String type;
-	private Boolean ok;
+	private int ok;
 	
-	public OkData(Calendar datetime, String type, Boolean ok) {
+	public OkData(Calendar datetime, String type, int ok) {
 		this.datetime = (Calendar)datetime.clone();
 		this.type = type;
 		this.ok = ok;
@@ -32,11 +32,11 @@ public class OkData implements Serializable {
 		this.type = type;
 	}
 	
-	public Boolean getOk() {
+	public int getOk() {
 		return ok;
 	}
 	
-	public void setOk(Boolean ok) {
+	public void setOk(int ok) {
 		this.ok = ok;
 	}
 	

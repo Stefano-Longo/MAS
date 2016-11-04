@@ -18,7 +18,8 @@ public class DbBatteryData extends DbConnection	{
 				+ " VALUES ('"+battery.getIdBattery()+"','"+format.format(battery.getDatetime().getTime())+"',"
 						+battery.getSocObjective()+","+battery.getSoc()+","+battery.getCostKwh()+","
 						+battery.getInputPowerMax()+","+battery.getOutputPowerMax()+","
-						+battery.getPowerRequested()+", "+battery.getDesideredChoice()+", 'false')";
+						+battery.getPowerRequested()+", "+battery.getDesideredChoice()+", '0')";
+		//System.out.println(query);
 		try {
 			return stmt.execute(query);
 		} catch (SQLException e) {
@@ -32,7 +33,7 @@ public class DbBatteryData extends DbConnection	{
 		String query = "UPDATE BatteryDataHistory"
 				+ " SET SocObjective = "+battery.getSocObjective()+", Soc="+battery.getSoc()+","
 					+ " CostKwh = "+battery.getCostKwh()+", PowerRequested="+battery.getPowerRequested()+","
-					+ " Confirmed = 'true'"
+					+ " Confirmed = 1"
 				+ " WHERE IdBattery = "+battery.getIdBattery()
 				+ " AND DateTime = '"+format.format(battery.getDatetime().getTime())+"'";
 		//System.out.println(query);
@@ -47,12 +48,18 @@ public class DbBatteryData extends DbConnection	{
 	public BatteryData getLastBatteryData (int idBattery, Calendar datetime)
 	{
 		BatteryData data = new BatteryData();
-		String query = "SELECT TOP 1 *"
+		String querysqlserver = "SELECT TOP 1 *"
 				+ " FROM BatteryDataHistory"
 				+ " WHERE IdBattery = "+idBattery
 				+ " AND DateTime < '"+format.format(datetime.getTime())+"'"
 				+ " ORDER BY DateTime DESC";
-		//System.out.println(query);
+		String query = "SELECT *"
+				+ " FROM BatteryDataHistory"
+				+ " WHERE IdBattery = "+idBattery
+				+ " AND DateTime < '"+format.format(datetime.getTime())+"'"
+				+ " ORDER BY DateTime DESC"
+				+ " LIMIT 1";
+		System.out.println(query);
 		try {
 			ResultSet rs = stmt.executeQuery(query);
 			while(rs.next())

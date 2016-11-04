@@ -14,6 +14,7 @@ public class DbBatteryInfo extends DbConnection{
 				+ " VALUES ('"+battery.getIdAgent()+"','"+battery.getIdPlatform()+"',"
 						+battery.getCapacity()+",'"+battery.getType()+"',"+battery.getBatteryInputMax()+","
 						+battery.getBatteryOutputMax()+","+battery.getSocMin()+","+battery.getSocMax()+")";
+		//System.out.println(query);
 		try {
 			return stmt.execute(query);
 		} catch (SQLException e) {

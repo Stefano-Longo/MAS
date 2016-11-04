@@ -10,7 +10,6 @@ public class GeneralData {
 	static private SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.ITALIAN);
 	private double dieselKwhPrice = 1; //expressed in €
 	private double priceKwhSold = 0.15; //expressed in €
-	private double meanKwhPrice = 0.4;
 	static private double sellEnergyPrice = 0.05; //expressed in €
 	
 	public int getTimeSlot() {
@@ -43,14 +42,6 @@ public class GeneralData {
 
 	public void setPriceKwhSold(double priceKwhSold) {
 		this.priceKwhSold = priceKwhSold;
-	}
-	
-	public double getMeanKwhPrice() {
-		return meanKwhPrice;
-	}
-
-	public void setMeanKwhPrice(double meanKwhPrice) {
-		this.meanKwhPrice = meanKwhPrice;
 	}
 
 	static public double round(double value, int places) {

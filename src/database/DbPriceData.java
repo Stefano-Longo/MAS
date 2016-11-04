@@ -41,6 +41,7 @@ public class DbPriceData extends DbConnection {
 				+ " FROM Price"
 				+ " WHERE DateTime = '"+format.format(datetime.getTime())+"'"
 				+ " ORDER BY DateTime";
+		//System.out.println(query);
 		try {
 			ResultSet rs = stmt.executeQuery(query);
 			while(rs.next())
@@ -61,10 +62,15 @@ public class DbPriceData extends DbConnection {
 	{
 		ArrayList<TimePowerPrice> list = new ArrayList<TimePowerPrice>();
 		
-		String query = "SELECT *" 
+		String querysqlserver = "SELECT *" 
 				+ " FROM Price"
 				+ " WHERE DateTime >= '"+format.format(datetime.getTime())+"'"
 				+ " AND DATEPART(DAY, DateTime) = "+datetime.get(Calendar.DAY_OF_MONTH)
+				+ " ORDER BY DateTime";
+		String query = "SELECT *" 
+				+ " FROM Price"
+				+ " WHERE DateTime >= '"+format.format(datetime.getTime())+"'"
+				+ " AND DAYOFMONTH(DateTime) = "+datetime.get(Calendar.DAY_OF_MONTH)
 				+ " ORDER BY DateTime";
 		try {
 			ResultSet rs = stmt.executeQuery(query);
@@ -86,11 +92,17 @@ public class DbPriceData extends DbConnection {
 	{
 		ArrayList<TimePowerPrice> list = new ArrayList<TimePowerPrice>();
 		
-		String query = "SELECT *" 
+		String querysqlserver = "SELECT *" 
 				+ " FROM Price"
 				+ " WHERE DateTime <= '"+format.format(datetime.getTime())+"'"
 				+ " AND DateTime > dateadd(wk, datediff(wk, 0, '"+format.format(datetime.getTime())+"') - 1, 0) + 4 "
 				+ " ORDER BY DateTime";
+		String query = "SELECT *" 
+				+ " FROM Price"
+				+ " WHERE DateTime <= '"+format.format(datetime.getTime())+"'"
+				+ " AND DATEDIFF(DateTime,'"+format.format(datetime.getTime())+"') between 0 and 7"
+				+ " ORDER BY DateTime";
+		//System.out.println(query);
 		try {
 			ResultSet rs = stmt.executeQuery(query);
 			while(rs.next())

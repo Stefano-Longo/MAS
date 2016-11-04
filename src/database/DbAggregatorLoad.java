@@ -40,6 +40,7 @@ public class DbAggregatorLoad extends DbConnection {
 					+ " VALUES ('"+idAggregatorAgent+"',"+data.get(i).getIdAgent()+",'"
 					+ format.format(data.get(i).getDatetime().getTime())+"',"+data.get(i).getLowerLimit()+","+data.get(i).getUpperLimit()+","
 					+ data.get(i).getCostKwh()+","+data.get(i).getDesideredChoice()+", "+forecast+")";
+			//System.out.println(query);
 			try {
 				stmt.execute(query);
 			} catch (SQLException e) {
@@ -57,9 +58,9 @@ public class DbAggregatorLoad extends DbConnection {
 								+ " FROM LoadAggregatorData  "
 								+ " WHERE IdAggregatorAgent = '"+idAggregatorAgent+"'"
 									+" AND Forecast = 1"
-								+ " GROUP BY DateTime) load "
-							+ "ON p.DateTime = load.DateTime ";
-		//System.out.println(query);
+								+ " GROUP BY DateTime) loads "
+							+ "ON p.DateTime = loads.DateTime ";
+		System.out.println(query);
 		try {
 			ResultSet rs = stmt.executeQuery(query);
 			while(rs.next())
@@ -86,6 +87,7 @@ public class DbAggregatorLoad extends DbConnection {
 				+ " WHERE IdAggregatorAgent = '"+idAggregatorAgent+"'"
 				+ " AND Datetime = '"+format.format(datetime.getTime())+"'"
 				+ " GROUP BY DateTime, IdAggregatorAgent";
+		System.out.println(query);
 		try {
 			ResultSet rs = stmt.executeQuery(query);
 			while(rs.next())
@@ -93,9 +95,9 @@ public class DbAggregatorLoad extends DbConnection {
 				Calendar cal = Calendar.getInstance();
 				cal.setTime(rs.getTimestamp("DateTime"));
 
-				data = new FlexibilityData(rs.getString("IdAggregatorAgent"),cal, rs.getDouble("LowerLimit"), 
-						rs.getDouble("UpperLimit"), rs.getDouble("CostKwh"), 
-						rs.getDouble("DesideredChoice"), "load");
+				data = new FlexibilityData(rs.getString("IdAggregatorAgent"),cal, GeneralData.round(rs.getDouble("LowerLimit"),2), 
+						GeneralData.round(rs.getDouble("UpperLimit"),2), GeneralData.round(rs.getDouble("CostKwh"), 5), 
+						GeneralData.round(rs.getDouble("DesideredChoice"),2), "load");
 				return data;
 			}
 		} catch (SQLException e) {
@@ -151,7 +153,7 @@ public class DbAggregatorLoad extends DbConnection {
 		return list;
 	}
 	
-	public Boolean updateLastLoadConfirmedChoice(String idAggregatorAgent, int idLoad, boolean confirmed, Calendar datetime)
+	public Boolean updateLastLoadConfirmedChoice(String idAggregatorAgent, int idLoad, int confirmed, Calendar datetime)
 	{
 		String query = "UPDATE LoadAggregatorData"
 				+ " SET Confirmed = '"+confirmed+"'"

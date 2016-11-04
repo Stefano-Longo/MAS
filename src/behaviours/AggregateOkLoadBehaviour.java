@@ -40,7 +40,7 @@ public class AggregateOkLoadBehaviour extends OneShotBehaviour {
 		System.out.println("LoadOk - confirmedTrue:"+confirmedTrue+" loadAgents: "+loadAgents);
 		if(confirmedTrue == loadAgents)
 		{
-			OkData ok = new OkData(msgData.getDatetime(), "load", true);
+			OkData ok = new OkData(msgData.getDatetime(), "load", 1);
 			new BaseAgent().sendMessageToAgentsByServiceType(this.myAgent, "ControlAgent",
 					"ok", ok);
 		}

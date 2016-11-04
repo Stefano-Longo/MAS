@@ -26,7 +26,7 @@ public class DbLoadData extends DbConnection {
 						+load.getCostKwh()+","+load.getCriticalConsumption()+","
 						+load.getNonCriticalConsumption()+","+load.getConsumptionMin()+","+load.getConsumptionMax()+","
 						+load.getPowerRequested()+","+load.getDesideredChoice()+","+load.getConsumptionShifted()+","
-						+toDatetime+", 'false', "+load.getSolutionNumber()+")";
+						+toDatetime+", '0', "+load.getSolutionNumber()+")";
 		//System.out.println(query);
 		try {
 			return stmt.execute(query);
@@ -41,7 +41,7 @@ public class DbLoadData extends DbConnection {
 		String query = "UPDATE LoadDataHistory"
 				+ " SET  PowerRequested="+load.getPowerRequested()+","
 					+ " ConsumptionShifted="+load.getConsumptionShifted()+", "
-					+ " Confirmed = 'true'"
+					+ " Confirmed = 1"
 				+ " WHERE IdLoad = "+load.getIdLoad()
 				+ " AND DateTime = '"+format.format(load.getDatetime().getTime())+"'";
 		try {

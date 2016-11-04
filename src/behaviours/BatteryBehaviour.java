@@ -46,7 +46,7 @@ public class BatteryBehaviour  extends OneShotBehaviour {
 			System.out.println("I'm the battery "+batteryInfo.getIdBattery()+" and I don't accept this power requested: "
 				+ msgData.getPowerRequested()+ " because my limist are: "+lastBatteryData.getInputPowerMax()+" "+lastBatteryData.getOutputPowerMax()
 				+ "\nfor datetime: "+msgData.getDatetime().getTime());
-			OkData ko = new OkData(msgData.getDatetime(), "battery", false);
+			OkData ko = new OkData(msgData.getDatetime(), "battery", 0);
 			new BaseAgent().sendMessageToAgentsByServiceType(this.myAgent, "BatteryAggregatorAgent",
 					"ok", ko);
 			return;
@@ -64,7 +64,7 @@ public class BatteryBehaviour  extends OneShotBehaviour {
 				newSocObjective, newSoc, newCostKwh, msgData.getPowerRequested());
 		new DbBatteryData().updateBatteryData(batteryData); //salvo nello storico
 		
-		OkData ok = new OkData(msgData.getDatetime(), "battery", true);
+		OkData ok = new OkData(msgData.getDatetime(), "battery", 1);
 		new BaseAgent().sendMessageToAgentsByServiceType(this.myAgent, "BatteryAggregatorAgent",
 				"ok", ok);
 	}

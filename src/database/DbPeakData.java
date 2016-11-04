@@ -22,7 +22,7 @@ public class DbPeakData extends DbConnection {
 			String query = "INSERT INTO Peak (IdAggregatorAgent, DateTime, PeakValue)"
 					+ " VALUES ('"+peaks.get(i).getIdAggregatorAgent()+"','"+format.format(peaks.get(i).getDatetime().getTime())+"',"
 					+ peaks.get(i).getPeakValue()+")";
-			System.out.println(query);
+			//System.out.println(query);
 			try {
 				return stmt.execute(query);
 			} catch (SQLException e) {
@@ -35,10 +35,14 @@ public class DbPeakData extends DbConnection {
 	public ArrayList<PeakData> getTodayPeaks (String idAggregatorAgent, Calendar datetime, Statement stmt)
 	{
 		ArrayList<PeakData> list = new ArrayList<PeakData>();
-		String query = "SELECT *"
+		String querysqlserver = "SELECT *"
 				+ " FROM Peak"
 				+ " WHERE IdAggregatorAgent = '"+idAggregatorAgent+"'"
 				+ " AND DATEPART(DAY, DateTime) = "+datetime.get(Calendar.DAY_OF_MONTH);
+		String query = "SELECT *"
+				+ " FROM Peak"
+				+ " WHERE IdAggregatorAgent = '"+idAggregatorAgent+"'"
+				+ " AND DAY(DateTime) = "+datetime.get(Calendar.DAY_OF_MONTH);
 		System.out.println(query);
 		try {
 			ResultSet rs = stmt.executeQuery(query);

@@ -26,6 +26,7 @@ public class DbAggregatorBattery extends DbConnection {
 				+ " VALUES ('"+idAggregatorAgent+"',"+data.getIdAgent()+",'"
 				+ format.format(data.getDatetime().getTime())+"',"+data.getLowerLimit()+","+data.getUpperLimit()+","
 				+ data.getCostKwh()+","+data.getDesideredChoice()+")";
+		//System.out.println(query);
 		try {
 			return stmt.execute(query);
 		} catch (SQLException e) {
@@ -57,9 +58,9 @@ public class DbAggregatorBattery extends DbConnection {
 			{	
 				Calendar cal2 = Calendar.getInstance();
 				cal2.setTime(rs.getTimestamp("DateTime"));
-
+				
 				data = new FlexibilityData(idAggregatorAgent, cal2, rs.getDouble("InputPowerMax"), 
-						rs.getDouble("OutputPowerMax"), rs.getDouble("CostKwh"), 
+						rs.getDouble("OutputPowerMax"), GeneralData.round(rs.getDouble("CostKwh"), 5), 
 						rs.getDouble("DesideredChoice"), "battery");
 				return data;
 			}
@@ -164,7 +165,7 @@ public class DbAggregatorBattery extends DbConnection {
 		return list;
 	}
 	
-	public Boolean updateLastBatteryConfirmedChoice(String idAggregatorAgent, int idBattery, boolean confirmed, Calendar datetime)
+	public Boolean updateLastBatteryConfirmedChoice(String idAggregatorAgent, int idBattery, int confirmed, Calendar datetime)
 	{
 		String query = "UPDATE BatteryAggregatorData"
 				+ " SET Confirmed = '"+confirmed+"'"

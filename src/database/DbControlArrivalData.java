@@ -44,8 +44,9 @@ public class DbControlArrivalData extends DbConnection {
 				Calendar cal = Calendar.getInstance();
 				cal.setTime(rs.getTimestamp("DateTime"));
 				FlexibilityData data =  new FlexibilityData(
-						idControlAgent, cal, rs.getDouble("LowerLimit"), 
-						rs.getDouble("UpperLimit"), rs.getDouble("CostKwh"), 
+						idControlAgent, cal, GeneralData.round(rs.getDouble("LowerLimit"),2), 
+						GeneralData.round(rs.getDouble("UpperLimit"), 2), 
+						GeneralData.round(rs.getDouble("CostKwh"), 2), 
 						rs.getDouble("DesideredChoice"), type);
 				return data;
 			}
@@ -73,7 +74,7 @@ public class DbControlArrivalData extends DbConnection {
 		return 0;
 	}
 	
-	public Boolean updateControlArrivalData (String idControlAgent, String type, boolean confirmed, Calendar datetime)
+	public Boolean updateControlArrivalData (String idControlAgent, String type, int confirmed, Calendar datetime)
 	{
 		String query = "UPDATE ControlArrivalData"
 				+ " SET Confirmed = '"+confirmed+"'"

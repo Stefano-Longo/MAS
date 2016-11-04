@@ -36,7 +36,7 @@ public class AggregateOkDerBehaviour extends OneShotBehaviour {
 		System.out.println("DerOk - confirmedTrue:"+confirmedTrue+" derAgents: "+derAgents);
 		if(confirmedTrue == derAgents)
 		{
-			OkData ok = new OkData(msgData.getDatetime(), "der", true);
+			OkData ok = new OkData(msgData.getDatetime(), "der", 1);
 			new BaseAgent().sendMessageToAgentsByServiceType(this.myAgent, "ControlAgent",
 					"ok", ok);
 		}

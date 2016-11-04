@@ -20,7 +20,7 @@ public class DbLoadInfo extends DbConnection {
 		ArrayList<LoadInfoPrice> list = new ArrayList<LoadInfoPrice>();
 		String query = "SELECT A.IdLoad, IdAgent, IdPlatform, B.DateTime, CriticalConsumption,"
 						+ " NonCriticalConsumption, ConsumptionAdded, EnergyPrice, ToDateTime" 
-					+ " FROM ((Load as A JOIN LoadInfo as B ON A.IdLoad = B.IdLoad)"
+					+ " FROM ((Loads as A JOIN LoadInfo as B ON A.IdLoad = B.IdLoad)"
 						+ " JOIN LoadManagement as C ON B.Id = C.IdLoadDateTime)"
 						+ " JOIN Price P on C.ToDateTime = P.DateTime"
 					+ " WHERE RTRIM(IdAgent) = '"+idAgent+"'"
@@ -52,10 +52,10 @@ public class DbLoadInfo extends DbConnection {
 	{
 		LoadInfo data = new LoadInfo();
 		String query = "SELECT *"
-					+ " FROM LoadInfo A JOIN Load B ON A.IdLoad = B.IdLoad "
+					+ " FROM LoadInfo A JOIN Loads B ON A.IdLoad = B.IdLoad"
 					+ " WHERE RTRIM(IdAgent) = '"+idAgent+"'"
 					+ " AND DateTime = '"+format.format(datetime.getTime())+"'";
-		//System.out.println(query);
+		System.out.println(query);
 		try {
 			ResultSet rs = stmt.executeQuery(query);
 			while(rs.next())
@@ -74,7 +74,7 @@ public class DbLoadInfo extends DbConnection {
 	{
 		LoadInfo data = new LoadInfo();
 		String query = "SELECT *"
-					+ " FROM LoadInfo as A JOIN Load as B ON A.IdLoad = B.IdLoad"
+					+ " FROM LoadInfo as A JOIN Loads as B ON A.IdLoad = B.IdLoad"
 					+ " WHERE A.IdLoad = '"+idLoad+"'"
 					+ " AND DateTime = '"+format.format(datetime.getTime())+"'";
 		try {
@@ -109,12 +109,17 @@ public class DbLoadInfo extends DbConnection {
 	public ArrayList<FlexibilityData> getFutureLoadInfoByIdAgent (int idLoad, Calendar datetime)
 	{
 		ArrayList<FlexibilityData> list = new ArrayList<FlexibilityData>();
-		String query = "SELECT *"
+		String querysqlserver = "SELECT *"
 				+ " FROM LoadInfo"
 				+ " WHERE IdLoad = "+idLoad
 				+ " AND DateTime > '"+format.format(datetime.getTime())+"'"
 				+ " AND DATEPART(DAY, DateTime) = "+datetime.get(Calendar.DAY_OF_MONTH);
-		//System.out.println("FUTURE LIST "+query);
+		String query = "SELECT *"
+				+ " FROM LoadInfo"
+				+ " WHERE IdLoad = "+idLoad
+				+ " AND DateTime > '"+format.format(datetime.getTime())+"'"
+				+ " AND DAYOFMONTH(DateTime) = "+datetime.get(Calendar.DAY_OF_MONTH);
+		System.out.println("FUTURE LIST "+query);
 		try {
 			ResultSet rs = stmt.executeQuery(query);
 			while(rs.next())

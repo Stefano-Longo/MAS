@@ -19,6 +19,7 @@ public class DbControlData extends DbConnection {
 						+format.format(controlData.getDatetime().getTime())+"',"+controlData.getDerPower()+","
 						+controlData.getBatteryPower()+","+controlData.getLoadPower()+", "+controlData.getGridPower()+", "
 						+controlData.getCostKwh()+", "+controlData.getConfirmed()+")";
+		//System.out.println(query);
 		try {
 			return stmt.execute(query);
 		} catch (SQLException e) {
@@ -53,7 +54,7 @@ public class DbControlData extends DbConnection {
 	public Boolean setConfirmed (String idAgent, Calendar datetime)
 	{
 		String query = "UPDATE ControlData"
-				+ " SET Confirmed = 'true'"
+				+ " SET Confirmed = 1"
 				+ " WHERE IdAgent = '"+idAgent+"'"
 				+ " AND DateTime = '"+format.format(datetime.getTime())+"'";
 		try {

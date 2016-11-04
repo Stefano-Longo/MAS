@@ -48,7 +48,7 @@ public class DbAggregatorDer extends DbConnection {
 				cal.setTime(rs.getTimestamp("DateTime"));
 
 				data = new FlexibilityData(rs.getString("IdAggregatorAgent"), cal, rs.getDouble("LowerLimit"), 
-						rs.getDouble("UpperLimit"), rs.getDouble("CostKwh"), 
+						rs.getDouble("UpperLimit"), GeneralData.round(rs.getDouble("CostKwh"), 5), 
 						rs.getDouble("DesideredChoice"), "der");
 				return data;
 			}
@@ -102,7 +102,7 @@ public class DbAggregatorDer extends DbConnection {
 		return list;
 	}
 	
-	public Boolean updateLastDerConfirmedChoice(String idAggregatorAgent, int idDer, boolean confirmed, Calendar datetime)
+	public Boolean updateLastDerConfirmedChoice(String idAggregatorAgent, int idDer, int confirmed, Calendar datetime)
 	{
 		String query = "UPDATE DerAggregatorData"
 				+ " SET Confirmed = '"+confirmed+"'"

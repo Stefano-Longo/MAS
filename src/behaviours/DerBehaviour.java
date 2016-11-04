@@ -41,7 +41,7 @@ public class DerBehaviour extends OneShotBehaviour {
 			System.out.println("\nI'm "+this.myAgent.getName()+" and Control Agent requested "+msgData.getPowerRequested()+" Kw from me"
 				+ "\nMy limits are: derData.getProductionMin(): "+derData.getProductionMin()+" derData.getProductionMax():"+derData.getProductionMax()
 				+ "\nfor datetime: "+msgData.getDatetime().getTime());
-			OkData ko = new OkData(msgData.getDatetime(), "der", false);
+			OkData ko = new OkData(msgData.getDatetime(), "der", 0);
 			new BaseAgent().sendMessageToAgentsByServiceType(this.myAgent, "DerAggregatorAgent",
 					"ok", ko);
 			return;
@@ -49,7 +49,7 @@ public class DerBehaviour extends OneShotBehaviour {
 		
 		new DbDerData().updateDerData(newDerData);
 		
-		OkData ok = new OkData(msgData.getDatetime(), "der", true);
+		OkData ok = new OkData(msgData.getDatetime(), "der", 1);
 		new BaseAgent().sendMessageToAgentsByServiceType(this.myAgent, "DerAggregatorAgent",
 				"ok", ok);
 	}

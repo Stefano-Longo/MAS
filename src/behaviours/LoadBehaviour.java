@@ -36,7 +36,7 @@ public class LoadBehaviour extends OneShotBehaviour {
 			System.out.println("\nI'm "+this.myAgent.getName()+" and Control Agent requested "+msgData.getPowerRequested()+" Kw from me"
 				+ "\nMy limits are: loadData.getConsumptionMin(): "+loadData.getConsumptionMin()+" loadData.getConsumptionMax():"+loadData.getConsumptionMax()
 				+ "\nfor datetime: "+msgData.getDatetime().getTime());
-			OkData ko = new OkData(msgData.getDatetime(), "load", false);
+			OkData ko = new OkData(msgData.getDatetime(), "load", 0);
 			new BaseAgent().sendMessageToAgentsByServiceType(this.myAgent, "LoadAggregatorAgent",
 					"ok", ko);
 			return;
@@ -54,7 +54,7 @@ public class LoadBehaviour extends OneShotBehaviour {
 			new DbLoadInfo().updateLoadInfo(newLoadInfo);
 		}
 		
-		OkData ok = new OkData(msgData.getDatetime(), "load", true);
+		OkData ok = new OkData(msgData.getDatetime(), "load", 1);
 		new BaseAgent().sendMessageToAgentsByServiceType(this.myAgent, "LoadAggregatorAgent",
 				"ok", ok);
 	}

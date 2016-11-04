@@ -18,7 +18,7 @@ public class DbDerData extends DbConnection {
 				+ " ProductionMax, ProductionRequested, DesideredChoice, Confirmed)"
 				+ " VALUES ('"+der.getIdDer()+"','"+format.format(der.getDatetime().getTime())+"',"
 						+der.getCostKwh()+","+der.getProductionMin()+","+der.getProductionMax()+","
-						+der.getProductionRequested()+","+der.getDesideredChoice()+", 'false')";
+						+der.getProductionRequested()+","+der.getDesideredChoice()+", '0')";
 		//System.out.println(query);
 		try {
 			return stmt.execute(query);
@@ -39,7 +39,7 @@ public class DbDerData extends DbConnection {
 	public DerData getAverageLastMonthProductionByIdDer (int idDer, Calendar datetime)
 	{
 		DerData data = new DerData();
-		String query = "SELECT Avg(CostKwh) as CostKwh, Avg(ProductionMin) as ProdMin,"
+		String querysqlserver = "SELECT Avg(CostKwh) as CostKwh, Avg(ProductionMin) as ProdMin,"
 				+ " Avg(ProductionMax) as ProdMax, Avg(ProductionRequested) as ProdReq,"
 				+ " Avg(DesideredChoice) as DesChoice"
 				+ " FROM DerDataHistory"
@@ -47,7 +47,15 @@ public class DbDerData extends DbConnection {
 				+ " AND DATEPART(HOUR, Datetime) = "+datetime.get(Calendar.HOUR_OF_DAY)
 				+ " AND DATEPART(MINUTE, Datetime) = "+datetime.get(Calendar.MINUTE)
 				+ " AND DATEDIFF(day,DateTime,'"+format.format(datetime.getTime())+"') between 0 and 30";
-		//System.out.println(query);
+		String query = "SELECT Avg(CostKwh) as CostKwh, Avg(ProductionMin) as ProdMin,"
+				+ " Avg(ProductionMax) as ProdMax, Avg(ProductionRequested) as ProdReq,"
+				+ " Avg(DesideredChoice) as DesChoice"
+				+ " FROM DerDataHistory"
+				+ " WHERE IdDer = "+idDer
+				+ " AND HOUR(Datetime) = "+datetime.get(Calendar.HOUR_OF_DAY)
+				+ " AND MINUTE(Datetime) = "+datetime.get(Calendar.MINUTE)
+				+ " AND DATEDIFF(DateTime,'"+format.format(datetime.getTime())+"') between 0 and 30";
+		System.out.println(query);
 		try {
 			ResultSet rs = stmt.executeQuery(query);
 			while(rs.next())
@@ -63,12 +71,19 @@ public class DbDerData extends DbConnection {
 	
 	public double getAverageLastMonthProduction (Calendar datetime)
 	{
-		String query = "SELECT AVG(q.Production) as ProductionAvg"
+		String querysqlserver = "SELECT AVG(q.Production) as ProductionAvg"
 				+ " FROM (SELECT DateTime, Avg(DesideredChoice) as Production"
 				+ " FROM DerDataHistory"
 				+ " WHERE DATEPART(HOUR, Datetime) = "+datetime.get(Calendar.HOUR_OF_DAY)
 					+ " AND DATEPART(MINUTE, Datetime) = "+datetime.get(Calendar.MINUTE)
 					+ " AND DATEDIFF(day,DateTime,'"+format.format(datetime.getTime())+"') between 0 and 30"
+				+ " GROUP BY DateTime) as q";
+		String query = "SELECT AVG(q.Production) as ProductionAvg"
+				+ " FROM (SELECT DateTime, Avg(DesideredChoice) as Production"
+				+ " FROM DerDataHistory"
+				+ " WHERE HOUR(Datetime) = "+datetime.get(Calendar.HOUR_OF_DAY)
+					+ " AND MINUTE(Datetime) = "+datetime.get(Calendar.MINUTE)
+					+ " AND DATEDIFF(DateTime,'"+format.format(datetime.getTime())+"') between 0 and 30"
 				+ " GROUP BY DateTime) as q";
 		try {
 			ResultSet rs = stmt.executeQuery(query);
@@ -110,7 +125,7 @@ public class DbDerData extends DbConnection {
 	{
 		String query = "UPDATE DerDataHistory"
 				+ " SET ProductionRequested = "+der.getProductionRequested()+","
-					+ " Confirmed = 'true'"
+					+ " Confirmed = 1"
 				+ " WHERE IdDer = "+der.getIdDer()
 				+ " AND DateTime = '"+format.format(der.getDatetime().getTime())+"'";
 		try {
