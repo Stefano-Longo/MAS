@@ -2,6 +2,7 @@ package database;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
@@ -17,8 +18,9 @@ public class DbConnection {
 	static final String USER = "root";
 	static final String PASS = "";
 	
-	protected Connection conn = null;
-	protected Statement stmt = null;
+	public Connection conn = null;
+	public Statement stmt = null;
+	public ResultSet rs = null;
     
     public DbConnection(){
     	
@@ -65,10 +67,8 @@ public class DbConnection {
     }
     
     public void connClose(){
-        try{
-            conn.close();
-        }catch(SQLException e){
-			e.printStackTrace();
-        }
+	    try { rs.close(); } catch (Exception e) { }
+	    try { stmt.close(); } catch (Exception e) { }
+	    try { conn.close(); } catch (Exception e) { }
     }
 }

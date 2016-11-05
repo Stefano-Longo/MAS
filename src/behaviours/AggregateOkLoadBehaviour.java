@@ -35,7 +35,7 @@ public class AggregateOkLoadBehaviour extends OneShotBehaviour {
 				loadInfo.getIdLoad(), msgData.getOk(), msgData.getDatetime());
 		//System.out.println("\nLoadAggrOK dopo: "+msgData.getDatetime().getTime());
 		
-		int confirmedTrue = new DbAggregatorLoad().getLastConfirmedByChoice(this.myAgent.getName(), true, msgData.getDatetime());
+		int confirmedTrue = new DbAggregatorLoad().getLastConfirmedByChoice(this.myAgent.getName(), 1, msgData.getDatetime());
 		int loadAgents = new BaseAgent().getAgentsbyServiceType(this.myAgent, "LoadAgent").length;
 		System.out.println("LoadOk - confirmedTrue:"+confirmedTrue+" loadAgents: "+loadAgents);
 		if(confirmedTrue == loadAgents)

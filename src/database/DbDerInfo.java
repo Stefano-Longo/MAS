@@ -28,6 +28,8 @@ public class DbDerInfo extends DbConnection {
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
+		} finally {
+			connClose();
 		}
 		return data;
 	}
@@ -49,6 +51,8 @@ public class DbDerInfo extends DbConnection {
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
+		} finally {
+			connClose();
 		}
 		return data;
 	}

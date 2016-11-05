@@ -15,22 +15,37 @@ public class DbAggregatorLoad extends DbConnection {
 
 	static DateFormat format = GeneralData.getFormat();
 
-	public static boolean deleteOldForecastDataByIdLoad (String idAggregatorAgent, String idAgent, Statement stmt)
+	public boolean deleteOldForecastDataByIdLoad (String idAggregatorAgent, String idAgent, Statement stmt)
 	{
 		String query = "DELETE FROM LoadAggregatorData "
 				+ " WHERE RTRIM(IdAggregatorAgent) = '"+idAggregatorAgent+"'"
 				+ " AND IdLoad = '"+idAgent+"'"
 				+ " AND Forecast = 1";
-		System.out.println(query);
+		//System.out.println(query);
 		try {
-			return stmt.execute(query);
+			stmt.execute(query);
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
 		return false;
 	}
 	
-	public static Boolean addFlexibilityLoadMessage (String idAggregatorAgent, ArrayList<FlexibilityData> data, Statement stmt)
+	public boolean deleteOldNonForecastDataByIdLoad (String idAggregatorAgent, String idAgent, Calendar datetime, Statement stmt)
+	{
+		String query = "DELETE FROM LoadAggregatorData "
+				+ " WHERE RTRIM(IdAggregatorAgent) = '"+idAggregatorAgent+"'"
+				+ " AND IdLoad = '"+idAgent+"'"
+				+ " AND DateTime = '"+format.format(datetime.getTime())+"'";
+		//System.out.println(query);
+		try {
+			stmt.execute(query);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return false;
+	}
+	
+	public Boolean addFlexibilityLoadMessage (String idAggregatorAgent, ArrayList<FlexibilityData> data, Statement stmt)
 	{
 		for(int i=0; i<data.size(); i++)
 		{
@@ -47,32 +62,36 @@ public class DbAggregatorLoad extends DbConnection {
 				e.printStackTrace();
 			}
 		}
+		connClose();
 		return true;
 	}
 	
 	public ArrayList<TimePowerPrice> checkThreshold(String idAggregatorAgent, Calendar datetime, Statement stmt)
 	{
 		ArrayList<TimePowerPrice> list = new ArrayList<TimePowerPrice>();
-		String query = "SELECT p.DateTime, LowerLimit, Threshold"
-					+ " FROM Price p JOIN (SELECT DateTime, SUM(LowerLimit) as LowerLimit"
+		String query = "SELECT p.DateTime, MinimumConsumption, Threshold"
+					+ " FROM Price p JOIN (SELECT DateTime, SUM(LowerLimit) as MinimumConsumption"
 								+ " FROM LoadAggregatorData  "
 								+ " WHERE IdAggregatorAgent = '"+idAggregatorAgent+"'"
 									+" AND Forecast = 1"
 								+ " GROUP BY DateTime) loads "
 							+ "ON p.DateTime = loads.DateTime ";
-		System.out.println(query);
+		//System.out.println(query);
 		try {
 			ResultSet rs = stmt.executeQuery(query);
 			while(rs.next())
 			{	
 				Calendar cal = Calendar.getInstance();
 				cal.setTime(rs.getTimestamp("DateTime"));
-				TimePowerPrice data = new TimePowerPrice(cal, rs.getDouble("Threshold"), rs.getDouble("LowerLimit"));
+				TimePowerPrice data = new TimePowerPrice(cal, GeneralData.round(rs.getDouble("Threshold"), 2), 
+						GeneralData.round(rs.getDouble("MinimumConsumption"), 2));
 				list.add(data);
 			}
 			return list;
 		} catch (SQLException e) {
 			e.printStackTrace();
+		} finally {
+			connClose();
 		}
 		return null;
 	}
@@ -102,6 +121,8 @@ public class DbAggregatorLoad extends DbConnection {
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
+		} finally {
+			connClose();
 		}
 		return null;
 	}
@@ -122,6 +143,8 @@ public class DbAggregatorLoad extends DbConnection {
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
+		} finally {
+			connClose();
 		}
 		return 0;
 	}
@@ -149,6 +172,8 @@ public class DbAggregatorLoad extends DbConnection {
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
+		} finally {
+			connClose();
 		}
 		return list;
 	}
@@ -165,18 +190,21 @@ public class DbAggregatorLoad extends DbConnection {
 			return stmt.execute(query);
 		} catch (SQLException e) {
 			e.printStackTrace();
+		} finally {
+			connClose();
 		}
 		return false;
 	}
 	
-	public int getLastConfirmedByChoice (String idAggregatorAgent, boolean confirmed, Calendar datetime)
+	public int getLastConfirmedByChoice (String idAggregatorAgent, int confirmed, Calendar datetime)
 	{
 		String query = "SELECT COUNT(*) as Count"
 				+ " FROM LoadAggregatorData"
 				+ " WHERE IdAggregatorAgent = '"+idAggregatorAgent+"'"
 				+ " AND Confirmed = '"+confirmed+"'"
-				+ " AND DateTime = '"+format.format(datetime.getTime())+"'";
-		System.out.println(query);
+				+ " AND DateTime = '"+format.format(datetime.getTime())+"'"
+				+ " AND Forecast = 0";
+		//System.out.println(query);
 		try {
 			ResultSet rs = stmt.executeQuery(query);
 			while(rs.next())
@@ -185,6 +213,8 @@ public class DbAggregatorLoad extends DbConnection {
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
+		} finally {
+			connClose();
 		}
 		return 0;
 	}

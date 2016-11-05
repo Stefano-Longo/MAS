@@ -26,6 +26,8 @@ public class DbAggregatorDer extends DbConnection {
 			return stmt.execute(query);
 		} catch (SQLException e) {
 			e.printStackTrace();
+		} finally {
+			connClose();
 		}
 		return false;
 	}
@@ -41,7 +43,7 @@ public class DbAggregatorDer extends DbConnection {
 				+ " GROUP BY DateTime, IdAggregatorAgent";
 		//System.out.println(query);
 		try {
-			ResultSet rs = stmt.executeQuery(query);
+			rs = stmt.executeQuery(query);
 			while(rs.next())
 			{	
 				Calendar cal = Calendar.getInstance();
@@ -54,6 +56,8 @@ public class DbAggregatorDer extends DbConnection {
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
+		} finally {
+			connClose();
 		}
 		return null;
 	}
@@ -65,13 +69,15 @@ public class DbAggregatorDer extends DbConnection {
     			+ " WHERE IdAggregatorAgent = '"+idAgent+"'"
     			+ " AND DateTime = '"+format.format(datetime.getTime())+"'";
 		try{
-			ResultSet rs = stmt.executeQuery(query);
+			rs = stmt.executeQuery(query);
 			while(rs.next())
 			{
 				return rs.getInt("Count");
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
+		} finally {
+			connClose();
 		}
 		return 0;
 	}
@@ -85,7 +91,7 @@ public class DbAggregatorDer extends DbConnection {
 				+ " AND DateTime = '"+format.format(datetime.getTime())+"'"
 				+ " ORDER BY CostKwh";
 		try {
-			ResultSet rs = stmt.executeQuery(query);
+			rs = stmt.executeQuery(query);
 			while(rs.next())
 			{
 				Calendar cal = Calendar.getInstance();
@@ -98,6 +104,8 @@ public class DbAggregatorDer extends DbConnection {
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
+		} finally {
+			connClose();
 		}
 		return list;
 	}
@@ -114,11 +122,13 @@ public class DbAggregatorDer extends DbConnection {
 			return stmt.execute(query);
 		} catch (SQLException e) {
 			e.printStackTrace();
+		} finally {
+			connClose();
 		}
 		return false;
 	}
 	
-	public int getLastConfirmedByChoice (String idAggregatorAgent, boolean confirmed, Calendar datetime)
+	public int getLastConfirmedByChoice (String idAggregatorAgent, int confirmed, Calendar datetime)
 	{
 		String query = "SELECT COUNT(*) as Count"
 				+ " FROM DerAggregatorData"
@@ -127,13 +137,15 @@ public class DbAggregatorDer extends DbConnection {
 				+ " AND DateTime = '"+format.format(datetime.getTime())+"'";
 		//System.out.println(query);
 		try {
-			ResultSet rs = stmt.executeQuery(query);
+			rs = stmt.executeQuery(query);
 			while(rs.next())
 			{
 				return rs.getInt("Count");
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
+		} finally {
+			connClose();
 		}
 		return 0;
 	}

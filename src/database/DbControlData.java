@@ -24,6 +24,8 @@ public class DbControlData extends DbConnection {
 			return stmt.execute(query);
 		} catch (SQLException e) {
 			e.printStackTrace();
+		} finally {
+			connClose();
 		}
 		return false;
 	}
@@ -47,6 +49,8 @@ public class DbControlData extends DbConnection {
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
+		} finally {
+			connClose();
 		}
 		return controlData;
 	}
@@ -61,6 +65,8 @@ public class DbControlData extends DbConnection {
 			return stmt.execute(query);
 		} catch (SQLException e) {
 			e.printStackTrace();
+		} finally {
+			connClose();
 		}
 		return false;
 	}

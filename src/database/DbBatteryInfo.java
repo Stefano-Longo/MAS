@@ -19,6 +19,8 @@ public class DbBatteryInfo extends DbConnection{
 			return stmt.execute(query);
 		} catch (SQLException e) {
 			e.printStackTrace();
+		} finally {
+			connClose();
 		}
 		return null;
 	}
@@ -42,6 +44,8 @@ public class DbBatteryInfo extends DbConnection{
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
+		} finally {
+			connClose();
 		}
 		return null;
 	}
@@ -63,6 +67,8 @@ public class DbBatteryInfo extends DbConnection{
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
+		} finally {
+			connClose();
 		}
 		return null;
 	}

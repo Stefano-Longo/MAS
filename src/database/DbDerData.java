@@ -21,9 +21,13 @@ public class DbDerData extends DbConnection {
 						+der.getProductionRequested()+","+der.getDesideredChoice()+", '0')";
 		//System.out.println(query);
 		try {
-			return stmt.execute(query);
+			stmt.execute(query);
+			connClose();
+			return true;
 		} catch (SQLException e) {
 			e.printStackTrace();
+		} finally {
+			connClose();
 		}
 		return false;
 	}
@@ -54,23 +58,28 @@ public class DbDerData extends DbConnection {
 				+ " WHERE IdDer = "+idDer
 				+ " AND HOUR(Datetime) = "+datetime.get(Calendar.HOUR_OF_DAY)
 				+ " AND MINUTE(Datetime) = "+datetime.get(Calendar.MINUTE)
-				+ " AND DATEDIFF(DateTime,'"+format.format(datetime.getTime())+"') between 0 and 30";
-		System.out.println(query);
+				+ " AND DATEDIFF('"+format.format(datetime.getTime())+"', DateTime) between 0 and 30";
+		//System.out.println(query);
+		ResultSet rs = null;
 		try {
-			ResultSet rs = stmt.executeQuery(query);
+			rs = stmt.executeQuery(query);
 			while(rs.next())
 			{
 				data = new DerData(idDer, datetime, rs.getDouble("CostKwh"), rs.getDouble("ProdMin"),
 						rs.getDouble("ProdMax"), rs.getDouble("ProdReq"), rs.getDouble("DesChoice"));
 			}
+			connClose();
 		} catch (SQLException e) {
 			e.printStackTrace();
+		} finally {
+			connClose();
 		}
 		return data;
 	}
 	
 	public double getAverageLastMonthProduction (Calendar datetime)
 	{
+		ResultSet rs = null;
 		String querysqlserver = "SELECT AVG(q.Production) as ProductionAvg"
 				+ " FROM (SELECT DateTime, Avg(DesideredChoice) as Production"
 				+ " FROM DerDataHistory"
@@ -83,16 +92,18 @@ public class DbDerData extends DbConnection {
 				+ " FROM DerDataHistory"
 				+ " WHERE HOUR(Datetime) = "+datetime.get(Calendar.HOUR_OF_DAY)
 					+ " AND MINUTE(Datetime) = "+datetime.get(Calendar.MINUTE)
-					+ " AND DATEDIFF(DateTime,'"+format.format(datetime.getTime())+"') between 0 and 30"
+					+ " AND DATEDIFF('"+format.format(datetime.getTime())+"',DateTime) between 0 and 30"
 				+ " GROUP BY DateTime) as q";
 		try {
-			ResultSet rs = stmt.executeQuery(query);
+			rs = stmt.executeQuery(query);
 			while(rs.next())
 			{
 				return rs.getDouble("ProductionAvg");
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
+		} finally {
+			connClose();
 		}
 		return 0;
 	}
@@ -117,6 +128,8 @@ public class DbDerData extends DbConnection {
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
+		} finally {
+			connClose();
 		}
 		return data;
 	}
@@ -132,6 +145,8 @@ public class DbDerData extends DbConnection {
 			return stmt.execute(query);
 		} catch (SQLException e) {
 			e.printStackTrace();
+		} finally {
+			connClose();
 		}
 		return false;
 	}

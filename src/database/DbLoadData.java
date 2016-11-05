@@ -32,6 +32,8 @@ public class DbLoadData extends DbConnection {
 			return stmt.execute(query);
 		} catch (SQLException e) {
 			e.printStackTrace();
+		} finally {
+			connClose();
 		}
 		return false;
 	}
@@ -48,6 +50,26 @@ public class DbLoadData extends DbConnection {
 			return stmt.execute(query);
 		} catch (SQLException e) {
 			e.printStackTrace();
+		} finally {
+			connClose();
+		}
+		return false;
+	}
+	
+	public Boolean updateLoadDataToDateTime(LoadData load)
+	{
+		String query = "UPDATE LoadDataHistory"
+				+ " SET  ToDateTime = '"+format.format(load.getDatetime().getTime())+"',"
+					+ " ConsumptionShifted = "+load.getConsumptionShifted()+", "
+					+ " SolutionNumber = "+load.getSolutionNumber()
+				+ " WHERE IdLoad = "+load.getIdLoad()
+				+ " AND DateTime = '"+format.format(load.getDatetime().getTime())+"'";
+		try {
+			return stmt.execute(query);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			connClose();
 		}
 		return false;
 	}
@@ -55,12 +77,12 @@ public class DbLoadData extends DbConnection {
 	public LoadData getLastLoadData (int idLoad, Calendar datetime)
 	{
 		LoadData data = new LoadData();
-		System.out.println("In query: datetime:"+datetime.getTime());
+		//System.out.println("In query: datetime:"+datetime.getTime());
 		String query = "SELECT *"
 				+ " FROM LoadDataHistory"
 				+ " WHERE IdLoad = "+idLoad
 				+ " AND DateTime = '"+format.format(datetime.getTime())+"'";
-		System.out.println(query);
+		//System.out.println(query);
 		try {
 			ResultSet rs = stmt.executeQuery(query);
 			while(rs.next())
@@ -82,6 +104,8 @@ public class DbLoadData extends DbConnection {
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
+		} finally {
+			connClose();
 		}
 		return data;
 	}

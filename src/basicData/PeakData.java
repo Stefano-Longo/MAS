@@ -10,7 +10,7 @@ public class PeakData {
 	
 	public PeakData(String idAggregatorAgent, Calendar datetime, double peakValue) {
 		this.idAggregatorAgent = idAggregatorAgent;
-		this.datetime = datetime;
+		this.datetime = (Calendar)datetime.clone();
 		this.peakValue = peakValue;
 	}
 	
@@ -24,7 +24,7 @@ public class PeakData {
 		return datetime;
 	}
 	public void setDatetime(Calendar datetime) {
-		this.datetime = datetime;
+		this.datetime = (Calendar)datetime.clone();
 	}
 	public double getPeakValue() {
 		return peakValue;
@@ -32,6 +32,4 @@ public class PeakData {
 	public void setPeakValue(double peakValue) {
 		this.peakValue = peakValue;
 	}
-
-	
 }

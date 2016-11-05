@@ -156,5 +156,4 @@ public class LoadData implements Serializable {
 	public void setSolutionNumber(int solutionNumber) {
 		this.solutionNumber = solutionNumber;
 	}
-	
 }

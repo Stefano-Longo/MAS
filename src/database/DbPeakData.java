@@ -15,7 +15,7 @@ public class DbPeakData extends DbConnection {
 
 	DateFormat format = GeneralData.getFormat();
 	
-	public Boolean addPeaks (ArrayList<PeakData> peaks, Statement stmt)
+	public Boolean addPeaks (ArrayList<PeakData> peaks)
 	{
 		for(int i=0; i<peaks.size(); i++)
 		{
@@ -24,15 +24,16 @@ public class DbPeakData extends DbConnection {
 					+ peaks.get(i).getPeakValue()+")";
 			//System.out.println(query);
 			try {
-				return stmt.execute(query);
+				stmt.execute(query);
 			} catch (SQLException e) {
 				e.printStackTrace();
 			}
 		}
+		connClose();
 		return false;
 	}
 	
-	public ArrayList<PeakData> getTodayPeaks (String idAggregatorAgent, Calendar datetime, Statement stmt)
+	public ArrayList<PeakData> getTodayPeaks (String idAggregatorAgent, Calendar datetime)
 	{
 		ArrayList<PeakData> list = new ArrayList<PeakData>();
 		String querysqlserver = "SELECT *"
@@ -49,13 +50,15 @@ public class DbPeakData extends DbConnection {
 			while(rs.next())
 			{
 				Calendar cal = Calendar.getInstance();
-				cal.setTime(rs.getDate("DateTime"));
+				cal.setTime(rs.getTimestamp("DateTime"));
 				
 				PeakData data = new PeakData(idAggregatorAgent, cal, rs.getDouble("PeakValue"));
 				list.add(data);
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
+		} finally {
+			connClose();
 		}
 		return list;
 	}

@@ -24,6 +24,8 @@ public class DbControlArrivalData extends DbConnection {
 			return stmt.execute(query);
 		} catch (SQLException e) {
 			e.printStackTrace();
+		} finally {
+			connClose();
 		}
 		return null;
 	}
@@ -37,6 +39,7 @@ public class DbControlArrivalData extends DbConnection {
 				+ " AND Type = '"+type+"'"
 				+ " AND DateTime = '"+format.format(datetime.getTime())+"'"
 				+ " GROUP BY DateTime";
+		//System.out.println(query);
 		try {
 			ResultSet rs = stmt.executeQuery(query);
 			while(rs.next())
@@ -52,6 +55,8 @@ public class DbControlArrivalData extends DbConnection {
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
+		} finally {
+			connClose();
 		}
 		return null;
 	}
@@ -62,6 +67,7 @@ public class DbControlArrivalData extends DbConnection {
     			+ " FROM ControlArrivalData"
     			+ " WHERE IdControlAgent = '"+idControlAgent+"'"
     			+ " AND DateTime = '"+format.format(datetime.getTime())+"'";
+		
 		try{
 			ResultSet rs = stmt.executeQuery(query);
 			while(rs.next())
@@ -70,6 +76,8 @@ public class DbControlArrivalData extends DbConnection {
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
+		} finally {
+			connClose();
 		}
 		return 0;
 	}
@@ -85,18 +93,20 @@ public class DbControlArrivalData extends DbConnection {
 			return stmt.execute(query);
 		} catch (SQLException e) {
 			e.printStackTrace();
+		} finally {
+			connClose();
 		}
 		return false;
 	}
 	
-	public int getLastConfirmedByChoice (String idAgent, boolean confirmed, Calendar datetime)
+	public int getLastConfirmedByChoice (String idAgent, int confirmed, Calendar datetime)
 	{
 		String query = "SELECT COUNT(*) as Count"
 				+ " FROM ControlArrivalData"
 				+ " WHERE IdControlAgent = '"+idAgent+"'"
 				+ " AND Confirmed = '"+confirmed+"'"
 				+ " AND DateTime = '"+format.format(datetime.getTime())+"'";
-		System.out.println(query);
+		//System.out.println(query);
 		try {
 			ResultSet rs = stmt.executeQuery(query);
 			while(rs.next())
@@ -105,6 +115,8 @@ public class DbControlArrivalData extends DbConnection {
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
+		} finally {
+			connClose();
 		}
 		return 0;
 	}

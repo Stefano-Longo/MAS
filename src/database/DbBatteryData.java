@@ -24,6 +24,8 @@ public class DbBatteryData extends DbConnection	{
 			return stmt.execute(query);
 		} catch (SQLException e) {
 			e.printStackTrace();
+		} finally {
+			connClose();
 		}
 		return false;
 	}
@@ -41,6 +43,8 @@ public class DbBatteryData extends DbConnection	{
 			return stmt.execute(query);
 		} catch (SQLException e) {
 			e.printStackTrace();
+		} finally {
+			connClose();
 		}
 		return false;
 	}
@@ -59,7 +63,7 @@ public class DbBatteryData extends DbConnection	{
 				+ " AND DateTime < '"+format.format(datetime.getTime())+"'"
 				+ " ORDER BY DateTime DESC"
 				+ " LIMIT 1";
-		System.out.println(query);
+		//System.out.println(query);
 		try {
 			ResultSet rs = stmt.executeQuery(query);
 			while(rs.next())
@@ -73,6 +77,8 @@ public class DbBatteryData extends DbConnection	{
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
+		} finally {
+			connClose();
 		}
 		return data;
 	}
@@ -99,6 +105,8 @@ public class DbBatteryData extends DbConnection	{
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
+		} finally {
+			connClose();
 		}
 		return data;
 	}

@@ -27,7 +27,7 @@ public class DbLoadInfo extends DbConnection {
 						+ " AND B.DateTime = '"+format.format(datetime.getTime())+"'"
 						+ " AND NonCriticalConsumption > 0"
 					+ " ORDER BY P.EnergyPrice";
-		//System.out.println(query);
+		System.out.println(query);
 		try {
 			ResultSet rs = stmt.executeQuery(query);
 			while(rs.next())
@@ -44,6 +44,8 @@ public class DbLoadInfo extends DbConnection {
 			return list;
 		} catch (SQLException e) {
 			e.printStackTrace();
+		} finally {
+			connClose();
 		}
 		return null;
 	}
@@ -55,7 +57,7 @@ public class DbLoadInfo extends DbConnection {
 					+ " FROM LoadInfo A JOIN Loads B ON A.IdLoad = B.IdLoad"
 					+ " WHERE RTRIM(IdAgent) = '"+idAgent+"'"
 					+ " AND DateTime = '"+format.format(datetime.getTime())+"'";
-		System.out.println(query);
+		//System.out.println(query);
 		try {
 			ResultSet rs = stmt.executeQuery(query);
 			while(rs.next())
@@ -66,6 +68,8 @@ public class DbLoadInfo extends DbConnection {
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
+		} finally {
+			connClose();
 		}
 		return data;
 	}
@@ -87,6 +91,8 @@ public class DbLoadInfo extends DbConnection {
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
+		} finally {
+			connClose();
 		}
 		return data;
 	}
@@ -94,13 +100,16 @@ public class DbLoadInfo extends DbConnection {
 	public Boolean updateLoadInfo(LoadInfo loadInfo)
 	{
 		String query = "UPDATE LoadInfo"
-				+ " SET  ConsumptionAdded += "+loadInfo.getConsumptionAdded()
+				+ " SET  ConsumptionAdded = ConsumptionAdded + "+loadInfo.getConsumptionAdded()
 				+ " WHERE IdLoad = "+loadInfo.getIdLoad()
 				+ " AND DateTime = '"+format.format(loadInfo.getDatetime().getTime())+"'";
+		System.out.println(query);
 		try {
 			return stmt.execute(query);
 		} catch (SQLException e) {
 			e.printStackTrace();
+		} finally {
+			connClose();
 		}
 		return false;
 	}
@@ -119,7 +128,7 @@ public class DbLoadInfo extends DbConnection {
 				+ " WHERE IdLoad = "+idLoad
 				+ " AND DateTime > '"+format.format(datetime.getTime())+"'"
 				+ " AND DAYOFMONTH(DateTime) = "+datetime.get(Calendar.DAY_OF_MONTH);
-		System.out.println("FUTURE LIST "+query);
+		//System.out.println("FUTURE LIST "+query);
 		try {
 			ResultSet rs = stmt.executeQuery(query);
 			while(rs.next())
@@ -136,6 +145,8 @@ public class DbLoadInfo extends DbConnection {
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
+		} finally {
+			connClose();
 		}
 		return list;
 	}

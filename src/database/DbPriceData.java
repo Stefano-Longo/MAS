@@ -31,6 +31,8 @@ public class DbPriceData extends DbConnection {
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
+		} finally {
+			connClose();
 		}
 		return null;
 	}
@@ -54,6 +56,8 @@ public class DbPriceData extends DbConnection {
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
+		} finally {
+			connClose();
 		}
 		return null;
 	}
@@ -84,6 +88,8 @@ public class DbPriceData extends DbConnection {
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
+		} finally {
+			connClose();
 		}
 		return list;
 	}
@@ -100,7 +106,7 @@ public class DbPriceData extends DbConnection {
 		String query = "SELECT *" 
 				+ " FROM Price"
 				+ " WHERE DateTime <= '"+format.format(datetime.getTime())+"'"
-				+ " AND DATEDIFF(DateTime,'"+format.format(datetime.getTime())+"') between 0 and 7"
+				+ " AND DATEDIFF('"+format.format(datetime.getTime())+"',DateTime) between 0 and 7"
 				+ " ORDER BY DateTime";
 		//System.out.println(query);
 		try {
@@ -115,6 +121,8 @@ public class DbPriceData extends DbConnection {
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
+		} finally {
+			connClose();
 		}
 		return list;
 	}

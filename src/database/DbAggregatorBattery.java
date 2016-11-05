@@ -31,6 +31,8 @@ public class DbAggregatorBattery extends DbConnection {
 			return stmt.execute(query);
 		} catch (SQLException e) {
 			e.printStackTrace();
+		} finally {
+			connClose();
 		}
 		return false;
 	}
@@ -53,7 +55,7 @@ public class DbAggregatorBattery extends DbConnection {
 				+ " AND Datetime = '"+format.format(datetime.getTime())+"'"
 				+ " GROUP BY DateTime";
 		try {
-			ResultSet rs = stmt.executeQuery(query);
+			rs = stmt.executeQuery(query);
 			while(rs.next())
 			{	
 				Calendar cal2 = Calendar.getInstance();
@@ -66,6 +68,8 @@ public class DbAggregatorBattery extends DbConnection {
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
+		} finally {
+			connClose();
 		}
 		return null;
 	}
@@ -84,13 +88,15 @@ public class DbAggregatorBattery extends DbConnection {
     			+ " AND DateTime = '"+format.format(datetime.getTime())+"'";
 		//System.out.println(query);
 		try{
-			ResultSet rs = stmt.executeQuery(query);
+			rs = stmt.executeQuery(query);
 			while(rs.next())
 			{
 				return rs.getInt("Count");
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
+		} finally {
+			connClose();
 		}
 		return 0;
 	}
@@ -109,7 +115,7 @@ public class DbAggregatorBattery extends DbConnection {
 				+ " AND DateTime = '"+format.format(datetime.getTime())+"'"
 				+ " ORDER BY Diff, IdBattery";
 		try {
-			ResultSet rs = stmt.executeQuery(query);
+			rs = stmt.executeQuery(query);
 			while(rs.next())
 			{
 				Calendar cal = Calendar.getInstance();
@@ -122,6 +128,8 @@ public class DbAggregatorBattery extends DbConnection {
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
+		} finally {
+			connClose();
 		}
 		
 		return list;
@@ -146,7 +154,7 @@ public class DbAggregatorBattery extends DbConnection {
 			   + " AND DateTime = '"+format.format(datetime.getTime())+"'"
 			   + " ORDER BY Diff, B.IdBattery";
 		try {
-			ResultSet rs = stmt.executeQuery(query);
+			rs = stmt.executeQuery(query);
 			while(rs.next())
 			{
 				Calendar cal = Calendar.getInstance();
@@ -160,6 +168,8 @@ public class DbAggregatorBattery extends DbConnection {
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
+		} finally {
+			connClose();
 		}
 		
 		return list;
@@ -177,11 +187,13 @@ public class DbAggregatorBattery extends DbConnection {
 			return stmt.execute(query);
 		} catch (SQLException e) {
 			e.printStackTrace();
+		} finally {
+			connClose();
 		}
 		return false;
 	}
 	
-	public int getLastConfirmedByChoice (String idAggregatorAgent, boolean confirmed, Calendar datetime)
+	public int getLastConfirmedByChoice (String idAggregatorAgent, int confirmed, Calendar datetime)
 	{
 		String query = "SELECT COUNT(*) as Count"
 				+ " FROM BatteryAggregatorData"
@@ -189,13 +201,15 @@ public class DbAggregatorBattery extends DbConnection {
 				+ " AND Confirmed = '"+confirmed+"'"
 				+ " AND DateTime = '"+format.format(datetime.getTime())+"'";
 		try {
-			ResultSet rs = stmt.executeQuery(query);
+			rs = stmt.executeQuery(query);
 			while(rs.next())
 			{
 				return rs.getInt("Count");
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
+		} finally {
+			connClose();
 		}
 		return 0;
 	}
