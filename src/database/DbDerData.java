@@ -87,13 +87,14 @@ public class DbDerData extends DbConnection {
 					+ " AND DATEPART(MINUTE, Datetime) = "+datetime.get(Calendar.MINUTE)
 					+ " AND DATEDIFF(day,DateTime,'"+format.format(datetime.getTime())+"') between 0 and 30"
 				+ " GROUP BY DateTime) as q";
-		String query = "SELECT AVG(q.Production) as ProductionAvg"
-				+ " FROM (SELECT DateTime, Avg(DesideredChoice) as Production"
+		String query = "SELECT SUM(q.Production) as ProductionAvg"
+				+ " FROM (SELECT IdDer, Avg(DesideredChoice) as Production"
 				+ " FROM DerDataHistory"
 				+ " WHERE HOUR(Datetime) = "+datetime.get(Calendar.HOUR_OF_DAY)
 					+ " AND MINUTE(Datetime) = "+datetime.get(Calendar.MINUTE)
 					+ " AND DATEDIFF('"+format.format(datetime.getTime())+"',DateTime) between 0 and 30"
-				+ " GROUP BY DateTime) as q";
+				+ " GROUP BY IdDer) as q";
+		//System.out.println(query);
 		try {
 			rs = stmt.executeQuery(query);
 			while(rs.next())

@@ -128,7 +128,7 @@ public class DbLoadInfo extends DbConnection {
 				+ " WHERE IdLoad = "+idLoad
 				+ " AND DateTime > '"+format.format(datetime.getTime())+"'"
 				+ " AND DAYOFMONTH(DateTime) = "+datetime.get(Calendar.DAY_OF_MONTH);
-		//System.out.println("FUTURE LIST "+query);
+		System.out.println("FUTURE LIST "+query);
 		try {
 			ResultSet rs = stmt.executeQuery(query);
 			while(rs.next())

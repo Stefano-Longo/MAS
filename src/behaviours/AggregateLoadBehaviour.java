@@ -57,17 +57,27 @@ public class AggregateLoadBehaviour extends OneShotBehaviour {
 		 * con i suoi dati nuovi. Poi si fa il controllo aggregando i dati. Se tutto va bene si committa altrimenti
 		 * si fa il rollback e si manda un messaggio all'ultimo agente.
 		 */
-		int ciao=0;
+		
 		DbConnection connection = new DbConnection();
 		try {
 			connection.stmt = connection.conn.createStatement();
 			connection.conn.setAutoCommit(false);
-			new DbAggregatorLoad().deleteOldNonForecastDataByIdLoad(this.myAgent.getName(), msgData.get(0).getIdAgent(), msgData.get(0).getDatetime(), connection.stmt);
-			new DbAggregatorLoad().deleteOldForecastDataByIdLoad(this.myAgent.getName(), msgData.get(0).getIdAgent(), connection.stmt);
+			
+			ArrayList<TimePowerPrice> list = new DbAggregatorLoad().checkThreshold(this.myAgent.getName(), 
+					msgData.get(0).getDatetime(), connection.stmt);
+			for(int i=0; i<list.size(); i++)
+			{
+				System.out.println(list.get(i).getDatetime().getTime()+" --> "+list.get(i).getEnergyPrice());
+			}
+			System.out.println("\n\n");
+			
+			new DbAggregatorLoad().deleteOldDataByIdLoad(this.myAgent.getName(), msgData.get(0).getIdAgent(), msgData.get(0).getDatetime(), connection.stmt);
+			//new DbAggregatorLoad().deleteOldForecastDataByIdLoad(this.myAgent.getName(), msgData.get(0).getIdAgent(), connection.stmt);
 			new DbAggregatorLoad().addFlexibilityLoadMessage(this.myAgent.getName(), msgData, connection.stmt);
 			//check if UpperLimit of all agents in all hours < Threshold
 			System.out.println("peaks size: "+peaks.size());
-			for(int i=0; i<peaks.size(); i++) System.out.println("PEAK: "+peaks.get(i).getDatetime().getTime()+" - "+peaks.get(i).getPeakValue());
+			for(int i=0; i<peaks.size(); i++) 
+				System.out.println("PEAK: "+peaks.get(i).getDatetime().getTime()+" - "+peaks.get(i).getPeakValue());
 			
 			boolean existPeak = existPeak(connection.stmt);
 			if(existPeak && msgData.get(0).getDesideredChoice() != msgData.get(0).getUpperLimit())
@@ -76,7 +86,6 @@ public class AggregateLoadBehaviour extends OneShotBehaviour {
 				System.out.println("Entered 1!");
 				
 				connection.conn.rollback();
-				System.out.println("TO-DO if I rollback I need to check what happens");
 				//send message back to the agent with the data timepowerprice
 				ArrayList<TimePowerPrice> data = new DbPriceData().getDailyTimePowerPrice(msgData.get(0).getDatetime());
 				LoadInfo loadInfo = new DbLoadInfo().getLoadInfoByIdLoad(msgData.get(0).getIdAgent(), msgData.get(0).getDatetime());
@@ -130,16 +139,14 @@ public class AggregateLoadBehaviour extends OneShotBehaviour {
 	{
 		ArrayList<TimePowerPrice> list = new DbAggregatorLoad().checkThreshold(this.myAgent.getName(), 
 				msgData.get(0).getDatetime(), stmt);
-
+		for(int i=0; i<list.size(); i++)
+		{
+			System.out.println(list.get(i).getDatetime().getTime()+" -> "+list.get(i).getEnergyPrice());
+		}
+		
 		//prendo i picchi esistenti nel db, se trova solo questi picchi che non si possono eliminare allora return true
 		ArrayList<PeakData> existingPeaks = new DbPeakData().getTodayPeaks(this.myAgent.getName(), msgData.get(0).getDatetime());
 		//stampa existingPeaks
-		System.out.println("\n\nEXISTING PEAKS - "+msgData.get(0).getIdAgent());
-		for(int i=0; i<existingPeaks.size(); i++)
-		{
-			System.out.println(existingPeaks.get(i).getDatetime().getTime()+ " " + existingPeaks.get(i).getPeakValue());
-		}
-		System.out.println("\n");
 		Boolean found = false;
 		Boolean entered = false;
 		int counter = 0;
@@ -158,29 +165,28 @@ public class AggregateLoadBehaviour extends OneShotBehaviour {
 					if(existingPeaks.get(k).getDatetime().getTime().compareTo(list.get(i).getDatetime().getTime()) == 0)
 					{	//data uguale -> picco vecchio ma controlla se il valore è uguale per non far peggiorare il picco
 						entered = true;
-						System.out.println("Already exist!");
+						//System.out.println("Already exist!");
 						if(existingPeaks.get(k).getPeakValue() != list.get(i).getEnergyPrice())
 						{
 							System.out.println(existingPeaks.get(k).getPeakValue()+" != "+list.get(i).getEnergyPrice());
-							System.out.println("And is not the same");
+							//System.out.println("And is not the same");
 							found = true;
 						}
 					}
 				}
 				if(!entered) //la data del nuovo picco è nuova -> nuovo picco 
 				{
-					System.out.println("Already exists? NO");
-					System.out.println("Add");
+					//System.out.println("Already exists? NO");
+					//System.out.println("Add");
 
-					System.out.println("list.get(i).upperlimit(): "+list.get(i).getDatetime().getTime()+" "+list.get(i).getEnergyPrice()+" > "+(list.get(i).getThreshold()+productionAvg)+"?? SI!! ");
+					//System.out.println("list.get(i).upperlimit(): "+list.get(i).getDatetime().getTime()+" "+list.get(i).getEnergyPrice()+" > "+(list.get(i).getThreshold()+productionAvg)+"?? SI!! ");
 					PeakData data = new PeakData(this.myAgent.getName(), list.get(i).getDatetime(), list.get(i).getEnergyPrice());
 					peaks.add(data);
-					System.out.println("How many peaks? "+peaks.size());
+					//System.out.println("How many peaks? "+peaks.size());
 					found = true;
 				}
 			}
 		}
-		System.out.println("bye");
 		return found;
 	}
 }

@@ -18,7 +18,7 @@ public class DbLoadData extends DbConnection {
 	public Boolean addLoadData(LoadData load)
 	{
 		String toDatetime = load.getToDatetime()==null ? null : "'"+format.format(load.getToDatetime().getTime())+"'";
-		//System.out.println("\nDatetimeLoad"+load.getIdLoad()+": "+load.getDatetime().getTime()+" toDatetime: "+toDatetime+"\n");
+		System.out.println("\nDatetimeLoad"+load.getIdLoad()+": "+load.getDatetime().getTime()+" toDatetime: "+toDatetime+"\n");
 		String query = "INSERT INTO LoadDataHistory (IdLoad, DateTime, CostKwh, CriticalConsumption, NonCriticalConsumption,"
 				+ " ConsumptionMin, ConsumptionMax, PowerRequested, DesideredChoice, ConsumptionShifted,"
 				+ " ToDateTime, Confirmed, SolutionNumber)"
@@ -27,7 +27,7 @@ public class DbLoadData extends DbConnection {
 						+load.getNonCriticalConsumption()+","+load.getConsumptionMin()+","+load.getConsumptionMax()+","
 						+load.getPowerRequested()+","+load.getDesideredChoice()+","+load.getConsumptionShifted()+","
 						+toDatetime+", '0', "+load.getSolutionNumber()+")";
-		//System.out.println(query);
+		System.out.println(query);
 		try {
 			return stmt.execute(query);
 		} catch (SQLException e) {
@@ -58,9 +58,13 @@ public class DbLoadData extends DbConnection {
 	
 	public Boolean updateLoadDataToDateTime(LoadData load)
 	{
+		String toDatetime = load.getToDatetime()==null ? null : "'"+format.format(load.getToDatetime().getTime())+"'";
 		String query = "UPDATE LoadDataHistory"
-				+ " SET  ToDateTime = '"+format.format(load.getDatetime().getTime())+"',"
-					+ " ConsumptionShifted = "+load.getConsumptionShifted()+", "
+				+ " SET  ConsumptionMin = "+load.getConsumptionMin()+","
+					+ " ConsumptionMax = "+load.getConsumptionMax()+","
+					+ " DesideredChoice = "+load.getDesideredChoice()+","
+					+ " ConsumptionShifted = "+load.getConsumptionShifted()+","
+					+ " ToDateTime = "+toDatetime+","
 					+ " SolutionNumber = "+load.getSolutionNumber()
 				+ " WHERE IdLoad = "+load.getIdLoad()
 				+ " AND DateTime = '"+format.format(load.getDatetime().getTime())+"'";

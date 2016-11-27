@@ -30,12 +30,12 @@ public class DbAggregatorLoad extends DbConnection {
 		return false;
 	}
 	
-	public boolean deleteOldNonForecastDataByIdLoad (String idAggregatorAgent, String idAgent, Calendar datetime, Statement stmt)
+	public boolean deleteOldDataByIdLoad (String idAggregatorAgent, String idAgent, Calendar datetime, Statement stmt)
 	{
 		String query = "DELETE FROM LoadAggregatorData "
 				+ " WHERE RTRIM(IdAggregatorAgent) = '"+idAggregatorAgent+"'"
 				+ " AND IdLoad = '"+idAgent+"'"
-				+ " AND DateTime = '"+format.format(datetime.getTime())+"'";
+				+ " AND DateTime >= '"+format.format(datetime.getTime())+"'";
 		//System.out.println(query);
 		try {
 			stmt.execute(query);
@@ -70,7 +70,7 @@ public class DbAggregatorLoad extends DbConnection {
 	{
 		ArrayList<TimePowerPrice> list = new ArrayList<TimePowerPrice>();
 		String query = "SELECT p.DateTime, MinimumConsumption, Threshold"
-					+ " FROM Price p JOIN (SELECT DateTime, SUM(LowerLimit) as MinimumConsumption"
+					+ " FROM Price p JOIN (SELECT DateTime, SUM(UpperLimit) as MinimumConsumption"
 								+ " FROM LoadAggregatorData  "
 								+ " WHERE IdAggregatorAgent = '"+idAggregatorAgent+"'"
 									+" AND Forecast = 1"
