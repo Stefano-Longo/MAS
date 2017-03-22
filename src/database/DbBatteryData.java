@@ -14,11 +14,11 @@ public class DbBatteryData extends DbConnection	{
 	public Boolean addBatteryData(BatteryData battery)
 	{
 		String query = "INSERT INTO BatteryDataHistory (IdBattery, DateTime, SocObjective, Soc, CostKwh, InputPowerMax,"
-				+ " OutputPowerMax, PowerRequested, DesideredChoice, Confirmed)"
+				+ " OutputPowerMax, PowerRequested, DesiredChoice, Confirmed)"
 				+ " VALUES ('"+battery.getIdBattery()+"','"+format.format(battery.getDatetime().getTime())+"',"
 						+battery.getSocObjective()+","+battery.getSoc()+","+battery.getCostKwh()+","
 						+battery.getInputPowerMax()+","+battery.getOutputPowerMax()+","
-						+battery.getPowerRequested()+", "+battery.getDesideredChoice()+", '0')";
+						+battery.getPowerRequested()+", "+battery.getDesiredChoice()+", '0')";
 		//System.out.println(query);
 		try {
 			return stmt.execute(query);
@@ -52,11 +52,11 @@ public class DbBatteryData extends DbConnection	{
 	public BatteryData getLastBatteryData (int idBattery, Calendar datetime)
 	{
 		BatteryData data = new BatteryData();
-		String querysqlserver = "SELECT TOP 1 *"
+		/*String querysqlserver = "SELECT TOP 1 *"
 				+ " FROM BatteryDataHistory"
 				+ " WHERE IdBattery = "+idBattery
 				+ " AND DateTime < '"+format.format(datetime.getTime())+"'"
-				+ " ORDER BY DateTime DESC";
+				+ " ORDER BY DateTime DESC";*/
 		String query = "SELECT *"
 				+ " FROM BatteryDataHistory"
 				+ " WHERE IdBattery = "+idBattery
@@ -73,7 +73,7 @@ public class DbBatteryData extends DbConnection	{
 
 				data = new BatteryData(rs.getInt("IdBattery"), cal, rs.getDouble("SocObjective"),
 						rs.getDouble("Soc"), rs.getDouble("CostKwh"), rs.getDouble("InputPowerMax"),
-						rs.getDouble("OutputPowerMax"), rs.getDouble("PowerRequested"), rs.getDouble("DesideredChoice"));
+						rs.getDouble("OutputPowerMax"), rs.getDouble("PowerRequested"), rs.getDouble("DesiredChoice"));
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -101,7 +101,7 @@ public class DbBatteryData extends DbConnection	{
 
 				data = new BatteryData(rs.getInt("IdBattery"), cal, rs.getDouble("SocObjective"),
 						rs.getDouble("Soc"), rs.getDouble("CostKwh"), rs.getDouble("InputPowerMax"),
-						rs.getDouble("OutputPowerMax"), rs.getDouble("PowerRequested"), rs.getDouble("DesideredChoice"));
+						rs.getDouble("OutputPowerMax"), rs.getDouble("PowerRequested"), rs.getDouble("DesiredChoice"));
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();

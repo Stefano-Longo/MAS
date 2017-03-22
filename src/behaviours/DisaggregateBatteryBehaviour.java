@@ -86,8 +86,8 @@ public class DisaggregateBatteryBehaviour extends OneShotBehaviour {
 	/**
 	 * I try to give to all batteries what they asked
 	 * 
-	 * batteriesChoice list is ordered by difference UpperLimit-DesideredChoice
-	 * why all of this? because some batteries can have the upperLimit equal to the desideredChoice, others maybe not.
+	 * batteriesChoice list is ordered by difference UpperLimit-DesiredChoice
+	 * why all of this? because some batteries can have the upperLimit equal to the desiredChoice, others maybe not.
 	 * So I take first the maximum (so the desidered choice) from the ones which requested the maximum,
 	 * then I apply the percentage to all the others.
 	 * 

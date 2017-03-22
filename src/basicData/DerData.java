@@ -10,7 +10,7 @@ public class DerData {
 	private double productionMin;
 	private double productionMax;
 	private double productionRequested;
-	private double desideredChoice;
+	private double desiredChoice;
 	
 	/**
 	 * 
@@ -20,10 +20,10 @@ public class DerData {
 	 * @param consumptionMin
 	 * @param consumptionMax
 	 * @param powerRequested
-	 * @param desideredChoice
+	 * @param desiredChoice
 	 */
 	public DerData(int idDer, Calendar datetime, double costKwh, double productionMin, double productionMax,
-			double productionRequested, double desideredChoice) 
+			double productionRequested, double desiredChoice) 
 	{
 		this.idDer = idDer;
 		this.datetime = (Calendar)datetime.clone();
@@ -31,7 +31,7 @@ public class DerData {
 		this.productionMin = productionMin;
 		this.productionMax = productionMax;
 		this.productionRequested = productionRequested;
-		this.desideredChoice = desideredChoice;
+		this.desiredChoice = desiredChoice;
 	}
 
 	public DerData(int idDer, Calendar datetime, double productionRequested) 
@@ -91,11 +91,11 @@ public class DerData {
 		this.productionRequested = productionRequested;
 	}
 
-	public double getDesideredChoice() {
-		return desideredChoice;
+	public double getDesiredChoice() {
+		return desiredChoice;
 	}
 
-	public void setDesideredChoice(double desideredChoice) {
-		this.desideredChoice = desideredChoice;
+	public void setDesiredChoice(double desiredChoice) {
+		this.desiredChoice = desiredChoice;
 	}
 }

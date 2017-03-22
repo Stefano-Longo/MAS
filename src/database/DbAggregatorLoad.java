@@ -51,10 +51,10 @@ public class DbAggregatorLoad extends DbConnection {
 		{
 			int forecast = i==0 ? 0 : 1;
 			String query = "INSERT INTO LoadAggregatorData (IdAggregatorAgent, IdLoad,"
-					+ " DateTime, LowerLimit, UpperLimit, CostKwh, DesideredChoice, Forecast)"
+					+ " DateTime, LowerLimit, UpperLimit, CostKwh, DesiredChoice, Forecast)"
 					+ " VALUES ('"+idAggregatorAgent+"',"+data.get(i).getIdAgent()+",'"
 					+ format.format(data.get(i).getDatetime().getTime())+"',"+data.get(i).getLowerLimit()+","+data.get(i).getUpperLimit()+","
-					+ data.get(i).getCostKwh()+","+data.get(i).getDesideredChoice()+", "+forecast+")";
+					+ data.get(i).getCostKwh()+","+data.get(i).getDesiredChoice()+", "+forecast+")";
 			//System.out.println(query);
 			try {
 				stmt.execute(query);
@@ -101,12 +101,12 @@ public class DbAggregatorLoad extends DbConnection {
 	{
 		FlexibilityData data = new FlexibilityData();
 		String query = "SELECT IdAggregatorAgent, DateTime, SUM(LowerLimit) as LowerLimit, SUM(UpperLimit) as UpperLimit,"
-				+ " AVG(CostKwh) as CostKwh, SUM(DesideredChoice) as DesideredChoice"
+				+ " AVG(CostKwh) as CostKwh, SUM(DesiredChoice) as DesiredChoice"
 				+ " FROM LoadAggregatorData"
 				+ " WHERE IdAggregatorAgent = '"+idAggregatorAgent+"'"
 				+ " AND Datetime = '"+format.format(datetime.getTime())+"'"
 				+ " GROUP BY DateTime, IdAggregatorAgent";
-		System.out.println(query);
+		//System.out.println(query);
 		try {
 			ResultSet rs = stmt.executeQuery(query);
 			while(rs.next())
@@ -116,7 +116,7 @@ public class DbAggregatorLoad extends DbConnection {
 
 				data = new FlexibilityData(rs.getString("IdAggregatorAgent"),cal, GeneralData.round(rs.getDouble("LowerLimit"),2), 
 						GeneralData.round(rs.getDouble("UpperLimit"),2), GeneralData.round(rs.getDouble("CostKwh"), 5), 
-						GeneralData.round(rs.getDouble("DesideredChoice"),2), "load");
+						GeneralData.round(rs.getDouble("DesiredChoice"),2), "load");
 				return data;
 			}
 		} catch (SQLException e) {
@@ -134,7 +134,7 @@ public class DbAggregatorLoad extends DbConnection {
     			+ " WHERE IdAggregatorAgent = '"+idAgent+"'"
 	    			+ " AND DateTime = '"+format.format(datetime.getTime())+"'"
 					+ " AND Forecast = 0";
-		System.out.println(query);
+		//System.out.println(query);
 		try{
 			ResultSet rs = stmt.executeQuery(query);
 			while(rs.next())
@@ -167,7 +167,7 @@ public class DbAggregatorLoad extends DbConnection {
 				
 				FlexibilityData data = new FlexibilityData(rs.getString("IdLoad"),cal,
 						rs.getDouble("LowerLimit"), rs.getDouble("UpperLimit"), 
-						rs.getDouble("CostKwh"), rs.getDouble("DesideredChoice"), "load");
+						rs.getDouble("CostKwh"), rs.getDouble("DesiredChoice"), "load");
 				list.add(data);
 			}
 		} catch (SQLException e) {

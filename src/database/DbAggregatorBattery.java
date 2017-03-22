@@ -1,6 +1,5 @@
 package database;
 
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.DateFormat;
 import java.util.Calendar;
@@ -22,10 +21,10 @@ public class DbAggregatorBattery extends DbConnection {
 	public Boolean addFlexibilityBatteryMessage (String idAggregatorAgent, FlexibilityData data)
 	{
 		String query = "INSERT INTO BatteryAggregatorData (IdAggregatorAgent, IdBattery,"
-				+ " DateTime, InputPowerMax, OutputPowerMax, CostKwh, DesideredChoice)"
+				+ " DateTime, InputPowerMax, OutputPowerMax, CostKwh, DesiredChoice)"
 				+ " VALUES ('"+idAggregatorAgent+"',"+data.getIdAgent()+",'"
 				+ format.format(data.getDatetime().getTime())+"',"+data.getLowerLimit()+","+data.getUpperLimit()+","
-				+ data.getCostKwh()+","+data.getDesideredChoice()+")";
+				+ data.getCostKwh()+","+data.getDesiredChoice()+")";
 		//System.out.println(query);
 		try {
 			return stmt.execute(query);
@@ -49,7 +48,7 @@ public class DbAggregatorBattery extends DbConnection {
 	{
 		FlexibilityData data = new FlexibilityData();
 		String query = "SELECT DateTime, SUM(InputPowerMax) as InputPowerMax, SUM(OutputPowerMax) as OutputPowerMax,"
-				+ " AVG(CostKwh) as CostKwh, SUM(DesideredChoice) as DesideredChoice"
+				+ " AVG(CostKwh) as CostKwh, SUM(DesiredChoice) as DesiredChoice"
 				+ " FROM BatteryAggregatorData"
 				+ " WHERE IdAggregatorAgent = '"+idAggregatorAgent+"'"
 				+ " AND Datetime = '"+format.format(datetime.getTime())+"'"
@@ -63,7 +62,7 @@ public class DbAggregatorBattery extends DbConnection {
 				
 				data = new FlexibilityData(idAggregatorAgent, cal2, rs.getDouble("InputPowerMax"), 
 						rs.getDouble("OutputPowerMax"), GeneralData.round(rs.getDouble("CostKwh"), 5), 
-						rs.getDouble("DesideredChoice"), "battery");
+						rs.getDouble("DesiredChoice"), "battery");
 				return data;
 			}
 		} catch (SQLException e) {
@@ -109,7 +108,7 @@ public class DbAggregatorBattery extends DbConnection {
 	public ArrayList<FlexibilityData> getBatteriesChoice(String idAggregatorAgent, Calendar datetime)
 	{
 		ArrayList<FlexibilityData> list = new ArrayList<FlexibilityData>();
-		String query = "SELECT *, InputPowerMax-DesideredChoice as Diff"
+		String query = "SELECT *, InputPowerMax-DesiredChoice as Diff"
 				+ " FROM BatteryAggregatorData"
 				+ " WHERE IdAggregatorAgent='"+idAggregatorAgent+"'"
 				+ " AND DateTime = '"+format.format(datetime.getTime())+"'"
@@ -123,7 +122,7 @@ public class DbAggregatorBattery extends DbConnection {
 				
 				FlexibilityData data = new FlexibilityData(rs.getString("IdBattery"),cal,
 						rs.getDouble("InputPowerMax"), rs.getDouble("OutputPowerMax"), 
-						rs.getDouble("CostKwh"), rs.getDouble("DesideredChoice"), "battery");
+						rs.getDouble("CostKwh"), rs.getDouble("DesiredChoice"), "battery");
 				list.add(data);
 			}
 		} catch (SQLException e) {
@@ -139,16 +138,16 @@ public class DbAggregatorBattery extends DbConnection {
 			String choice, Calendar datetime)
 	{
 		ArrayList<FlexibilityData> list = new ArrayList<FlexibilityData>();
-		String query = "SELECT *, InputPowerMax-DesideredChoice as Diff"
+		String query = "SELECT *, InputPowerMax-DesiredChoice as Diff"
 				+ " FROM BatteryAggregatorData A JOIN Battery B ON A.IdBattery = B.IdBattery"
 				+ " WHERE";
 		if(choice.equals("positive"))
 		{
-			query += " DesideredChoice > 0 AND";
+			query += " DesiredChoice > 0 AND";
 		}
 		else if(choice.equals("negative"))
 		{
-			query += " DesideredChoice < 0 AND";
+			query += " DesiredChoice < 0 AND";
 		}
 		query += " IdAggregatorAgent='"+idAggregatorAgent+"'"
 			   + " AND DateTime = '"+format.format(datetime.getTime())+"'"
@@ -163,7 +162,7 @@ public class DbAggregatorBattery extends DbConnection {
 				FlexibilityData data = new FlexibilityData(
 						rs.getString("IdBattery"),cal, rs.getDouble("InputPowerMax"),
 						rs.getDouble("OutputPowerMax"), rs.getDouble("CostKwh"), 
-						rs.getDouble("DesideredChoice"), "battery");
+						rs.getDouble("DesiredChoice"), "battery");
 				list.add(data);
 			}
 		} catch (SQLException e) {

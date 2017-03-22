@@ -17,10 +17,10 @@ public class DbAggregatorDer extends DbConnection {
 	public Boolean addFlexibilityDerMessage (String idAggregatorAgent, FlexibilityData data)
 	{
 		String query = "INSERT INTO DerAggregatorData (IdAggregatorAgent, IdDer,"
-				+ " DateTime, LowerLimit, UpperLimit, CostKwh, DesideredChoice)"
+				+ " DateTime, LowerLimit, UpperLimit, CostKwh, DesiredChoice)"
 				+ " VALUES ('"+idAggregatorAgent+"',"+data.getIdAgent()+",'"
 				+ format.format(data.getDatetime().getTime())+"',"+data.getLowerLimit()+","+data.getUpperLimit()+","
-				+ data.getCostKwh()+","+data.getDesideredChoice()+")";
+				+ data.getCostKwh()+","+data.getDesiredChoice()+")";
 		//System.out.println(query);
 		try {
 			return stmt.execute(query);
@@ -36,7 +36,7 @@ public class DbAggregatorDer extends DbConnection {
 	{
 		FlexibilityData data = new FlexibilityData();
 		String query = "SELECT IdAggregatorAgent, DateTime, SUM(LowerLimit) as LowerLimit, SUM(UpperLimit) as UpperLimit,"
-				+ " AVG(CostKwh) as CostKwh, SUM(DesideredChoice) as DesideredChoice"
+				+ " AVG(CostKwh) as CostKwh, SUM(DesiredChoice) as DesiredChoice"
 				+ " FROM DerAggregatorData"
 				+ " WHERE IdAggregatorAgent = '"+idAggregatorAgent+"'"
 				+ " AND Datetime = '"+format.format(datetime.getTime())+"'"
@@ -51,7 +51,7 @@ public class DbAggregatorDer extends DbConnection {
 
 				data = new FlexibilityData(rs.getString("IdAggregatorAgent"), cal, rs.getDouble("LowerLimit"), 
 						rs.getDouble("UpperLimit"), GeneralData.round(rs.getDouble("CostKwh"), 5), 
-						rs.getDouble("DesideredChoice"), "der");
+						rs.getDouble("DesiredChoice"), "der");
 				return data;
 			}
 		} catch (SQLException e) {
@@ -99,7 +99,7 @@ public class DbAggregatorDer extends DbConnection {
 				
 				FlexibilityData data = new FlexibilityData(rs.getString("IdDer"),cal,
 						rs.getDouble("LowerLimit"), rs.getDouble("UpperLimit"), 
-						rs.getDouble("CostKwh"), rs.getDouble("DesideredChoice"), "der");
+						rs.getDouble("CostKwh"), rs.getDouble("DesiredChoice"), "der");
 				list.add(data);
 			}
 		} catch (SQLException e) {

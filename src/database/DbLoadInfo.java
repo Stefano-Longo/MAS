@@ -27,7 +27,7 @@ public class DbLoadInfo extends DbConnection {
 						+ " AND B.DateTime = '"+format.format(datetime.getTime())+"'"
 						+ " AND NonCriticalConsumption > 0"
 					+ " ORDER BY P.EnergyPrice";
-		System.out.println(query);
+		//System.out.println(query);
 		try {
 			ResultSet rs = stmt.executeQuery(query);
 			while(rs.next())
@@ -42,6 +42,34 @@ public class DbLoadInfo extends DbConnection {
 				list.add(data);
 			}
 			return list;
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			connClose();
+		}
+		return null;
+	}
+	
+	public Calendar getToDatetimeByIdAgent (String idAgent, Calendar datetime)
+	{
+		String query = "SELECT A.IdLoad, IdAgent, IdPlatform, B.DateTime, CriticalConsumption,"
+						+ " NonCriticalConsumption, ConsumptionAdded, EnergyPrice, ToDateTime" 
+					+ " FROM ((Loads as A JOIN LoadInfo as B ON A.IdLoad = B.IdLoad)"
+						+ " JOIN LoadManagement as C ON B.Id = C.IdLoadDateTime)"
+						+ " JOIN Price P on C.ToDateTime = P.DateTime"
+					+ " WHERE RTRIM(IdAgent) = '"+idAgent+"'"
+						+ " AND B.DateTime = '"+format.format(datetime.getTime())+"'"
+						+ " AND NonCriticalConsumption > 0"
+					+ " ORDER BY P.EnergyPrice"
+					+ " LIMIT 1";
+		try {
+			ResultSet rs = stmt.executeQuery(query);
+			while(rs.next())
+			{
+				Calendar cal = Calendar.getInstance();
+				cal.setTime(rs.getTimestamp("ToDateTime"));
+				return cal;
+			}
 		} catch (SQLException e) {
 			e.printStackTrace();
 		} finally {
@@ -103,7 +131,7 @@ public class DbLoadInfo extends DbConnection {
 				+ " SET  ConsumptionAdded = ConsumptionAdded + "+loadInfo.getConsumptionAdded()
 				+ " WHERE IdLoad = "+loadInfo.getIdLoad()
 				+ " AND DateTime = '"+format.format(loadInfo.getDatetime().getTime())+"'";
-		System.out.println(query);
+		//System.out.println(query);
 		try {
 			return stmt.execute(query);
 		} catch (SQLException e) {
@@ -118,17 +146,17 @@ public class DbLoadInfo extends DbConnection {
 	public ArrayList<FlexibilityData> getFutureLoadInfoByIdAgent (int idLoad, Calendar datetime)
 	{
 		ArrayList<FlexibilityData> list = new ArrayList<FlexibilityData>();
-		String querysqlserver = "SELECT *"
+		/*String querysqlserver = "SELECT *"
 				+ " FROM LoadInfo"
 				+ " WHERE IdLoad = "+idLoad
 				+ " AND DateTime > '"+format.format(datetime.getTime())+"'"
-				+ " AND DATEPART(DAY, DateTime) = "+datetime.get(Calendar.DAY_OF_MONTH);
+				+ " AND DATEPART(DAY, DateTime) = "+datetime.get(Calendar.DAY_OF_MONTH);*/
 		String query = "SELECT *"
 				+ " FROM LoadInfo"
 				+ " WHERE IdLoad = "+idLoad
 				+ " AND DateTime > '"+format.format(datetime.getTime())+"'"
 				+ " AND DAYOFMONTH(DateTime) = "+datetime.get(Calendar.DAY_OF_MONTH);
-		System.out.println("FUTURE LIST "+query);
+		//System.out.println("FUTURE LIST "+query);
 		try {
 			ResultSet rs = stmt.executeQuery(query);
 			while(rs.next())

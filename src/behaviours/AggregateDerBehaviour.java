@@ -32,7 +32,7 @@ public class AggregateDerBehaviour extends OneShotBehaviour {
 		int messagesReceived = new DbAggregatorDer().countMessagesReceived(this.myAgent.getName(), msgData.getDatetime());
 		int derAgents = new BaseAgent().getAgentsbyServiceType(this.myAgent, "DerAgent").length;
 		
-		System.out.println("DER messagesReceived: "+messagesReceived+" derAgents: "+derAgents);
+		//System.out.println("DER messagesReceived: "+messagesReceived+" derAgents: "+derAgents);
 		if (messagesReceived == derAgents)
 		{
 			//System.out.println("messages: "+messagesReceived+" derAgents: "+derAgents);

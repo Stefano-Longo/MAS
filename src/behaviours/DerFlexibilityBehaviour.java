@@ -36,7 +36,7 @@ public class DerFlexibilityBehaviour extends OneShotBehaviour {
 		DerInfo derInfo = new DbDerInfo().getDerInfoByIdAgent(this.myAgent.getName());
 		DerData derDataAvg = new DbDerData().getAverageLastMonthProductionByIdDer(derInfo.getIdDer(), msgData.get(0).getDatetime());
 		
-		double desideredChoice = GeneralData.round(derDataAvg.getProductionRequested(),2);
+		double desiredChoice = GeneralData.round(derDataAvg.getProductionRequested(),2);
 		double lowerLimit = GeneralData.round(getLowerLimit(derInfo),2);
 		double upperLimit = GeneralData.round(derDataAvg.getProductionRequested(),2);
 		
@@ -44,9 +44,9 @@ public class DerFlexibilityBehaviour extends OneShotBehaviour {
 		double costKwh = getCostKwh(derInfo);
 
 		FlexibilityData result = new FlexibilityData(Integer.toString(derInfo.getIdDer()), msgData.get(0).getDatetime(), 
-				lowerLimit, upperLimit, costKwh, desideredChoice);
+				lowerLimit, upperLimit, costKwh, desiredChoice);
 		DerData derData = new DerData(derInfo.getIdDer(), msgData.get(0).getDatetime(), costKwh, 
-				lowerLimit, upperLimit, 0, desideredChoice);
+				lowerLimit, upperLimit, 0, desiredChoice);
 		new DbDerData().addDerData(derData);
 		
 		new BaseAgent().sendMessageToAgentsByServiceType(this.myAgent, "DerAggregatorAgent",

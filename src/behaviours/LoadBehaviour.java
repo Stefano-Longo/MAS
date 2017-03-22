@@ -50,6 +50,9 @@ public class LoadBehaviour extends OneShotBehaviour {
 		
 		if(msgData.getPowerRequested() < loadData.getConsumptionMax())
 		{
+			System.out.println(loadInfo.getIdLoad());
+			System.out.println(loadData.getToDatetime());
+			System.out.println(consumptionShifted);
 			LoadInfo newLoadInfo = new LoadInfo(loadInfo.getIdLoad(), loadData.getToDatetime(), consumptionShifted);
 			new DbLoadInfo().updateLoadInfo(newLoadInfo);
 		}

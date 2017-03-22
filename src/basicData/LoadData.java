@@ -14,7 +14,7 @@ public class LoadData implements Serializable {
 	private double consumptionMin;
 	private double consumptionMax;
 	private double powerRequested;
-	private double desideredChoice;
+	private double desiredChoice;
 	private double consumptionShifted;
 	private Calendar toDatetime;
 	private int solutionNumber;
@@ -29,13 +29,13 @@ public class LoadData implements Serializable {
 	 * @param consumptionMin
 	 * @param consumptionMax
 	 * @param powerRequested
-	 * @param desideredChoice
+	 * @param desiredChoice
 	 * @param consumptionShifted
 	 * @param toDatetime
 	 */
 	public LoadData(int idLoad, Calendar datetime, double costKwh, double criticalConsumption, 
 			double nonCriticalConsumption, double consumptionMin, double consumptionMax, double powerRequested,
-			double desideredChoice, double consumptionShifted, Calendar toDatetime, int solutionNumber) 
+			double desiredChoice, double consumptionShifted, Calendar toDatetime, int solutionNumber) 
 	{
 		this.idLoad = idLoad;
 		this.datetime = (Calendar)datetime.clone();
@@ -45,7 +45,7 @@ public class LoadData implements Serializable {
 		this.consumptionMax = consumptionMax;
 		this.consumptionMin = consumptionMin;
 		this.powerRequested = powerRequested;
-		this.desideredChoice = desideredChoice;
+		this.desiredChoice = desiredChoice;
 		this.consumptionShifted = consumptionShifted;
 		this.toDatetime = toDatetime == null ? null : (Calendar)toDatetime.clone();
 		this.solutionNumber = solutionNumber;
@@ -125,12 +125,12 @@ public class LoadData implements Serializable {
 		this.powerRequested = powerRequested;
 	}
 
-	public double getDesideredChoice() {
-		return desideredChoice;
+	public double getDesiredChoice() {
+		return desiredChoice;
 	}
 
-	public void setDesideredChoice(double desideredChoice) {
-		this.desideredChoice = desideredChoice;
+	public void setDesiredChoice(double desiredChoice) {
+		this.desiredChoice = desiredChoice;
 	}
 	
 	public double getConsumptionShifted() {

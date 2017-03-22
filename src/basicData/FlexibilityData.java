@@ -11,7 +11,7 @@ public class FlexibilityData implements Serializable {
 	private double lowerLimit;
 	private double upperLimit;
 	private double costKwh; 
-	private double desideredChoice; // positive or negative value which represent the choice the single agent
+	private double desiredChoice; // positive or negative value which represent the choice the single agent
 	private String type;
 
 
@@ -22,28 +22,28 @@ public class FlexibilityData implements Serializable {
 	 * @param lowerLimit
 	 * @param upperLimit
 	 * @param costKwh
-	 * @param desideredChoice
+	 * @param desiredChoice
 	 * @param type
 	 */
 	public FlexibilityData(String idAgent, Calendar datetime, double lowerLimit, double upperLimit, 
-			double costKwh, double desideredChoice, String type) {
+			double costKwh, double desiredChoice, String type) {
 		this.idAgent = idAgent;
 		this.datetime = (Calendar)datetime.clone();
 		this.lowerLimit = lowerLimit;
 		this.upperLimit = upperLimit;
 		this.costKwh = costKwh;
-		this.desideredChoice = desideredChoice;
+		this.desiredChoice = desiredChoice;
 		this.type = type;
 	}
 
 	public FlexibilityData(String idAgent, Calendar datetime, double lowerLimit, double upperLimit, 
-			double costKwh, double desideredChoice) {
+			double costKwh, double desiredChoice) {
 		this.idAgent = idAgent;
 		this.datetime = (Calendar)datetime.clone();
 		this.lowerLimit = lowerLimit;
 		this.upperLimit = upperLimit;
 		this.costKwh = costKwh;
-		this.desideredChoice = desideredChoice;
+		this.desiredChoice = desiredChoice;
 	}
 	
 	public FlexibilityData() {}
@@ -88,12 +88,12 @@ public class FlexibilityData implements Serializable {
 		this.upperLimit = upperLimit;
 	}
 
-	public double getDesideredChoice() {
-		return desideredChoice;
+	public double getDesiredChoice() {
+		return desiredChoice;
 	}
 
-	public void setDesideredChoice(double desideredChoice) {
-		this.desideredChoice = desideredChoice;
+	public void setDesiredChoice(double desiredChoice) {
+		this.desiredChoice = desiredChoice;
 	}
 
 	public String getType() {

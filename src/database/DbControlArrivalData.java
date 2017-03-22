@@ -15,10 +15,10 @@ public class DbControlArrivalData extends DbConnection {
 	public Boolean addControlArrivalData (String idControlAgent, FlexibilityData data)
 	{
 		String query = "INSERT INTO ControlArrivalData (IdControlAgent, DateTime,"
-				+ " LowerLimit, UpperLimit, CostKwh, DesideredChoice, Type)"
+				+ " LowerLimit, UpperLimit, CostKwh, DesiredChoice, Type)"
 				+ " VALUES ('"+idControlAgent+"','"+format.format(data.getDatetime().getTime())+"',"
 				+data.getLowerLimit()+","+ data.getUpperLimit()+","+data.getCostKwh()+","
-				+data.getDesideredChoice()+",'"+data.getType()+"')";
+				+data.getDesiredChoice()+",'"+data.getType()+"')";
 		//System.out.println(query);
 		try {
 			return stmt.execute(query);
@@ -33,7 +33,7 @@ public class DbControlArrivalData extends DbConnection {
 	public FlexibilityData getLastControlArrivalData (String idControlAgent, String type, Calendar datetime)
 	{
 		String query = "SELECT SUM(LowerLimit) as LowerLimit, SUM(UpperLimit) as UpperLimit, AVG(CostKwh) as CostKwh,"
-				+ " SUM(DesideredChoice) as DesideredChoice, DateTime"
+				+ " SUM(DesiredChoice) as DesiredChoice, DateTime"
 				+ " FROM ControlArrivalData"
 				+ " WHERE IdControlAgent = '"+idControlAgent+"'"
 				+ " AND Type = '"+type+"'"
@@ -50,7 +50,7 @@ public class DbControlArrivalData extends DbConnection {
 						idControlAgent, cal, GeneralData.round(rs.getDouble("LowerLimit"),2), 
 						GeneralData.round(rs.getDouble("UpperLimit"), 2), 
 						GeneralData.round(rs.getDouble("CostKwh"), 2), 
-						rs.getDouble("DesideredChoice"), type);
+						rs.getDouble("DesiredChoice"), type);
 				return data;
 			}
 		} catch (SQLException e) {

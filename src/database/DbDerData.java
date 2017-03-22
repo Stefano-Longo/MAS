@@ -15,10 +15,10 @@ public class DbDerData extends DbConnection {
 	public Boolean addDerData(DerData der)
 	{
 		String query = "INSERT INTO DerDataHistory (IdDer, DateTime, CostKwh, ProductionMin,"
-				+ " ProductionMax, ProductionRequested, DesideredChoice, Confirmed)"
+				+ " ProductionMax, ProductionRequested, DesiredChoice, Confirmed)"
 				+ " VALUES ('"+der.getIdDer()+"','"+format.format(der.getDatetime().getTime())+"',"
 						+der.getCostKwh()+","+der.getProductionMin()+","+der.getProductionMax()+","
-						+der.getProductionRequested()+","+der.getDesideredChoice()+", '0')";
+						+der.getProductionRequested()+","+der.getDesiredChoice()+", '0')";
 		//System.out.println(query);
 		try {
 			stmt.execute(query);
@@ -45,7 +45,7 @@ public class DbDerData extends DbConnection {
 		DerData data = new DerData();
 		String querysqlserver = "SELECT Avg(CostKwh) as CostKwh, Avg(ProductionMin) as ProdMin,"
 				+ " Avg(ProductionMax) as ProdMax, Avg(ProductionRequested) as ProdReq,"
-				+ " Avg(DesideredChoice) as DesChoice"
+				+ " Avg(DesiredChoice) as DesChoice"
 				+ " FROM DerDataHistory"
 				+ " WHERE IdDer = "+idDer
 				+ " AND DATEPART(HOUR, Datetime) = "+datetime.get(Calendar.HOUR_OF_DAY)
@@ -53,7 +53,7 @@ public class DbDerData extends DbConnection {
 				+ " AND DATEDIFF(day,DateTime,'"+format.format(datetime.getTime())+"') between 0 and 30";
 		String query = "SELECT Avg(CostKwh) as CostKwh, Avg(ProductionMin) as ProdMin,"
 				+ " Avg(ProductionMax) as ProdMax, Avg(ProductionRequested) as ProdReq,"
-				+ " Avg(DesideredChoice) as DesChoice"
+				+ " Avg(DesiredChoice) as DesChoice"
 				+ " FROM DerDataHistory"
 				+ " WHERE IdDer = "+idDer
 				+ " AND HOUR(Datetime) = "+datetime.get(Calendar.HOUR_OF_DAY)
@@ -80,15 +80,15 @@ public class DbDerData extends DbConnection {
 	public double getAverageLastMonthProduction (Calendar datetime)
 	{
 		ResultSet rs = null;
-		String querysqlserver = "SELECT AVG(q.Production) as ProductionAvg"
-				+ " FROM (SELECT DateTime, Avg(DesideredChoice) as Production"
+		/*String querysqlserver = "SELECT AVG(q.Production) as ProductionAvg"
+				+ " FROM (SELECT DateTime, Avg(DesiredChoice) as Production"
 				+ " FROM DerDataHistory"
 				+ " WHERE DATEPART(HOUR, Datetime) = "+datetime.get(Calendar.HOUR_OF_DAY)
 					+ " AND DATEPART(MINUTE, Datetime) = "+datetime.get(Calendar.MINUTE)
 					+ " AND DATEDIFF(day,DateTime,'"+format.format(datetime.getTime())+"') between 0 and 30"
-				+ " GROUP BY DateTime) as q";
+				+ " GROUP BY DateTime) as q";*/
 		String query = "SELECT SUM(q.Production) as ProductionAvg"
-				+ " FROM (SELECT IdDer, Avg(DesideredChoice) as Production"
+				+ " FROM (SELECT IdDer, Avg(DesiredChoice) as Production"
 				+ " FROM DerDataHistory"
 				+ " WHERE HOUR(Datetime) = "+datetime.get(Calendar.HOUR_OF_DAY)
 					+ " AND MINUTE(Datetime) = "+datetime.get(Calendar.MINUTE)
@@ -125,7 +125,7 @@ public class DbDerData extends DbConnection {
 				cal.setTime(rs.getTimestamp("DateTime"));
 	
 				data = new DerData(idDer, cal, rs.getDouble("CostKwh"), rs.getDouble("ProductionMin"),
-					rs.getDouble("ProductionMax"), rs.getDouble("ProductionRequested"), rs.getDouble("DesideredChoice"));
+					rs.getDouble("ProductionMax"), rs.getDouble("ProductionRequested"), rs.getDouble("DesiredChoice"));
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();

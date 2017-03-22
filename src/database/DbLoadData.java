@@ -18,16 +18,16 @@ public class DbLoadData extends DbConnection {
 	public Boolean addLoadData(LoadData load)
 	{
 		String toDatetime = load.getToDatetime()==null ? null : "'"+format.format(load.getToDatetime().getTime())+"'";
-		System.out.println("\nDatetimeLoad"+load.getIdLoad()+": "+load.getDatetime().getTime()+" toDatetime: "+toDatetime+"\n");
+		//System.out.println("\nDatetimeLoad"+load.getIdLoad()+": "+load.getDatetime().getTime()+" toDatetime: "+toDatetime+"\n");
 		String query = "INSERT INTO LoadDataHistory (IdLoad, DateTime, CostKwh, CriticalConsumption, NonCriticalConsumption,"
-				+ " ConsumptionMin, ConsumptionMax, PowerRequested, DesideredChoice, ConsumptionShifted,"
+				+ " ConsumptionMin, ConsumptionMax, PowerRequested, DesiredChoice, ConsumptionShifted,"
 				+ " ToDateTime, Confirmed, SolutionNumber)"
 				+ " VALUES ("+load.getIdLoad()+",'"+format.format(load.getDatetime().getTime())+"',"
 						+load.getCostKwh()+","+load.getCriticalConsumption()+","
 						+load.getNonCriticalConsumption()+","+load.getConsumptionMin()+","+load.getConsumptionMax()+","
-						+load.getPowerRequested()+","+load.getDesideredChoice()+","+load.getConsumptionShifted()+","
+						+load.getPowerRequested()+","+load.getDesiredChoice()+","+load.getConsumptionShifted()+","
 						+toDatetime+", '0', "+load.getSolutionNumber()+")";
-		System.out.println(query);
+		//System.out.println(query);
 		try {
 			return stmt.execute(query);
 		} catch (SQLException e) {
@@ -62,7 +62,7 @@ public class DbLoadData extends DbConnection {
 		String query = "UPDATE LoadDataHistory"
 				+ " SET  ConsumptionMin = "+load.getConsumptionMin()+","
 					+ " ConsumptionMax = "+load.getConsumptionMax()+","
-					+ " DesideredChoice = "+load.getDesideredChoice()+","
+					+ " DesiredChoice = "+load.getDesiredChoice()+","
 					+ " ConsumptionShifted = "+load.getConsumptionShifted()+","
 					+ " ToDateTime = "+toDatetime+","
 					+ " SolutionNumber = "+load.getSolutionNumber()
@@ -103,7 +103,7 @@ public class DbLoadData extends DbConnection {
 				data = new LoadData(rs.getInt("IdLoad"), cal, rs.getDouble("CostKwh"), 
 						rs.getDouble("CriticalConsumption"), rs.getDouble("NonCriticalConsumption"), 
 						rs.getDouble("ConsumptionMin"), rs.getDouble("ConsumptionMax"), 
-						rs.getDouble("PowerRequested"), rs.getDouble("DesideredChoice"), 
+						rs.getDouble("PowerRequested"), rs.getDouble("DesiredChoice"), 
 						rs.getDouble("ConsumptionShifted"), cal1, rs.getInt("SolutionNumber"));
 			}
 		} catch (SQLException e) {

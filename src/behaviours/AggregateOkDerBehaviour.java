@@ -33,7 +33,7 @@ public class AggregateOkDerBehaviour extends OneShotBehaviour {
 		
 		int confirmedTrue = new DbAggregatorDer().getLastConfirmedByChoice(this.myAgent.getName(), 1, msgData.getDatetime());
 		int derAgents = new BaseAgent().getAgentsbyServiceType(this.myAgent, "DerAgent").length;
-		System.out.println("DerOk - confirmedTrue:"+confirmedTrue+" derAgents: "+derAgents);
+		//System.out.println("DerOk - confirmedTrue:"+confirmedTrue+" derAgents: "+derAgents);
 		if(confirmedTrue == derAgents)
 		{
 			OkData ok = new OkData(msgData.getDatetime(), "der", 1);

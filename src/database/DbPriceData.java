@@ -66,11 +66,11 @@ public class DbPriceData extends DbConnection {
 	{
 		ArrayList<TimePowerPrice> list = new ArrayList<TimePowerPrice>();
 		
-		String querysqlserver = "SELECT *" 
+		/*String querysqlserver = "SELECT *" 
 				+ " FROM Price"
 				+ " WHERE DateTime >= '"+format.format(datetime.getTime())+"'"
 				+ " AND DATEPART(DAY, DateTime) = "+datetime.get(Calendar.DAY_OF_MONTH)
-				+ " ORDER BY DateTime";
+				+ " ORDER BY DateTime";*/
 		String query = "SELECT *" 
 				+ " FROM Price"
 				+ " WHERE DateTime >= '"+format.format(datetime.getTime())+"'"

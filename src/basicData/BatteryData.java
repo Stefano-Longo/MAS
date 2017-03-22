@@ -12,7 +12,7 @@ public class BatteryData {
 	private double inputPowerMax;
 	private double outputPowerMax;
 	private double powerRequested;
-	private double desideredChoice;
+	private double desiredChoice;
 	
 	//not for upload in db
 	private Calendar analisysDatetime;
@@ -29,10 +29,10 @@ public class BatteryData {
 	 * @param inputPowerMax
 	 * @param outputPowerMax
 	 * @param powerRequested
-	 * @param desideredChoice
+	 * @param desiredChoice
 	 */
 	public BatteryData(int idBattery, Calendar datetime, double socObjective, double soc, double costKwh, 
-			double inputPowerMax, double outputPowerMax, double powerRequested, double desideredChoice)
+			double inputPowerMax, double outputPowerMax, double powerRequested, double desiredChoice)
 	{
 		this.idBattery = idBattery;
 		this.datetime = (Calendar)datetime.clone();
@@ -42,7 +42,7 @@ public class BatteryData {
 		this.inputPowerMax = inputPowerMax;
 		this.outputPowerMax = outputPowerMax;
 		this.powerRequested = powerRequested;
-		this.desideredChoice = desideredChoice;
+		this.desiredChoice = desiredChoice;
 	}
 	
 	/**
@@ -155,12 +155,12 @@ public class BatteryData {
 		this.costKwh = costKwh;
 	}
 
-	public double getDesideredChoice() {
-		return desideredChoice;
+	public double getDesiredChoice() {
+		return desiredChoice;
 	}
 
-	public void setDesideredChoice(double desideredChoice) {
-		this.desideredChoice = desideredChoice;
+	public void setDesiredChoice(double desiredChoice) {
+		this.desiredChoice = desiredChoice;
 	}
 	
 }

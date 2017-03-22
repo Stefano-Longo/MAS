@@ -43,21 +43,21 @@ public class DisaggregateLoadBehaviour extends OneShotBehaviour{
 		{
 			switchOff();
 		}
-		else if(msgData.getPowerRequested() >= loadAggregatedData.getDesideredChoice())
+		else if(msgData.getPowerRequested() >= loadAggregatedData.getDesiredChoice())
 		{
 			/**
-			 * Garantisco a tutti la loro scelta (desideredChoice) e il surplus lo dò 
+			 * Garantisco a tutti la loro scelta (desiredChoice) e il surplus lo dò 
 			 * a chi mi garantisce un prezzo basso per ogni Kwh spostato
 			 */
-			double residualPower = msgData.getPowerRequested() - loadAggregatedData.getDesideredChoice();
+			double residualPower = msgData.getPowerRequested() - loadAggregatedData.getDesiredChoice();
 			/*System.out.println("\n\nDisaggrego!! \nLowerLimit: "+loadAggregatedData.getLowerLimit()+" "
 					+ "UpperLimit: "+loadAggregatedData.getUpperLimit()+" "
 					+ "PowRequested: "+msgData.getPowerRequested()+" "
-					+ "DesideredChoice: "+loadAggregatedData.getDesideredChoice()+" residual: "+residualPower+"\n");
+					+ "DesiredChoice: "+loadAggregatedData.getDesiredChoice()+" residual: "+residualPower+"\n");
 			*/
-			giveDesideredChoicePlusResidual(residualPower);
+			giveDesiredChoicePlusResidual(residualPower);
 		}
-		else if(msgData.getPowerRequested() < loadAggregatedData.getDesideredChoice())
+		else if(msgData.getPowerRequested() < loadAggregatedData.getDesiredChoice())
 		{
 			/**
 			 * Garantisco a tutti il minimo (lowerLimit) e il surplus lo dò 
@@ -69,15 +69,15 @@ public class DisaggregateLoadBehaviour extends OneShotBehaviour{
 			
 	}
 	
-	private void giveDesideredChoicePlusResidual(double residualPowerRequested)
+	private void giveDesiredChoicePlusResidual(double residualPowerRequested)
 	{
 		double loadPowerRequested;
 		for(int i=0; i < loadsChoice.size(); i++)
 		{
-			if(residualPowerRequested + loadsChoice.get(i).getDesideredChoice() >= loadsChoice.get(i).getUpperLimit())
+			if(residualPowerRequested + loadsChoice.get(i).getDesiredChoice() >= loadsChoice.get(i).getUpperLimit())
 			{
 				loadPowerRequested = loadsChoice.get(i).getUpperLimit();
-				residualPowerRequested -= loadsChoice.get(i).getUpperLimit() - loadsChoice.get(i).getDesideredChoice();
+				residualPowerRequested -= loadsChoice.get(i).getUpperLimit() - loadsChoice.get(i).getDesiredChoice();
 			}
 			else if (residualPowerRequested > 0)
 			{
@@ -89,13 +89,12 @@ public class DisaggregateLoadBehaviour extends OneShotBehaviour{
 				loadPowerRequested = loadsChoice.get(i).getLowerLimit();
 			} 
 			/*System.out.println("Load-"+loadsChoice.get(i).getIdAgent()+" LL: "+loadsChoice.get(i).getLowerLimit()
-					+" UL: "+loadsChoice.get(i).getUpperLimit()+" DC: "+loadsChoice.get(i).getDesideredChoice()
+					+" UL: "+loadsChoice.get(i).getUpperLimit()+" DC: "+loadsChoice.get(i).getDesiredChoice()
 					+" loadPower Requested: "+loadPowerRequested);*/
 			ResultPowerPrice loadAction = new ResultPowerPrice(msgData.getDatetime(), 
 					GeneralData.round(loadPowerRequested, 2), msgData.getCostKwh());
 			sendMessage(loadAction, i);
 		}
-		System.out.println("\n\n");
 	}
 
 	private void giveMinimumPlusResidual(double residualPowerRequested)

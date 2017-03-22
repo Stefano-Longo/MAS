@@ -58,28 +58,28 @@ public class BatteryFlexibilityBehaviour extends OneShotBehaviour {
 		 * define what the battery wants to do and the flexibility and the gain it has doing that
 		 * use getSocObjective, or anyway another function
 		 */
-		double socObjectiveDesideredChoice = calculateSocObjectiveDesideredChoice(batteryData.getSoc(), 
+		double socObjectiveDesiredChoice = calculateSocObjectiveDesiredChoice(batteryData.getSoc(), 
 				batteryInfo.getSocMax(), batteryInfo.getSocMin(), batteryInfo.getCapacity(), batteryInfo.getBatteryInputMax(), 
 				batteryInfo.getBatteryOutputMax(), newSocObjective);
-		double desideredChoice = socObjectiveDesideredChoice;
+		double desiredChoice = socObjectiveDesiredChoice;
 		
 		maxInput = GeneralData.round(maxInput, 2);
 		maxOutput = GeneralData.round(maxOutput, 2);
-		desideredChoice = GeneralData.round(desideredChoice, 2);
+		desiredChoice = GeneralData.round(desiredChoice, 2);
 
 		FlexibilityData result = new FlexibilityData(Integer.toString(batteryInfo.getIdBattery()), msgData.get(0).getDatetime(), maxInput,
-    			maxOutput, batteryData.getCostKwh(), desideredChoice);
+    			maxOutput, batteryData.getCostKwh(), desiredChoice);
 		
 		BatteryData data = new BatteryData(batteryInfo.getIdBattery(), msgData.get(0).getDatetime(), 
 				batteryData.getSocObjective(), batteryData.getSoc(), batteryData.getCostKwh(), 
-				maxInput, maxOutput, 0, desideredChoice);
+				maxInput, maxOutput, 0, desiredChoice);
 		
 		new DbBatteryData().addBatteryData(data);
 		new BaseAgent().sendMessageToAgentsByServiceType(this.myAgent, "BatteryAggregatorAgent",
 				"proposal", result);
 	}
 	
-	private double calculateSocObjectiveDesideredChoice (double soc, double socMax, double socMin, double capacity,
+	private double calculateSocObjectiveDesiredChoice (double soc, double socMax, double socMin, double capacity,
 			double maxInputBattery, double maxOutputBattery, double nextSocObjective)
 	{
 		if(soc < nextSocObjective)
